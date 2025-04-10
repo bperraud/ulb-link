@@ -11,7 +11,7 @@ services:
       - 5432
 
   web:
-    container_name: django-upylab
+    container_name: django-permalink
     build:
       context: ./pylab
       target: dev
@@ -48,3 +48,5 @@ services:
     depends_on:
       - web
 
+volumes:
+  postgresdata:
