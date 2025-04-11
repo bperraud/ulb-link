@@ -24,8 +24,8 @@ services:
     #   - pylab_logs:/var/log/pylab
     expose:
       - 8000
-    #depends_on:
-    #  - db
+    depends_on:
+      - db
 
   nginx:
     container_name: nginx
