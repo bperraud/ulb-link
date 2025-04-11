@@ -17,10 +17,10 @@ services:
     env_file:
       #- ./env_configs/db_conn.env
       - ./env_configs/.env
-    # volumes:
-    #   - ./pylab/:/app/web/
-    #   - mediaroot:/app/web/media_root
-    #   - staticroot:/app/web/static_root
+    volumes:
+      - ./permalink/:/app/
+    #   - mediaroot:/app/media_root
+    #   - staticroot:/app/static_root
     #   - pylab_logs:/var/log/pylab
     expose:
       - 8000
