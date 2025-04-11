@@ -13,8 +13,7 @@ services:
   web:
     container_name: django-permalink
     build:
-      context: ./pylab
-      target: dev
+      context: ./permalink
     env_file:
       #- ./env_configs/db_conn.env
       - ./env_configs/.env
