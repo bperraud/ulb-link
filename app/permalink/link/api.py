@@ -15,10 +15,21 @@ from rest_framework.generics import get_object_or_404
 
 from link.models import Link, User
 
+import string
+import random
+
+
+def generate_unique_token(length=10):
+    chars = string.ascii_letters + string.digits
+
+    while True:
+        token = "".join(random.choices(chars, k=length))
+        if not Link.objects.filter(token=token).exists():
+            return token
+
 
 class LinkCreateSerializer(serializers.Serializer):
     email = serializers.EmailField()
-    token = serializers.CharField(max_length=50)
     target_url = serializers.URLField()
 
 
@@ -34,7 +45,9 @@ class LinkAPIView(APIView):
         if serializer.is_valid():
             email = serializer.validated_data.pop("email")
             user = get_object_or_404(User, email=email)
-            link = Link.objects.create(user=user, **serializer.validated_data)
+            link = Link.objects.create(
+                user=user, token=generate_unique_token(), **serializer.validated_data
+            )
             return Response(
                 {"token": link.token, "target": link.target_url}, status=201
             )
