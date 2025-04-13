@@ -9,4 +9,5 @@ urlpatterns = [
     path("edit/<int:pk>", LinkEditRowView.as_view(), name="link-edit-row"),
     path("row/<int:pk>", LinkRowView.as_view(), name="link-row"),
     path("", LinkListView.as_view(), name="link-list"),
+    path("<int:pk>", LinkListView.as_view(), name="link-list"),
 ]

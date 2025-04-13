@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import TemplateView, DetailView, ListView, UpdateView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
@@ -32,3 +32,8 @@ class LinkRowView(TemplateView):
     def get_context_data(self, **kwargs):
         link = get_object_or_404(Link, pk=kwargs["pk"])
         return {"link": link}
+
+
+def targetURL(request, token):
+    link = get_object_or_404(Link, token=token)
+    return redirect(link.target_url)

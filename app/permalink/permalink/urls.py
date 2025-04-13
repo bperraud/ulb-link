@@ -19,11 +19,13 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import RedirectView
 
+from link.views import targetURL
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("link/", include("link.urls")),
+    path("token/<str:token>", targetURL, name="redirect"),
     path("", RedirectView.as_view(url="/link/", permanent=False)),
     # auth
     path(

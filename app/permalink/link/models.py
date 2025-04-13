@@ -1,3 +1,4 @@
+from enum import unique
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -7,4 +8,4 @@ class Link(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     target_url = models.URLField(verbose_name="Target URL")
-    token = models.CharField(max_length=50, verbose_name="Token")
+    token = models.CharField(max_length=50, verbose_name="Token", unique=True)
