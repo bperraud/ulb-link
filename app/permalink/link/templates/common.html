@@ -1,0 +1,191 @@
+<!doctype html>
+{% load static %}
+
+<html class="fixed" lang="fr">
+	<head>
+
+		<!-- Basic -->
+		<meta charset="UTF-8">
+
+		<title>{% block title %}{% endblock %}</title>
+        <link rel="icon" type="image/png" href="{% static "assets/images/favicon.ico"%}">
+
+		<!-- Mobile Metas -->
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+		<!-- Web Fonts  -->
+		<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800|Shadows+Into+Light" rel="stylesheet" type="text/css">
+
+		<!-- Vendor CSS -->
+		<link rel="stylesheet" href="{% static 'assets/vendor/bootstrap/css/bootstrap.css' %}" />
+		<link rel="stylesheet" href="{% static 'assets/vendor/font-awesome/css/font-awesome.css' %}" />
+		<link rel="stylesheet" href="{% static 'assets/vendor/magnific-popup/magnific-popup.css' %}" />
+        <link href="{% static 'assets/vendor/pnotify/pnotify.custom.css' %}" media="all" rel="stylesheet" type="text/css"/>
+
+		<!-- Specific Page Vendor CSS -->
+        {% block css_specific %}{% endblock %}
+
+		<!-- Theme CSS -->
+		<link rel="stylesheet" href="{% static 'assets/stylesheets/theme.css' %}" />
+
+		<!-- Skin CSS -->
+		<link rel="stylesheet" href="{% static 'assets/stylesheets/skins/default.css' %}" />
+
+		<!-- Theme Custom CSS -->
+		<link rel="stylesheet" href="{% static 'assets/stylesheets/theme-custom.css' %}">
+
+		<!-- Head Libs -->
+		<script src="{% static 'assets/vendor/modernizr/modernizr.js' %}"></script>
+
+        {% block additional_head %}{% endblock %}
+
+
+	</head>
+	<body style="background-color: #ecedf0">
+		<section class="body">
+
+			<!-- start: header -->
+			<header class="header">
+				<div class="logo-container">
+					<a href="{% url "mooc_home" %}" class="logo">
+						<img src="{% static 'assets/images/logoULBfull2.jpg' %}" height="56" alt="Logo_ulb" />
+					</a>
+					<div class="visible-xs toggle-sidebar-left" data-toggle-class="sidebar-left-opened" data-target="html" data-fire-event="sidebar-left-opened">
+						<i class="fa fa-bars" aria-label="Toggle sidebar"></i>
+					</div>
+				</div>
+
+				<!-- start: search & user box -->
+				<div class="header-right">
+
+					<span class="separator"></span>
+
+					<div id="userbox" class="userbox">
+						<a href="#" data-toggle="dropdown">
+							<figure class="profile-picture">
+								<img src="{% static 'assets/images/avatar_small.jpg' %}" class="img-circle" />
+							</figure>
+							<div class="profile-info">
+								<span class="name">{{ user.username }}</span>
+							</div>
+
+							<i class="fa custom-caret"></i>
+						</a>
+
+						<div class="dropdown-menu">
+							<ul class="list-unstyled">
+								<li class="divider"></li>
+                                <li>
+									<a role="menuitem" tabindex="-1" href="{% url 'edit_profile' %}" style="color: #4b4848; font-weight: bold;"><i class="fa fa-user"></i>Mon compte</a>
+								</li>
+                                <li class="divider"></li>
+								<li>
+									<a role="menuitem" tabindex="-1" href="{% url 'logout' %}" style="color: #4b4848; font-weight: bold;"><i class="fa fa-sign-out"></i>Déconnexion</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<!-- end: search & user box -->
+			</header>
+			<!-- end: header -->
+
+			<div class="inner-wrapper">
+				<!-- start: sidebar -->
+				<aside id="sidebar-left" class="sidebar-left">
+
+					<div class="sidebar-header">
+						<div class="sidebar-title">
+							NAVIGATION
+						</div>
+						<div class="sidebar-toggle hidden-xs" data-toggle-class="sidebar-left-collapsed" data-target="html" data-fire-event="sidebar-left-toggle">
+							<i class="fa fa-bars" aria-label="Toggle sidebar"></i>
+						</div>
+					</div>
+
+					<div class="nano">
+						<div class="nano-content">
+							<nav id="menu" class="nav-main" role="navigation">
+                                {% block navigation_list %}
+                                {% endblock %}
+							</nav>
+
+							<hr class="separator" />
+
+                            <nav id="menu" class="nav-main" role="navigation">
+								<ul class="nav nav-main">
+                                    <li>
+										<a href="{%  url 'edit_profile' %}">
+											<i class="fa fa-user" aria-hidden="true"></i>
+											<span>Mon compte</span>
+										</a>
+									</li>
+
+								</ul>
+							</nav>
+							<hr class="separator" />
+						</div>
+
+					</div>
+
+				</aside>
+				<!-- end: sidebar -->
+
+				<section role="main" class="content-body">
+
+                    {#  :::: PAGE SUB HEADER #}
+					<header class="page-header">
+						<h2>
+                            {% block back_button %}{% include "mooc/common/includes/include_back_button.html" %}{% endblock %}
+                            {%  block pagetitle %}Title{% endblock %}
+                        </h2>
+					</header>
+
+					<!-- start: page -->
+                    {%  block pagecontent %}
+                    {% endblock %}
+					<!-- end: page -->
+
+                    <div>
+        {# CC BY #}
+        <hr class="footer-hr">
+        <div class="text-center">
+            <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
+        </div>
+    </div>
+				</section>
+			</div>
+		</section>
+
+
+		<!-- Vendor -->
+		<script src="{% static 'assets/vendor/jquery/jquery.js' %}"></script>
+		<script src="{% static 'assets/vendor/jquery-browser-mobile/jquery.browser.mobile.js' %}"></script>
+		<script src="{% static 'assets/vendor/bootstrap/js/bootstrap.js' %}"></script>
+        <script src="{%  static 'assets/vendor/bootstrap-datepicker/js/bootstrap-datepicker.js' %}"></script>
+		<script src="{% static 'assets/vendor/nanoscroller/nanoscroller.js' %}"></script>
+		<script src="{% static 'assets/vendor/magnific-popup/magnific-popup.js' %}"></script>
+		<script src="{% static 'assets/vendor/jquery-placeholder/jquery.placeholder.js' %}"></script>
+        <script src="{% static 'assets/vendor/pnotify/pnotify.custom.js' %}"></script>
+
+		<!-- Specific Page Vendor -->
+        {% block js_specific %}{% endblock %}
+
+		<!-- Theme Base, Components and Settings -->
+		<script src="{% static 'assets/javascripts/theme.js' %}"></script>
+
+		<!-- Theme Custom -->
+		<script src="{% static 'assets/javascripts/theme.custom.js' %}"></script>
+
+		<!-- Theme Initialization Files -->
+		<script src="{% static 'assets/javascripts/theme.init.js' %}"></script>
+
+        <!-- Custom javascript-->
+        {% include "mooc/common/includes/include_msg_system.html" %}
+        <script src="{% static "assets/js/spinners.js" %}"></script>
+
+        {% block custom_js %}{% endblock %}
+
+	</body>
+</html>
+
