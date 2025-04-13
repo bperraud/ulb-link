@@ -22,15 +22,47 @@ class LinkCreateSerializer(serializers.Serializer):
     target_url = serializers.URLField()
 
 
-class LinkCreateAPIView(APIView):
+class LinkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Link
+        fields = ["user", "token", "target_url"]
+
+
+class LinkAPIView(APIView):
     def post(self, request):
         serializer = LinkCreateSerializer(data=request.data)
         if serializer.is_valid():
             email = serializer.validated_data.pop("email")
             user = get_object_or_404(User, email=email)
-            # Create Link manually (or use ModelSerializer if you prefer)
             link = Link.objects.create(user=user, **serializer.validated_data)
             return Response(
                 {"token": link.token, "target": link.target_url}, status=201
             )
         return Response(serializer.errors, status=400)
+
+    def get(self, request, pk):
+        try:
+            link = Link.objects.get(pk=pk)
+            serializer = LinkSerializer(link)
+            return Response(serializer.data)
+        except Link.DoesNotExist:
+            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    def put(self, request, pk):
+        try:
+            link = Link.objects.get(pk=pk)
+            serializer = LinkSerializer(link, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return render(request, "link_row.html", {"link": link})
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Link.DoesNotExist:
+            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    def delete(self, request, pk):
+        try:
+            link = Link.objects.get(pk=pk)
+            link.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Link.DoesNotExist:
+            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)

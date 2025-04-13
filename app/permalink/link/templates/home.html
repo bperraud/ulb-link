@@ -1,19 +1,16 @@
 <h2>My Links</h2>
-<table border="1">
+<table border="1" class="table delete-row-example">
     <thead>
         <tr>
             <th>Token</th>
             <th>Target URL</th>
             <th>Created At</th>
+            <th></th>
         </tr>
     </thead>
-    <tbody>
+    <tbody hx-headers='{"x-csrftoken": "{{ csrf_token }}"}' hx-target="closest tr" hx-swap="outerHTML">
         {% for link in links %}
-        <tr>
-            <td>{{ link.token }}</td>
-            <td><a href="{{ link.target_url }}">{{ link.target_url }}</a></td>
-            <td>{{ link.created_at }}</td>
-        </tr>
+            {% include "link_row.html" with link=link %}
         {% empty %}
         <tr>
             <td colspan="3">You haven't created any links yet.</td>
@@ -22,3 +19,5 @@
     </tbody>
 </table>
 
+
+<script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
