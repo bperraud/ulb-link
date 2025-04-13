@@ -11,7 +11,9 @@ from link.models import Link, User
 class LinkListView(ListView):
     model = Link
     template_name = "home.html"
-    context_object_name = "users"
+    context_object_name = "links"
 
     def get_queryset(self):
-        return Link.objects.filter(user=self.request.user)
+        query = Link.objects.filter(user=self.request.user)
+        print(query)
+        return query
