@@ -4,7 +4,7 @@
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
   </td>
   <td>{{ link.target_url }}</td>
-  <td>{{ link.created_at }}</td>
+  <td>{{ link.updated_at }}</td>
   <td>
     <button class="btn cancel" hx-get="{% url 'link-row' link.id %}">Cancel</button>
     <button class="btn save"
