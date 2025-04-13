@@ -14,6 +14,4 @@ class LinkListView(ListView):
     context_object_name = "links"
 
     def get_queryset(self):
-        query = Link.objects.filter(user=self.request.user)
-        print(query)
-        return query
+        return Link.objects.filter(user=self.request.user)
