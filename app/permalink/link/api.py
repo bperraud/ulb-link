@@ -11,10 +11,13 @@ from django.views.decorators.http import require_GET, require_POST
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, serializers
-from link.models import Link
+from rest_framework.generics import get_object_or_404
+
+from link.models import Link, User
 
 
 class LinkCreateSerializer(serializers.Serializer):
+    email = serializers.EmailField()
     token = serializers.CharField(max_length=50)
     target_url = serializers.URLField()
 
@@ -23,8 +26,10 @@ class LinkCreateAPIView(APIView):
     def post(self, request):
         serializer = LinkCreateSerializer(data=request.data)
         if serializer.is_valid():
+            email = serializer.validated_data.pop("email")
+            user = get_object_or_404(User, email=email)
             # Create Link manually (or use ModelSerializer if you prefer)
-            link = Link.objects.create(**serializer.validated_data)
+            link = Link.objects.create(user=user, **serializer.validated_data)
             return Response(
                 {"token": link.token, "target": link.target_url}, status=201
             )
