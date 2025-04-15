@@ -9,8 +9,9 @@ from rest_framework.generics import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 
-from rest_framework import permissions
-
+from django.conf import settings
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view
 
 
@@ -18,6 +19,7 @@ from link.models import Link, User
 
 import string
 import random
+import jwt
 
 
 def generate_unique_token(length=10):
@@ -30,7 +32,6 @@ def generate_unique_token(length=10):
 
 
 class LinkCreateSerializer(serializers.Serializer):
-    email = serializers.EmailField()
     target_url = serializers.URLField()
 
 
@@ -40,21 +41,36 @@ class LinkSerializer(serializers.ModelSerializer):
         fields = ["user", "token", "target_url"]
 
 
-@api_view(["POST"])
-def createLink(request):
-    serializer = LinkCreateSerializer(data=request.data)
-    if serializer.is_valid():
-        email = serializer.validated_data.pop("email")
-        user = get_object_or_404(User, email=email)
-        link = Link.objects.create(
-            user=user, token=generate_unique_token(), **serializer.validated_data
-        )
-        return Response({"token": link.token, "target": link.target_url}, status=201)
-    return Response(serializer.errors, status=400)
+class CreateLinkAPIView(APIView):
+    # authentication_classes = [JWTAuthentication]
+    # permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        token = request.headers.get("Authorization").split()[1]
+
+        try:
+            payload = jwt.decode(
+                token,
+                settings.SECRET_KEY,
+                algorithms=["HS256"],
+            )
+            user = get_object_or_404(User, id=payload.get("user_id"))
+        except jwt.InvalidSignatureError:
+            return Response({"Error": "Wrong JWT Secret"}, status=403)
+
+        serializer = LinkCreateSerializer(data=request.data)
+        if serializer.is_valid():
+            link = Link.objects.create(
+                user=user, token=generate_unique_token(), **serializer.validated_data
+            )
+            return Response(
+                {"token": link.token, "target": link.target_url}, status=201
+            )
+        return Response(serializer.errors, status=400)
 
 
 class LinkAPIView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, pk):
         try:
