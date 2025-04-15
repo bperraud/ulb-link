@@ -4,7 +4,6 @@ from link.api import CreateLinkAPIView, LinkAPIView
 from link.views import LinkListView, LinkEditRowView, LinkRowView
 
 urlpatterns = [
-    path("api/", LinkAPIView.as_view(), name="link-post"),
     path("api/create/", CreateLinkAPIView.as_view(), name="link-post"),
     path("api/<int:pk>", LinkAPIView.as_view(), name="link-api"),
     path("edit/<int:pk>", LinkEditRowView.as_view(), name="link-edit-row"),

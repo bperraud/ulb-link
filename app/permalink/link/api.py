@@ -57,6 +57,8 @@ class CreateLinkAPIView(APIView):
             user = get_object_or_404(User, id=payload.get("user_id"))
         except jwt.InvalidSignatureError:
             return Response({"Error": "Wrong JWT Secret"}, status=403)
+        except jwt.ExpiredSignatureError:
+            return Response({"Error": "JWT Token expired"}, status=403)
 
         serializer = LinkCreateSerializer(data=request.data)
         if serializer.is_valid():
