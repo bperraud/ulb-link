@@ -1,6 +1,7 @@
 <tr id="link-{{ link.id }}">
   <td>{{ link.token }}</td>
-  <td>{{ link.target_url }}</td>
+  <td><a href="{{ link.target_url }}">{{ link.target_url }}</a></td>
+  <td>{{ link.created_at }}</td>
   <td>{{ link.updated_at }}</td>
   <td>
     <button class="btn danger"
