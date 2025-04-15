@@ -60,9 +60,13 @@ class CreateLinkAPIView(APIView):
 
         serializer = LinkCreateSerializer(data=request.data)
         if serializer.is_valid():
-            link = Link.objects.create(
-                user=user, token=generate_unique_token(), **serializer.validated_data
+            link, created = Link.objects.get_or_create(
+                user=user, **serializer.validated_data
             )
+            if created:
+                token = generate_unique_token()
+                link.token = token
+            link.save()
             return Response(
                 {"token": link.token, "target": link.target_url}, status=201
             )
