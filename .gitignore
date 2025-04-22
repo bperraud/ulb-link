@@ -1,4 +1,5 @@
 .mypy_cache
 venv/
+.direnv/
 
 app/env_configs/.env
