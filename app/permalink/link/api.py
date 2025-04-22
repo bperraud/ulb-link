@@ -1,22 +1,25 @@
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseBadRequest, JsonResponse
 from django.shortcuts import redirect, render
-from django.urls import reverse
-from django.utils.html import escape
-from django.views.decorators.http import require_GET, require_POST
 
-
-# views.py
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, serializers
 from rest_framework.generics import get_object_or_404
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+
+from django.conf import settings
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view
+
 
 from link.models import Link, User
 
 import string
 import random
+import jwt
 
 
 def generate_unique_token(length=10):
@@ -29,7 +32,6 @@ def generate_unique_token(length=10):
 
 
 class LinkCreateSerializer(serializers.Serializer):
-    email = serializers.EmailField()
     target_url = serializers.URLField()
 
 
@@ -39,19 +41,42 @@ class LinkSerializer(serializers.ModelSerializer):
         fields = ["user", "token", "target_url"]
 
 
-class LinkAPIView(APIView):
+class CreateLinkAPIView(APIView):
+    # authentication_classes = [JWTAuthentication]
+    # permission_classes = [IsAuthenticated]
+
     def post(self, request):
+        token = request.headers.get("Authorization").split()[1]
+
+        try:
+            payload = jwt.decode(
+                token,
+                settings.SECRET_KEY,
+                algorithms=["HS256"],
+            )
+            user = get_object_or_404(User, id=payload.get("user_id"))
+        except jwt.InvalidSignatureError:
+            return Response({"Error": "Wrong JWT Secret"}, status=403)
+        except jwt.ExpiredSignatureError:
+            return Response({"Error": "JWT Token expired"}, status=403)
+
         serializer = LinkCreateSerializer(data=request.data)
         if serializer.is_valid():
-            email = serializer.validated_data.pop("email")
-            user = get_object_or_404(User, email=email)
-            link = Link.objects.create(
-                user=user, token=generate_unique_token(), **serializer.validated_data
+            link, created = Link.objects.get_or_create(
+                user=user, **serializer.validated_data
             )
+            if created:
+                token = generate_unique_token()
+                link.token = token
+            link.save()
             return Response(
                 {"token": link.token, "target": link.target_url}, status=201
             )
         return Response(serializer.errors, status=400)
+
+
+class LinkAPIView(APIView):
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, pk):
         try:

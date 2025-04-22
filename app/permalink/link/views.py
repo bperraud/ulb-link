@@ -18,6 +18,7 @@ class LinkListView(ListView):
         return Link.objects.filter(user=self.request.user)
 
 
+@method_decorator([login_required], name="dispatch")
 class LinkEditRowView(TemplateView):
     template_name = "edit_row.html"
 
@@ -26,6 +27,7 @@ class LinkEditRowView(TemplateView):
         return {"link": link}
 
 
+@method_decorator([login_required], name="dispatch")
 class LinkRowView(TemplateView):
     template_name = "link_row.html"
 
