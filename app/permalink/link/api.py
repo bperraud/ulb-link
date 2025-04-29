@@ -10,9 +10,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 
 from django.conf import settings
-from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import api_view
 
 
 from link.models import Link, User
@@ -20,6 +18,8 @@ from link.models import Link, User
 import string
 import random
 import jwt
+
+from link.context_processors import get_host
 
 
 def generate_unique_token(length=10):
@@ -54,7 +54,7 @@ class CreateLinkAPIView(APIView):
                 settings.SECRET_KEY,
                 algorithms=["HS256"],
             )
-            user = get_object_or_404(User, id=payload.get("user_id"))
+            user = get_object_or_404(User, email=payload.get("sub"))
         except jwt.InvalidSignatureError:
             return Response({"Error": "Wrong JWT Secret"}, status=403)
         except jwt.ExpiredSignatureError:
@@ -70,7 +70,8 @@ class CreateLinkAPIView(APIView):
                 link.token = token
             link.save()
             return Response(
-                {"token": link.token, "target": link.target_url}, status=201
+                {"permalink": f"{get_host()}/{link.token}", "target": link.target_url},
+                status=201,
             )
         return Response(serializer.errors, status=400)
 

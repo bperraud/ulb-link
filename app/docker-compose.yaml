@@ -38,8 +38,8 @@ services:
       NGINX_ENVSUBST_OUTPUT_DIR: /etc/nginx/conf.d
     restart: always
     ports:
-      - "80:80"
-      - "443:443"
+      - "8080:8080"
+      # - "443:443"
     # volumes:
     #   - mediaroot:/app/web/media_root
     #   - staticroot:/app/web/static_root
