@@ -17,8 +17,8 @@ from link.models import Link, User
 
 import string
 import random
-import jwt
 
+from link.auth import CustomJWTAuthentication
 from link.context_processors import get_host
 
 
@@ -42,28 +42,27 @@ class LinkSerializer(serializers.ModelSerializer):
 
 
 class CreateLinkAPIView(APIView):
-    # authentication_classes = [JWTAuthentication]
-    # permission_classes = [IsAuthenticated]
+    authentication_classes = [CustomJWTAuthentication]
 
     def post(self, request):
-        token = request.headers.get("Authorization").split()[1]
+        # token = request.headers.get("Authorization").split()[1]
 
-        try:
-            payload = jwt.decode(
-                token,
-                settings.SECRET_KEY,
-                algorithms=["HS256"],
-            )
-            user = get_object_or_404(User, email=payload.get("sub"))
-        except jwt.InvalidSignatureError:
-            return Response({"Error": "Wrong JWT Secret"}, status=403)
-        except jwt.ExpiredSignatureError:
-            return Response({"Error": "JWT Token expired"}, status=403)
+        # try:
+        #     payload = jwt.decode(
+        #         token,
+        #         settings.SECRET_KEY,
+        #         algorithms=["HS256"],
+        #     )
+        #     user = get_object_or_404(User, email=payload.get("sub"))
+        # except jwt.InvalidSignatureError:
+        #     return Response({"Error": "Wrong JWT Secret"}, status=403)
+        # except jwt.ExpiredSignatureError:
+        #     return Response({"Error": "JWT Token expired"}, status=403)
 
         serializer = LinkCreateSerializer(data=request.data)
         if serializer.is_valid():
             link, created = Link.objects.get_or_create(
-                user=user, **serializer.validated_data
+                user=request.user, **serializer.validated_data
             )
             if created:
                 token = generate_unique_token()
@@ -74,6 +73,19 @@ class CreateLinkAPIView(APIView):
                 status=201,
             )
         return Response(serializer.errors, status=400)
+
+    def get(self, request):
+        # Get 'url' from query parameters like ?url=https://example.com
+        url = request.query_params.get("url")
+
+        if not url:
+            return Response(
+                {"error": "Missing 'url' query parameter"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # You can now use the URL as needed
+        return Response({"received_url": url}, status=status.HTTP_200_OK)
 
 
 class LinkAPIView(APIView):
