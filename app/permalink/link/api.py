@@ -41,23 +41,10 @@ class LinkSerializer(serializers.ModelSerializer):
         fields = ["user", "token", "target_url"]
 
 
-class CreateLinkAPIView(APIView):
+class ExternalLinkAPIView(APIView):
     authentication_classes = [CustomJWTAuthentication]
 
     def post(self, request):
-        # token = request.headers.get("Authorization").split()[1]
-
-        # try:
-        #     payload = jwt.decode(
-        #         token,
-        #         settings.SECRET_KEY,
-        #         algorithms=["HS256"],
-        #     )
-        #     user = get_object_or_404(User, email=payload.get("sub"))
-        # except jwt.InvalidSignatureError:
-        #     return Response({"Error": "Wrong JWT Secret"}, status=403)
-        # except jwt.ExpiredSignatureError:
-        #     return Response({"Error": "JWT Token expired"}, status=403)
 
         serializer = LinkCreateSerializer(data=request.data)
         if serializer.is_valid():
@@ -75,17 +62,21 @@ class CreateLinkAPIView(APIView):
         return Response(serializer.errors, status=400)
 
     def get(self, request):
-        # Get 'url' from query parameters like ?url=https://example.com
-        url = request.query_params.get("url")
+        target_url = request.query_params.get("target_url")
 
-        if not url:
+        if not target_url:
             return Response(
-                {"error": "Missing 'url' query parameter"},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"error": "Missing 'target_url' query parameter"},
+                status=400,
             )
-
-        # You can now use the URL as needed
-        return Response({"received_url": url}, status=status.HTTP_200_OK)
+        try:
+            permalink = Link.objects.get(target_url=target_url)
+        except Link.DoesNotExist:
+            return Response(
+                {"error": "Permalink Does Not Exist"},
+                status=400,
+            )
+        return Response({"permalink": permalink}, status=200)
 
 
 class LinkAPIView(APIView):
