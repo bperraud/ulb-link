@@ -3,8 +3,12 @@ from permalink.settings import SITE_PROTOCOL
 
 
 def get_host():
-    return f"{SITE_PROTOCOL}://{SITE_DOMAIN}/token"
+    domain = SITE_DOMAIN
+    if domain == "localhost":
+        domain = "localhost:8080"
+
+    return f"{SITE_PROTOCOL}://{domain}/token"
 
 
 def host(request):
-    return {"HOST": f"{SITE_PROTOCOL}://{SITE_DOMAIN}/token"}
+    return {"HOST": get_host()}
