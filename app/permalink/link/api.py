@@ -17,9 +17,9 @@ from link.models import Link, User
 
 import string
 import random
+from urllib.parse import unquote
 
 from link.auth import CustomJWTAuthentication
-from link.context_processors import get_host
 
 
 def generate_unique_token(length=10):
@@ -56,7 +56,7 @@ class ExternalLinkAPIView(APIView):
                 link.token = token
             link.save()
             return Response(
-                {"permalink": f"{get_host()}/{link.token}", "target": link.target_url},
+                {"permalink": link.get_permalink(), "target": link.target_url},
                 status=201,
             )
         return Response(serializer.errors, status=400)
@@ -70,13 +70,14 @@ class ExternalLinkAPIView(APIView):
                 status=400,
             )
         try:
-            permalink = Link.objects.get(target_url=target_url)
+            print(unquote(target_url))
+            permalink = Link.objects.get(target_url=unquote(target_url))
         except Link.DoesNotExist:
             return Response(
                 {"error": "Permalink Does Not Exist"},
                 status=400,
             )
-        return Response({"permalink": permalink}, status=200)
+        return Response({"permalink": permalink.get_permalink()}, status=200)
 
 
 class LinkAPIView(APIView):

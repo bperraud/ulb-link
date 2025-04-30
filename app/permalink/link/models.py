@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+from link.context_processors import get_host
+
 
 class Link(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="link")
@@ -11,3 +13,6 @@ class Link(models.Model):
 
     class Meta:
         unique_together = ("user", "token")
+
+    def get_permalink(self):
+        return f"{get_host()}/{self.token}"
