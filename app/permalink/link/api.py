@@ -56,7 +56,7 @@ class ExternalLinkAPIView(APIView):
                 link.token = token
             link.save()
             return Response(
-                {"permalink": link.get_permalink(), "target": link.target_url},
+                {"permalink": link.get_permalink()},
                 status=201,
             )
         return Response(serializer.errors, status=400)
@@ -70,14 +70,35 @@ class ExternalLinkAPIView(APIView):
                 status=400,
             )
         try:
-            print(unquote(target_url))
-            permalink = Link.objects.get(target_url=unquote(target_url))
+            permalink = Link.objects.get(
+                user=request.user, target_url=unquote(target_url)
+            )
         except Link.DoesNotExist:
             return Response(
-                {"error": "Permalink Does Not Exist"},
+                {"error": "Permalink does not exist"},
                 status=400,
             )
         return Response({"permalink": permalink.get_permalink()}, status=200)
+
+    def delete(self, request):
+        target_url = request.query_params.get("target_url")
+
+        if not target_url:
+            return Response(
+                {"error": "Missing 'target_url' query parameter"},
+                status=400,
+            )
+        try:
+            permalink = Link.objects.get(
+                user=request.user, target_url=unquote(target_url)
+            )
+        except Link.DoesNotExist:
+            return Response(
+                {"error": "Permalink does not exist"},
+                status=400,
+            )
+        permalink.delete()
+        return Response({"message": "Permalink deleted successfully"}, status=200)
 
 
 class LinkAPIView(APIView):
