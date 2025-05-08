@@ -7,6 +7,8 @@ from django.contrib.auth.decorators import login_required
 from rest_framework.generics import get_object_or_404
 from link.models import Link, User
 
+from link.forms import LinkForm
+
 
 @method_decorator([login_required], name="dispatch")
 class LinkListView(ListView):
@@ -20,11 +22,14 @@ class LinkListView(ListView):
 
 @method_decorator([login_required], name="dispatch")
 class LinkEditRowView(TemplateView):
-    template_name = "edit_row.html"
+    # template_name = "form_snippet.html"
+    template_name = "modal.html"
+    # template_name = "edit_row.html"
 
     def get_context_data(self, **kwargs):
         link = get_object_or_404(Link, pk=kwargs["pk"])
-        return {"link": link}
+        form = LinkForm(instance=link)
+        return {"form": form}
 
 
 @method_decorator([login_required], name="dispatch")
