@@ -27,12 +27,8 @@ server {
         internal;
     }
 
-    location /static/ {
-        alias /app/web/static_root/;
-    }
-
     location /media/ {
-        alias /app/web/media_root/;
+        alias /app/media_root/;
     }
 
     location /doc/ {

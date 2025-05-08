@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -47,10 +49,13 @@
 	<!-- Sidebar -->
 	<div class="sidebar border-end">
 		<ul class="nav flex-column">
+
 			<li class="nav-item">
+            <img src="{% static 'link.svg' %}" alt="link">
                 <a class="nav-link" href="{% url 'link-home' %}">Links</a>
 			</li>
 			<li class="nav-item">
+            <img src="{% static 'people-fill.svg' %}" alt="users">
 				<a class="nav-link" href="#users">Users</a>
 			</li>
 			<!-- Add more endpoints as needed -->
@@ -66,3 +71,18 @@
 </body>
 </html>
 
+<style> 
+
+.nav-item {
+    font-size: 19px;
+    display: flex;
+    align-items: center; 
+    padding-left: 25px;
+}
+
+.nav-item a {
+    color: inherit;
+    text-decoration: none;
+}
+
+</style>
