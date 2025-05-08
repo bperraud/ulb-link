@@ -25,7 +25,7 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("link/", include("link.urls")),
-    path("token/<str:token>", targetURL, name="redirect"),
+    path("t/<str:token>", targetURL, name="redirect"),
     path("", RedirectView.as_view(url="/link/", permanent=False)),
     # auth
     path(

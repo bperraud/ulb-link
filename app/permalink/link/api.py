@@ -78,7 +78,13 @@ class ExternalLinkAPIView(APIView):
                 {"error": "Permalink does not exist"},
                 status=400,
             )
-        return Response({"permalink": permalink.get_permalink()}, status=200)
+        return Response(
+            {
+                "permalink": permalink.get_permalink(),
+                "target_url": permalink.target_url,
+            },
+            status=200,
+        )
 
     def delete(self, request):
         target_url = request.query_params.get("target_url")
