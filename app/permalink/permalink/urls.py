@@ -32,7 +32,7 @@ urlpatterns = [
     # auth
     path(
         "accounts/login/",
-        auth_views.LoginView.as_view(template_name="login.html"),
+        auth_views.LoginView.as_view(template_name="login.html", next_page="link-home"),
         name="login",
     ),
     path(

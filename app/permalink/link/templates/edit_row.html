@@ -4,6 +4,7 @@
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
   </td>
   <td><a href="{{ link.target_url }}">{{ link.target_url }}</a></td>
+  <td>{{ link.user.username }}</td>
   <td>{{ link.created_at }}</td>
   <td>{{ link.updated_at }}</td>
   <td>

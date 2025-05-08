@@ -11,7 +11,7 @@ from link.models import Link, User
 @method_decorator([login_required], name="dispatch")
 class LinkListView(ListView):
     model = Link
-    template_name = "home.html"
+    template_name = "links.html"
     context_object_name = "links"
 
     def get_queryset(self):
