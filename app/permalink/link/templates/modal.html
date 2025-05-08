@@ -4,10 +4,24 @@
       <h5 class="modal-title">Edit permalink</h5>
     </div>
     <div class="modal-body">
-      {% include "form_snippet.html" %}
+
+
+    <form method="POST" id="editForm" action="{% url 'link-edit-row' '1' %}" hx-post="{% url 'link-edit-row' '1' %}" hx-target="#editForm" hx-swap="outerHTML">
+
+        {% csrf_token %}
+        {% include "form_snippet.html" %}
+      </form>
+            
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="submitButton">Save</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
     </div>
   </div>
 </div>
+
+<script>
+    document.getElementById('submitButton').addEventListener('click', function() {
+        document.getElementById('editForm').submit();
+    });
+</script>
