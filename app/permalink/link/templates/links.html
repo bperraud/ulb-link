@@ -3,13 +3,10 @@
 
 {% block pagecontent %}
 
-<button
-    hx-get="{% url 'link-edit-row' '1' %}"
-    hx-target="#modals-here"
-    hx-trigger="click"
-    data-bs-toggle="modal"
-    data-bs-target="#modals-here"
-    class="btn primary">Open Modal</button>
+
+<div id="edit-container" hx-swap="innerHTML">
+
+</div>
 
 <div id="modals-here"
     class="modal modal-blur fade"
@@ -62,12 +59,25 @@ document.getElementById('selectAll').addEventListener('change', function () {
     checkboxes.forEach(cb => cb.checked = this.checked);
   });
 
+
+document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+    checkbox.addEventListener('change', function () {
+        const url = `/link/toolbar/${getSelectedIds().length}`;
+        htmx.ajax('GET', url, '#edit-container');
+    });
+});
+
 function getSelectedIds() {
     return [...document.querySelectorAll('.row-checkbox:checked')].map(cb => cb.value);
 }
 
+document.getElementById('dynamic-button').addEventListener('click', function (event) {
+    event.preventDefault();
+    const ids = getSelectedIds();
+    const url = `/link/edit/${ids[0]}`;
+    htmx.ajax('GET', url, '#modals-here');
+});
+
 </script>
 
 {% endblock %}
-
-
