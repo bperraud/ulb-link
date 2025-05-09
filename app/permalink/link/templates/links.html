@@ -71,11 +71,15 @@ function getSelectedIds() {
     return [...document.querySelectorAll('.row-checkbox:checked')].map(cb => cb.value);
 }
 
-document.getElementById('dynamic-button').addEventListener('click', function (event) {
-    event.preventDefault();
-    const ids = getSelectedIds();
-    const url = `/link/edit/${ids[0]}`;
-    htmx.ajax('GET', url, '#modals-here');
+document.body.addEventListener('htmx:afterSwap', function(evt) {
+    if (evt.target && document.getElementById('edit-button')) {
+        document.getElementById('edit-button').addEventListener('click', function (event) {
+            event.preventDefault();
+            const ids = getSelectedIds();
+            const url = `/link/edit/${ids[0]}`;
+            htmx.ajax('GET', url, '#modals-here');
+        });
+    }
 });
 
 </script>
