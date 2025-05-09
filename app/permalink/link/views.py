@@ -7,12 +7,14 @@ from django.views.generic.edit import FormView
 
 from django.urls import reverse_lazy
 
-
 from rest_framework.generics import get_object_or_404
 from link.models import Link, User
 
+from django.http import HttpResponseBadRequest, JsonResponse
 
 from link.forms import LinkForm
+
+from django.template.loader import render_to_string
 
 
 @method_decorator([login_required], name="dispatch")
@@ -54,7 +56,10 @@ class LinkEditRowView(FormView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        return super().form_invalid(form)
+        html = render_to_string("form_snippet.html", {"form": form})
+        return JsonResponse({"html": html})
+        # return render(self.request, "form_snippet.html", {"form": form})
+        # return super().form_invalid(form)
 
 
 @method_decorator([login_required], name="dispatch")
