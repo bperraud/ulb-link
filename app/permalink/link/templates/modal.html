@@ -1,27 +1,29 @@
-<div class="modal-dialog modal-dialog-centered">
+<div class="modal-dialog modal-dialog-centered" id="modalContainer">
   <div class="modal-content">
     <div class="modal-header">
       <h5 class="modal-title">Edit permalink</h5>
     </div>
     <div class="modal-body">
-
-
-    <form method="POST" id="editForm" action="{% url 'link-edit-row' '1' %}" hx-post="{% url 'link-edit-row' '1' %}" hx-target="#editForm" hx-swap="outerHTML">
-
+      <form 
+        method="POST" 
+        id="editForm" 
+        hx-post="{% url 'link-edit-row' '1' %}" 
+        hx-target="#modalContainer" 
+        hx-swap="outerHTML"
+      >
         {% csrf_token %}
         {% include "form_snippet.html" %}
       </form>
-            
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-primary" id="submitButton">Save</button>
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      <button type="submit" form="editForm" class="btn btn-primary">Save</button>
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
     </div>
   </div>
 </div>
 
 <script>
     document.getElementById('submitButton').addEventListener('click', function() {
-        document.getElementById('editForm').submit();
+        htmx.trigger(document.getElementById('editForm'), 'submit');
     });
 </script>
