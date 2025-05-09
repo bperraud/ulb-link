@@ -24,15 +24,15 @@
 <table id="links" border="1" class="table delete-row-example">
     <thead>
         <tr>
+            <th><input type="checkbox" id="selectAll"></th>
             <th>Permalink</th>
             <th>Target URL</th>
             <th>Created By</th>
             <th>Created At</th>
             <th>Updated At</th>
-            <th></th>
         </tr>
     </thead>
-    <tbody hx-headers='{"x-csrftoken": "{{ csrf_token }}"}' hx-target="closest tr" hx-swap="outerHTML">
+    <tbody>
         {% for link in links %}
             {% include "link_row.html" with link=link %}
         {% empty %}
@@ -45,11 +45,26 @@
 
 <script>
 
-$(document).ready( function () {
-    $('#links').DataTable(
-        {pageLength : 15}
-    );
+$(document).ready(function () {
+    $('#links').DataTable({
+        pageLength: 15,
+        columnDefs: [
+            {
+                orderable: false,
+                targets: 0
+            }
+        ]
+    });
 });
+
+document.getElementById('selectAll').addEventListener('change', function () {
+    const checkboxes = document.querySelectorAll('.row-checkbox');
+    checkboxes.forEach(cb => cb.checked = this.checked);
+  });
+
+function getSelectedIds() {
+    return [...document.querySelectorAll('.row-checkbox:checked')].map(cb => cb.value);
+}
 
 </script>
 
