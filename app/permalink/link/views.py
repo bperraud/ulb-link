@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.views.generic import TemplateView, ListView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.urls import reverse
 
@@ -40,6 +40,14 @@ def toolbar(request, nb):
             return render(request, "link_bar/edit_single_link.html")
         case _:
             return render(request, "link_bar/edit_multiple_link.html")
+
+
+@require_http_methods(["DELETE"])
+def delete_links(request, ids):
+    list_ids = ids.split(",")
+    links = Link.objects.filter(id__in=(list_ids))
+    links.delete()
+    return JsonResponse({"message": "ok"})
 
 
 @require_http_methods(["GET", "POST"])
