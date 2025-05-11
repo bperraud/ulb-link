@@ -93,6 +93,7 @@ document.body.addEventListener('htmx:afterSwap', function(evt) {
             .then(res => {
                 if (res.ok) {
                     console.debug("delete");
+                    location.reload();
                 }
             });
         });
