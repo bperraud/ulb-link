@@ -55,7 +55,7 @@ def edit_link(request, pk):
     else:
         form = LinkForm(instance=link)
 
-    return render(request, "modal.html", {"form": form})
+    return render(request, "modal.html", {"form": form, "link": link})
 
 
 def targetURL(request, token):
