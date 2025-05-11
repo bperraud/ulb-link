@@ -8,12 +8,7 @@ class LinkForm(ModelForm):
         model = Link
         fields = ["token", "target_url"]
         widgets = {
-            "target_url": forms.TextInput(
-                attrs={
-                    "style": "width: 100%;",
-                    "placeholder": "Enter target URL",
-                }
-            ),
+            "target_url": forms.TextInput(attrs={"style": "width: 100%;"}),
         }
 
     def __init__(self, *args, **kwargs):
