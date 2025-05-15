@@ -20,12 +20,13 @@ from django.urls import path, include
 from django.views.generic import RedirectView
 from django.conf.urls.static import static
 
-from link.views import targetURL
+from link.views import targetURL, status
 from django.contrib.auth import views as auth_views
 from django.conf import settings
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("status/", status),
     path("link/", include("link.urls")),
     path("t/<str:token>", targetURL, name="redirect"),
     path("", RedirectView.as_view(url="/link/", permanent=False)),
