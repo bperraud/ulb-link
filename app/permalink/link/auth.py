@@ -3,6 +3,7 @@ from rest_framework.exceptions import AuthenticationFailed
 from django.conf import settings
 from django.contrib.auth import get_user_model
 import jwt
+from authlib.integrations.django_client import OAuth
 
 User = get_user_model()
 
@@ -31,7 +32,5 @@ class CustomJWTAuthentication(BaseAuthentication):
         return (user, None)
 
 
-from authlib.integrations.django_client import OAuth
-
-
 oauth = OAuth()
+oauth.register(name="nextcloud", **settings.AUTHLIB_OAUTH_CLIENTS["nextcloud"])

@@ -135,18 +135,16 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 # Oauth2.0
-
 AUTHLIB_OAUTH_CLIENTS = {
     "nextcloud": {
-        "client_id": "vy4FZsQcowbrDIAUyMjOwpsAHy0yRVT5TRcFGj2KtofPu1W4cdsEq8enAy42hH4R",
-        "client_secret": "vy4FZsQcowbrDIAUyMjOwpsAHy0yRVT5TRcFGj2KtofPu1W4cdsEq8enAy42hH4R",
-        "request_token_url": "https://api.twitter.com/oauth/request_token",
-        "request_token_params": None,
-        "access_token_url": "https://api.twitter.com/oauth/access_token",
-        "access_token_params": None,
-        "refresh_token_url": None,
-        "authorize_url": "https://api.twitter.com/oauth/authenticate",
-        "api_base_url": "https://api.twitter.com/1.1/",
-        "client_kwargs": None,
+        "client_id": "v5YNBl86vqmDLER2fy7ezVQlZ6pzcu1eHl6aMo5wSlzrP6iYrNdK3ejw3uzz27qu",
+        "client_secret": "ZRF4pUyynkYdjRHy7aCiI1BrGUEibLvXMqCaAB7FFv2V1rx1G8pKT7pdxL9FL2L1",
+        "authorize_url": "http://nextcloud.local/index.php/apps/oauth2/authorize",
+        "access_token_url": "http://nextcloud.local/index.php/apps/oauth2/api/v1/token",
+        "refresh_token_url": "http://nextcloud.local/index.php/apps/oauth2/api/v1/token",
+        "api_base_url": "http://nextcloud.local/",
+        "client_kwargs": {
+            "scope": "openid profile email"  # adjust based on what Nextcloud provides
+        },
     }
 }

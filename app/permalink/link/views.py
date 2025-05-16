@@ -73,3 +73,41 @@ def targetURL(request, token):
 
 def status(request):
     return JsonResponse({"message": "ok"})
+
+
+from django.shortcuts import redirect
+from django.http import HttpResponse
+from django.contrib.auth import login
+from django.contrib.auth.models import User
+
+from link.auth import oauth
+
+
+# 1. Redirect to Nextcloud
+def login_view(request):
+    redirect_uri = request.build_absolute_uri("/auth/callback/")
+    return oauth.nextcloud.authorize_redirect(request, redirect_uri)
+
+
+# 2. Callback URL after login
+def auth_callback(request):
+    token = oauth.nextcloud.authorize_access_token(request)
+    if not token:
+        return HttpResponse("Authorization failed", status=401)
+
+    # You may need to query a user endpoint. Example:
+    userinfo_response = oauth.nextcloud.get(
+        "/ocs/v2.php/cloud/user?format=json", token=token
+    )
+    userinfo = userinfo_response.json()
+
+    # Extract the username or email (depends on Nextcloud config)
+    cloud_user = userinfo.get("ocs", {}).get("data", {})
+    username = cloud_user.get("id")
+    email = cloud_user.get("email") or f"{username}@nextcloud.local"
+
+    # Django login or create
+    user, _ = User.objects.get_or_create(username=username, defaults={"email": email})
+    login(request, user)
+
+    return redirect("/")  # Redirect to home or dashboard
