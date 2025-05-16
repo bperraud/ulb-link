@@ -132,3 +132,21 @@ STATIC_ROOT = os.environ.get("STATIC_ROOT")
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+# Oauth2.0
+
+AUTHLIB_OAUTH_CLIENTS = {
+    "nextcloud": {
+        "client_id": "vy4FZsQcowbrDIAUyMjOwpsAHy0yRVT5TRcFGj2KtofPu1W4cdsEq8enAy42hH4R",
+        "client_secret": "vy4FZsQcowbrDIAUyMjOwpsAHy0yRVT5TRcFGj2KtofPu1W4cdsEq8enAy42hH4R",
+        "request_token_url": "https://api.twitter.com/oauth/request_token",
+        "request_token_params": None,
+        "access_token_url": "https://api.twitter.com/oauth/access_token",
+        "access_token_params": None,
+        "refresh_token_url": None,
+        "authorize_url": "https://api.twitter.com/oauth/authenticate",
+        "api_base_url": "https://api.twitter.com/1.1/",
+        "client_kwargs": None,
+    }
+}
