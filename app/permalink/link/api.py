@@ -56,13 +56,11 @@ class ExternalLinkAPIView(APIView):
                 Link, user=request.user, token=serializer.validated_data["token"]
             )
             link.target_url = request.data["target_url"]
-            print(link.target_url)
             link.save()
             return Response(
                 {"permalink": link.get_permalink()},
                 status=200,
             )
-        print(serializer.errors)
         return Response(serializer.errors, status=400)
 
     def post(self, request):

@@ -133,16 +133,18 @@ STATIC_ROOT = os.environ.get("STATIC_ROOT")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Nextcloud
+NEXTCLOUD_URL = os.environ.get("NEXTCLOUD_URL")
 
 # Oauth2.0
 AUTHLIB_OAUTH_CLIENTS = {
     "nextcloud": {
-        "client_id": "v5YNBl86vqmDLER2fy7ezVQlZ6pzcu1eHl6aMo5wSlzrP6iYrNdK3ejw3uzz27qu",
-        "client_secret": "ZRF4pUyynkYdjRHy7aCiI1BrGUEibLvXMqCaAB7FFv2V1rx1G8pKT7pdxL9FL2L1",
-        "authorize_url": "http://nextcloud.local/index.php/apps/oauth2/authorize",
-        "access_token_url": "http://nextcloud.local/index.php/apps/oauth2/api/v1/token",
-        "refresh_token_url": "http://nextcloud.local/index.php/apps/oauth2/api/v1/token",
-        "api_base_url": "http://nextcloud.local/",
+        "client_id": os.environ.get("NEXTCLOUD_CLIENT_ID"),
+        "client_secret": os.environ.get("NEXTCLOUD_SECRET_ID"),
+        "authorize_url": f"{NEXTCLOUD_URL}/index.php/apps/oauth2/authorize",
+        "access_token_url": f"{NEXTCLOUD_URL}/index.php/apps/oauth2/api/v1/token",
+        "refresh_token_url": f"{NEXTCLOUD_URL}/index.php/apps/oauth2/api/v1/token",
+        "api_base_url": NEXTCLOUD_URL,
         "client_kwargs": {
             "scope": "openid profile email"  # adjust based on what Nextcloud provides
         },

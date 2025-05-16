@@ -25,7 +25,7 @@ class CustomJWTAuthentication(BaseAuthentication):
             raise AuthenticationFailed("Invalid JWT token")
 
         try:
-            user = User.objects.get(email=payload.get("sub"))
+            user = User.objects.get(username=payload.get("sub"))
         except User.DoesNotExist:
             raise AuthenticationFailed("User not found")
 

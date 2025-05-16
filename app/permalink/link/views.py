@@ -19,6 +19,8 @@ class LinkListView(ListView):
     context_object_name = "links"
 
     def get_queryset(self):
+        print(self.request.user)
+        print(Link.objects.filter(user=self.request.user))
         return Link.objects.filter(user=self.request.user)
 
 
@@ -83,13 +85,11 @@ from django.contrib.auth.models import User
 from link.auth import oauth
 
 
-# 1. Redirect to Nextcloud
 def login_view(request):
     redirect_uri = request.build_absolute_uri("/auth/callback/")
     return oauth.nextcloud.authorize_redirect(request, redirect_uri)
 
 
-# 2. Callback URL after login
 def auth_callback(request):
     token = oauth.nextcloud.authorize_access_token(request)
     if not token:

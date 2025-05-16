@@ -16,7 +16,7 @@ services:
       context: ./permalink
     env_file:
       #- ./env_configs/db_conn.env
-      - ./env_configs/env_template.env
+      - ./env_configs/env_dev.env
     volumes:
       - ./permalink/:/app/
     #   - mediaroot:/app/media_root
