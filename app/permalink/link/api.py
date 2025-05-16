@@ -41,8 +41,29 @@ class LinkSerializer(serializers.ModelSerializer):
         fields = ["user", "token", "target_url"]
 
 
+class LinkEditSerializer(serializers.Serializer):
+    target_url = serializers.URLField()
+    token = serializers.CharField()
+
+
 class ExternalLinkAPIView(APIView):
     authentication_classes = [CustomJWTAuthentication]
+
+    def put(self, request):
+        serializer = LinkEditSerializer(data=request.data)
+        if serializer.is_valid():
+            link = get_object_or_404(
+                Link, user=request.user, token=serializer.validated_data["token"]
+            )
+            link.target_url = request.data["target_url"]
+            print(link.target_url)
+            link.save()
+            return Response(
+                {"permalink": link.get_permalink()},
+                status=200,
+            )
+        print(serializer.errors)
+        return Response(serializer.errors, status=400)
 
     def post(self, request):
 
@@ -81,6 +102,7 @@ class ExternalLinkAPIView(APIView):
         return Response(
             {
                 "permalink": permalink.get_permalink(),
+                "token": permalink.token,
                 "target_url": permalink.target_url,
             },
             status=200,
