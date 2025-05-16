@@ -29,3 +29,9 @@ class CustomJWTAuthentication(BaseAuthentication):
             raise AuthenticationFailed("User not found")
 
         return (user, None)
+
+
+from authlib.integrations.django_client import OAuth
+
+
+oauth = OAuth()

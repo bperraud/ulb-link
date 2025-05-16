@@ -69,3 +69,7 @@ def edit_link(request, pk):
 def targetURL(request, token):
     link = get_object_or_404(Link, token=token)
     return redirect(link.target_url)
+
+
+def status(request):
+    return JsonResponse({"message": "ok"})
