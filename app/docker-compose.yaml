@@ -24,6 +24,8 @@ services:
     #   - pylab_logs:/var/log/pylab
     expose:
       - 8000
+    extra_hosts:
+      - nextcloud.local:host-gateway
     # depends_on:
     #   - db
 
