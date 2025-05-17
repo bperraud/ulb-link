@@ -20,7 +20,8 @@ from django.urls import path, include
 from django.views.generic import RedirectView
 from django.conf.urls.static import static
 
-from link.views.views import targetURL, status, login_view, auth_callback
+from link.views.views import targetURL, status
+from link.views.account_views import login_view, auth_callback
 from django.contrib.auth import views as auth_views
 from django.conf import settings
 

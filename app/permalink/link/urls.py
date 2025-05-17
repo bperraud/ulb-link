@@ -2,6 +2,7 @@ from django.urls import path
 
 from link.api import ExternalLinkAPIView, LinkAPIView
 from link.views.views import LinkListView, LinkRowView, edit_link, delete_links, toolbar
+from link.views.nextcloud_views import nextcloud_api
 
 urlpatterns = [
     path("api/external/", ExternalLinkAPIView.as_view(), name="external-api"),
@@ -12,4 +13,5 @@ urlpatterns = [
     path("row/<int:pk>", LinkRowView.as_view(), name="link-row"),
     path("", LinkListView.as_view(), name="link-home"),
     path("<int:pk>", LinkListView.as_view(), name="link-home"),
+    path("nextcloud_api/", nextcloud_api),
 ]

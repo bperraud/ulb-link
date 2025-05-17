@@ -54,6 +54,8 @@ def delete_links(request, ids):
 
 @require_http_methods(["GET", "POST"])
 def edit_link(request, pk):
+
+    print(request.session["oauth_token"])
     link = get_object_or_404(Link, pk=pk)
     if request.method == "POST":
         form = LinkForm(request.POST, instance=link)

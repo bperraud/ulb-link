@@ -17,7 +17,6 @@ def login_view(request):
 def auth_callback(request):
     token = oauth.nextcloud.authorize_access_token(request)
 
-    print(token)
     if not token:
         return HttpResponse("Authorization failed", status=401)
 
