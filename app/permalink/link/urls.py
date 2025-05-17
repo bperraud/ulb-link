@@ -1,7 +1,7 @@
 from django.urls import path
 
 from link.api import ExternalLinkAPIView, LinkAPIView
-from link.views import LinkListView, LinkRowView, edit_link, delete_links, toolbar
+from link.views.views import LinkListView, LinkRowView, edit_link, delete_links, toolbar
 
 urlpatterns = [
     path("api/external/", ExternalLinkAPIView.as_view(), name="external-api"),

@@ -11,6 +11,8 @@ from rest_framework.generics import get_object_or_404
 from link.models import Link
 from link.forms import LinkForm
 
+import requests
+
 
 @method_decorator([login_required], name="dispatch")
 class LinkListView(ListView):
@@ -19,8 +21,6 @@ class LinkListView(ListView):
     context_object_name = "links"
 
     def get_queryset(self):
-        print(self.request.user)
-        print(Link.objects.filter(user=self.request.user))
         return Link.objects.filter(user=self.request.user)
 
 
@@ -77,6 +77,19 @@ def status(request):
     return JsonResponse({"message": "ok"})
 
 
+def nextcloud_api(request):
+
+    access_token = get_valid_access_token(request)
+    if not access_token:
+        return redirect("login")  # or raise 403
+
+    # Use the token to make an API call
+    headers = {"Authorization": f"Bearer {access_token}"}
+    response = requests.get(
+        "https://nextcloud.local/ocs/v2.php/cloud/user", headers=headers
+    )
+
+
 from django.shortcuts import redirect
 from django.http import HttpResponse
 from django.contrib.auth import login
@@ -92,10 +105,11 @@ def login_view(request):
 
 def auth_callback(request):
     token = oauth.nextcloud.authorize_access_token(request)
+
+    print(token)
     if not token:
         return HttpResponse("Authorization failed", status=401)
 
-    # You may need to query a user endpoint. Example:
     userinfo_response = oauth.nextcloud.get(
         "/ocs/v2.php/cloud/user?format=json", token=token
     )
@@ -110,4 +124,4 @@ def auth_callback(request):
     user, _ = User.objects.get_or_create(username=username, defaults={"email": email})
     login(request, user)
 
-    return redirect("/")  # Redirect to home or dashboard
+    return redirect("/")

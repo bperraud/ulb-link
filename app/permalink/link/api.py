@@ -1,22 +1,15 @@
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseBadRequest, JsonResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import render
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, serializers
 from rest_framework.generics import get_object_or_404
-from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required
 
-from django.conf import settings
 from rest_framework.permissions import IsAuthenticated
 
+from link.models import Link
 
-from link.models import Link, User
-
-import string
-import random
+import string, random
 from urllib.parse import unquote
 
 from link.auth import CustomJWTAuthentication
