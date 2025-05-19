@@ -11,8 +11,6 @@ from rest_framework.generics import get_object_or_404
 from link.models import Link
 from link.forms import LinkForm
 
-import requests
-
 
 @method_decorator([login_required], name="dispatch")
 class LinkListView(ListView):

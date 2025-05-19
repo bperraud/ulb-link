@@ -6,7 +6,8 @@ from django import forms
 class LinkForm(ModelForm):
     class Meta:
         model = Link
-        fields = ["token", "target_url"]
+        fields = ["token"]
+        # fields = ["token", "sharelink.target_url"]
         widgets = {
             "target_url": forms.TextInput(attrs={"style": "width: 100%;"}),
         }

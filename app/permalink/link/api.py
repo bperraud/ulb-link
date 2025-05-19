@@ -7,7 +7,7 @@ from rest_framework.generics import get_object_or_404
 
 from rest_framework.permissions import IsAuthenticated
 
-from link.models import Link
+from link.models import Link, Share
 
 import string, random
 from urllib.parse import unquote
@@ -24,8 +24,16 @@ def generate_unique_token(length=10):
             return token
 
 
-class LinkCreateSerializer(serializers.Serializer):
-    target_url = serializers.URLField()
+class ShareCreateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Share
+        fields = ["uid", "expiration", "target_url", "path"]
+
+    # uid = serializers.IntegerField()
+    # target_url = serializers.URLField()
+    # expiration = serializers.DateField(required=False, allow_blank=True)
+    # path = serializers.CharField(required=False)
 
 
 class LinkSerializer(serializers.ModelSerializer):
@@ -48,7 +56,7 @@ class ExternalLinkAPIView(APIView):
             link = get_object_or_404(
                 Link, user=request.user, token=serializer.validated_data["token"]
             )
-            link.target_url = request.data["target_url"]
+            link.sharelink.target_url = request.data["target_url"]
             link.save()
             return Response(
                 {"permalink": link.get_permalink()},
@@ -58,11 +66,17 @@ class ExternalLinkAPIView(APIView):
 
     def post(self, request):
 
-        serializer = LinkCreateSerializer(data=request.data)
+        serializer = ShareCreateSerializer(data=request.data)
+        print(request.data)
+        print(serializer)
         if serializer.is_valid():
-            link, created = Link.objects.get_or_create(
-                user=request.user, **serializer.validated_data
-            )
+            print(serializer.validated_data)
+            share, _ = Share.objects.get_or_create(uid=serializer.validated_data["uid"])
+            share.target_url = serializer.validated_data.get("target_url")
+            share.expiration = serializer.validated_data.get("expiration")
+            share.path = serializer.validated_data.get("path")
+            share.save()
+            link, created = Link.objects.get_or_create(user=request.user, share=share)
             if created:
                 token = generate_unique_token()
                 link.token = token
@@ -71,6 +85,7 @@ class ExternalLinkAPIView(APIView):
                 {"permalink": link.get_permalink()},
                 status=201,
             )
+        print(serializer.errors)
         return Response(serializer.errors, status=400)
 
     def get(self, request):
@@ -83,7 +98,7 @@ class ExternalLinkAPIView(APIView):
             )
         try:
             permalink = Link.objects.get(
-                user=request.user, target_url=unquote(target_url)
+                user=request.user, sharelink__target_url=unquote(target_url)
             )
         except Link.DoesNotExist:
             return Response(
@@ -94,7 +109,7 @@ class ExternalLinkAPIView(APIView):
             {
                 "permalink": permalink.get_permalink(),
                 "token": permalink.token,
-                "target_url": permalink.target_url,
+                "target_url": permalink.sharelink.target_url,
             },
             status=200,
         )
@@ -109,7 +124,7 @@ class ExternalLinkAPIView(APIView):
             )
         try:
             permalink = Link.objects.get(
-                user=request.user, target_url=unquote(target_url)
+                user=request.user, sharelink__target_url=unquote(target_url)
             )
         except Link.DoesNotExist:
             return Response(
