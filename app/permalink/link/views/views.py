@@ -70,7 +70,7 @@ def edit_link(request, pk):
 
 def targetURL(request, token):
     link = get_object_or_404(Link, token=token)
-    return redirect(link.target_url)
+    return redirect(link.share.target_url)
 
 
 def status(request):

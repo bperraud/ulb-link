@@ -14,9 +14,7 @@ class Share(models.Model):
 
 class Link(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="link")
-    share = models.ForeignKey(
-        Share, on_delete=models.CASCADE, related_name="share", null=True
-    )
+    share = models.ForeignKey(Share, on_delete=models.CASCADE, related_name="share")
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -25,6 +23,7 @@ class Link(models.Model):
         max_length=50,
         verbose_name="Token",
         unique=True,
+        null=False,
     )
 
     class Meta:
