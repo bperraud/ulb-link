@@ -54,8 +54,6 @@ def delete_links(request, ids):
 
 @require_http_methods(["GET", "POST"])
 def edit_link(request, pk):
-
-    print(request.session["oauth_token"])
     link = get_object_or_404(Link, pk=pk)
     if request.method == "POST":
         form = LinkForm(request.POST, instance=link)
@@ -77,3 +75,16 @@ def targetURL(request, token):
 
 def status(request):
     return JsonResponse({"message": "ok"})
+
+
+def nextcloud_api(request):
+
+    access_token = get_valid_access_token(request)
+    if not access_token:
+        return redirect("login")  # or raise 403
+
+    # Use the token to make an API call
+    headers = {"Authorization": f"Bearer {access_token}"}
+    response = requests.get(
+        "https://nextcloud.local/ocs/v2.php/cloud/user", headers=headers
+    )

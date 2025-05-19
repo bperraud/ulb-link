@@ -1,4 +1,4 @@
-{
+
 	"venvPath": ".direnv",
 	"venv": ".direnv",
     "python.venvPath": ".direnv/python-3.12.3/bin/python3.12",

@@ -14,7 +14,6 @@ from urllib.parse import unquote
 
 from link.auth import CustomJWTAuthentication
 
-
 def generate_unique_token(length=10):
     chars = string.ascii_letters + string.digits
 
