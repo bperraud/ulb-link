@@ -47,7 +47,7 @@ services:
     #   - staticroot:/app/web/static_root
       #- nginxconf:/etc/nginx/conf.d
     depends_on:
-      - web
+      - django
 
 volumes:
   postgresdata:
