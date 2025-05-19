@@ -30,11 +30,6 @@ class ShareCreateSerializer(serializers.ModelSerializer):
         model = Share
         fields = ["uid", "expiration", "target_url", "path"]
 
-    # uid = serializers.IntegerField()
-    # target_url = serializers.URLField()
-    # expiration = serializers.DateField(required=False, allow_blank=True)
-    # path = serializers.CharField(required=False)
-
 
 class LinkSerializer(serializers.ModelSerializer):
     class Meta:
@@ -56,7 +51,7 @@ class ExternalLinkAPIView(APIView):
             link = get_object_or_404(
                 Link, user=request.user, token=serializer.validated_data["token"]
             )
-            link.sharelink.target_url = request.data["target_url"]
+            link.share.target_url = request.data["target_url"]
             link.save()
             return Response(
                 {"permalink": link.get_permalink()},
@@ -69,9 +64,9 @@ class ExternalLinkAPIView(APIView):
         if serializer.is_valid():
             print(serializer.validated_data)
             share = Share.objects.create(**serializer.validated_data)
-            link = Link.objects.create(user=request.user, share=share)
-            token = generate_unique_token()
-            link.token = token
+            link = Link.objects.create(
+                user=request.user, share=share, token=generate_unique_token()
+            )
             return Response(
                 {"permalink": link.get_permalink()},
                 status=201,
