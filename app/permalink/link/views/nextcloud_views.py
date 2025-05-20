@@ -3,8 +3,9 @@ from link.auth import get_valid_access_token
 from django.http import HttpResponse, JsonResponse
 import requests
 
-import xml.etree.ElementTree as ET
+from link.models import Share
 
+import xml.etree.ElementTree as ET
 
 def parse_xml(xml_data: str):
     root = ET.fromstring(xml_data)
@@ -12,8 +13,15 @@ def parse_xml(xml_data: str):
     # Namespace handling is not required here as the XML has no default NS
     elements = root.find("data").findall("element")
 
-    shares = []
     for el in elements:
+        try :
+            share = Share.objects.get(uid=el.findtext("id"))
+            share.path = el.findtext("path")
+            share.expiration = el.findtext("expiration")
+            share.save()
+        except Share.DoesNotExist:
+            pass
+
         share = {
             "id": el.findtext("id"),
             "path": el.findtext("path"),
@@ -25,7 +33,6 @@ def parse_xml(xml_data: str):
         }
         shares.append(share)
 
-    # Example output
     for s in shares:
         print(f"{s['item_type'].capitalize()} {s['path']} → {s['url']}")
 
@@ -34,7 +41,6 @@ def nextcloud_api(request):
 
     access_token = get_valid_access_token(request)
 
-    print(access_token)
     if not access_token:
         return redirect("login")  # or raise 403
 
@@ -45,6 +51,7 @@ def nextcloud_api(request):
         headers=headers,
     )
 
-    parse_xml(response.text)
+    if (response.status_code == 200):
+        parse_xml(response.text)
 
     return HttpResponse(response.text)
