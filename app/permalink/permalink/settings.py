@@ -138,15 +138,13 @@ NEXTCLOUD_URL = os.environ.get("NEXTCLOUD_URL")
 
 # Oauth2.0
 AUTHLIB_OAUTH_CLIENTS = {
-    "nextcloud": {
-        "client_id": os.environ.get("NEXTCLOUD_CLIENT_ID"),
-        "client_secret": os.environ.get("NEXTCLOUD_SECRET_ID"),
-        "authorize_url": f"{NEXTCLOUD_URL}/index.php/apps/oauth2/authorize",
-        "access_token_url": f"{NEXTCLOUD_URL}/index.php/apps/oauth2/api/v1/token",
-        "refresh_token_url": f"{NEXTCLOUD_URL}/index.php/apps/oauth2/api/v1/token",
-        "api_base_url": NEXTCLOUD_URL,
-        "client_kwargs": {
-            "scope": "openid profile email"  # adjust based on what Nextcloud provides
-        },
-    }
+    "client_id": os.environ.get("NEXTCLOUD_CLIENT_ID"),
+    "client_secret": os.environ.get("NEXTCLOUD_SECRET_ID"),
+    "authorize_url": f"{NEXTCLOUD_URL}/index.php/apps/oauth2/authorize",
+    "access_token_url": f"{NEXTCLOUD_URL}/index.php/apps/oauth2/api/v1/token",
+    "refresh_token_url": f"{NEXTCLOUD_URL}/index.php/apps/oauth2/api/v1/token",
+    "api_base_url": NEXTCLOUD_URL,
+    "client_kwargs": {
+        "scope": "openid profile email"  # adjust based on what Nextcloud provides
+    },
 }

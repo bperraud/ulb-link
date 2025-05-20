@@ -8,6 +8,8 @@ from authlib.integrations.requests_client import OAuth2Session
 from datetime import datetime, timedelta
 from django.utils import timezone
 
+import time
+
 from django.contrib.auth.models import User
 
 from django.conf import settings
@@ -40,7 +42,7 @@ class CustomJWTAuthentication(BaseAuthentication):
 
 
 oauth = OAuth()
-oauth.register(name="nextcloud", **settings.AUTHLIB_OAUTH_CLIENTS["nextcloud"])
+oauth.register(name="nextcloud", **settings.AUTHLIB_OAUTH_CLIENTS)
 
 
 def get_valid_access_token(request):
@@ -48,11 +50,9 @@ def get_valid_access_token(request):
     if not token:
         return None  # Not authenticated
 
-    expires_at = datetime.fromisoformat(token["expires_at"])
-    now = timezone.now()
-
-    if now >= expires_at - timedelta(minutes=1):  # refresh 1 min before expiry
-        token = refresh_token(token["refresh_token"])
+    now = int(time.time())
+    if now >= token["expires_at"] - 60:  # refresh 1 min before expiry
+        token = refresh_token(token)
         if not token:
             return None
         request.session["oauth_token"] = token
@@ -61,24 +61,23 @@ def get_valid_access_token(request):
 
 
 def refresh_token(refresh_token):
+
+    client_data = {
+        "client_id" : settings.AUTHLIB_OAUTH_CLIENTS["client_id"],
+        "client_secret" : settings.AUTHLIB_OAUTH_CLIENTS["client_secret"] 
+    }
+
     client = OAuth2Session(
-        client_id=settings.AUTHLIB_OAUTH_CLIENTS["client_id"],
-        client_secret=settings.AUTHLIB_OAUTH_CLIENTS["client_secret"],
+        **client_data,
+        token=refresh_token
     )
 
     try:
         token = client.refresh_token(
-            url=settings.AUTHLIB_OAUTH_CLIENTS["refresh_token"],
-            refresh_token=refresh_token,
+            settings.AUTHLIB_OAUTH_CLIENTS["refresh_token_url"],
+            **client_data
         )
-
-        return {
-            "access_token": token["access_token"],
-            "refresh_token": token.get("refresh_token", refresh_token),
-            "expires_at": (
-                timezone.now() + timedelta(seconds=token["expires_in"])
-            ).isoformat(),
-        }
+        return token
 
     except Exception as e:
         print(f"Token refresh failed: {e}")

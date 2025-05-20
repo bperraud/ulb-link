@@ -14,30 +14,21 @@ def parse_xml(xml_data: str):
     elements = root.find("data").findall("element")
 
     for el in elements:
+
+        id = el.findtext("id")
+
         try :
             share = Share.objects.get(uid=el.findtext("id"))
+            print(share)
             share.path = el.findtext("path")
             share.expiration = el.findtext("expiration")
             share.save()
         except Share.DoesNotExist:
+            print(f"share {id} not found")
             pass
 
-        share = {
-            "id": el.findtext("id"),
-            "path": el.findtext("path"),
-            "url": el.findtext("url"),
-            "token": el.findtext("token"),
-            "item_type": el.findtext("item_type"),
-            "mimetype": el.findtext("mimetype"),
-            "item_size": int(el.findtext("item_size")),
-        }
-        shares.append(share)
 
-    for s in shares:
-        print(f"{s['item_type'].capitalize()} {s['path']} → {s['url']}")
-
-
-def nextcloud_api(request):
+def update_shares_object(request):
 
     access_token = get_valid_access_token(request)
 

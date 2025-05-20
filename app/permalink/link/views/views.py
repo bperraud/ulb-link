@@ -9,6 +9,7 @@ from django.urls import reverse
 
 from rest_framework.generics import get_object_or_404
 from link.models import Link
+from link.views.nextcloud_views import update_shares_object
 from link.forms import LinkForm
 
 
@@ -18,7 +19,9 @@ class LinkListView(ListView):
     template_name = "links.html"
     context_object_name = "links"
 
+
     def get_queryset(self):
+        update_shares_object(self.request)
         return Link.objects.filter(user=self.request.user)
 
 

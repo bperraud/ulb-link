@@ -33,12 +33,7 @@ def auth_callback(request):
     user, _ = User.objects.get_or_create(username=username, defaults={"email": email})
     login(request, user)
 
-    request.session["oauth_token"] = {
-        "access_token": token["access_token"],
-        "refresh_token": token["refresh_token"],
-        "expires_at": (
-            timezone.now() + timedelta(seconds=token["expires_in"])
-        ).isoformat(),
-    }
+    # token["expire_at"] = (timezone.now() + timedelta(seconds=token["expires_in"])).isoformat()
+    request.session["oauth_token"] = token
 
     return redirect("/")
