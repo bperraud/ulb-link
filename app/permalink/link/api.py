@@ -28,8 +28,7 @@ class ShareCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Share
-        fields = ["uid", "target_url", "path"]
-        # fields = ["uid", "expiration", "target_url", "path"]
+        fields = ["uid", "expiration", "target_url", "path"]
 
 
 class LinkSerializer(serializers.ModelSerializer):
@@ -63,7 +62,6 @@ class ExternalLinkAPIView(APIView):
     def post(self, request):
         serializer = ShareCreateSerializer(data=request.data)
         if serializer.is_valid():
-            print(serializer.validated_data)
             share = Share.objects.create(**serializer.validated_data)
             link = Link.objects.create(
                 user=request.user, share=share, token=generate_unique_token()

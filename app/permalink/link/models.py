@@ -9,7 +9,7 @@ class Share(models.Model):
     uid = models.IntegerField(primary_key=True)
     target_url = models.URLField(verbose_name="Target URL")
     path = models.CharField()
-    expiration = models.DateField(null=True)
+    expiration = models.DateTimeField(null=True)
 
 
 class Link(models.Model):
