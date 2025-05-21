@@ -2,6 +2,7 @@ from django.forms import ModelForm
 from link.models import Link
 from django import forms
 
+from datetime import date, timedelta
 
 class LinkForm(ModelForm):
     target_url = forms.URLField(label="Share Target URL", required=False, disabled=True)
@@ -9,7 +10,12 @@ class LinkForm(ModelForm):
     expiration = forms.DateField(
         label="Expiration Date",
         required=False,
-        widget=forms.DateInput(attrs={"type": "date"})
+        widget=forms.DateInput(
+            attrs={"type": "date",
+                    "min": date.today().strftime("%Y-%m-%d"),
+                    "max": (date.today() + timedelta(days=365)).strftime("%Y-%m-%d"),  # max date = 1 year from today
+                  }
+        )
     )
 
     class Meta:

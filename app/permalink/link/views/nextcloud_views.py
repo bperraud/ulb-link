@@ -17,12 +17,10 @@ def parse_xml(xml_data: str):
         id = el.findtext("id")
         try :
             share = Share.objects.get(uid=el.findtext("id"))
-            print(share)
             share.path = el.findtext("path")
             share.expiration = el.findtext("expiration") if el.findtext("expiration") else None
             share.save()
         except Share.DoesNotExist:
-            print(f"share {id} not found")
             pass
 
 def update_share_in_nextcloud(request, id):
