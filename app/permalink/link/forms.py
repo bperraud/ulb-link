@@ -6,7 +6,6 @@ from datetime import date, timedelta
 
 class LinkForm(ModelForm):
     target_url = forms.URLField(label="Share Target URL", required=False, disabled=True)
-    # expiration = forms.DateField(label="Expiration Date", required=False, disabled=True)
     expiration = forms.DateField(
         label="Expiration Date",
         required=False,

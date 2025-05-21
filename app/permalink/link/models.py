@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.core.validators import MinLengthValidator
 
 from link.context_processors import get_host
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 
 
 class Share(models.Model):
@@ -20,22 +22,15 @@ class Link(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     token = models.CharField(
         validators=[MinLengthValidator(8)],
-        max_length=50,
+        max_length=20,
         verbose_name="Token",
         unique=True,
         null=False,
     )
 
-    class Meta:
-        unique_together = ("user", "token")
-
     def get_permalink(self):
         return f"{get_host()}/{self.token}"
 
-
-
-from django.db.models.signals import post_delete
-from django.dispatch import receiver
 
 @receiver(post_delete, sender=Link)
 def delete_associated_share(sender, instance, **kwargs):
