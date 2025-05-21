@@ -5,9 +5,6 @@ import jwt
 from authlib.integrations.django_client import OAuth
 from authlib.integrations.requests_client import OAuth2Session
 
-from datetime import datetime, timedelta
-from django.utils import timezone
-
 import time
 
 from django.contrib.auth.models import User
@@ -15,7 +12,6 @@ from django.contrib.auth.models import User
 from django.conf import settings
 
 User = get_user_model()
-
 
 class CustomJWTAuthentication(BaseAuthentication):
     def authenticate(self, request):
@@ -51,7 +47,7 @@ def get_valid_access_token(request):
         return None  # Not authenticated
 
     now = int(time.time())
-    if now >= token["expires_at"] - 60:  # refresh 1 min before expiry
+    if now >= int(token["expires_at"]) - 60:  # refresh 1 min before expiry
         token = refresh_token(token)
         if not token:
             return None
