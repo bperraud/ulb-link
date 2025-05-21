@@ -32,16 +32,16 @@ def update_share_in_nextcloud(request, id):
     if not access_token:
         return redirect("login")  # or raise 403
 
-    # share = get_object_or_404(Share, uid=id)
+    share = get_object_or_404(Share, uid=id)
 
     data = {
-        "expireDate": '2026-01-01'
+        "expireDate": share.expiration.strftime('%Y-%m-%d')
     }
 
     # Use the token to make an API call
     headers = {"Authorization": f"Bearer {access_token}"}
     response = requests.put(
-        "http://nextcloud.local/ocs/v2.php/apps/files_sharing/api/v1/shares/{share.uid}",
+        f"http://nextcloud.local/ocs/v2.php/apps/files_sharing/api/v1/shares/{id}",
         headers=headers,
         data=data,
     )

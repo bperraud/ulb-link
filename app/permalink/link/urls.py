@@ -1,6 +1,6 @@
 from django.urls import path
 
-from link.views.nextcloud_views import update_shares_object
+from link.views.nextcloud_views import update_share_in_nextcloud, update_shares_object
 from link.api import ExternalLinkAPIView, LinkAPIView
 from link.views.views import LinkListView, LinkRowView, edit_link, delete_links, toolbar
 
@@ -13,5 +13,5 @@ urlpatterns = [
     path("row/<int:pk>", LinkRowView.as_view(), name="link-row"),
     path("", LinkListView.as_view(), name="link-home"),
     path("<int:pk>", LinkListView.as_view(), name="link-home"),
-    path("update/share/<int:id>", update_shares_object),
+    path("update/share/<int:id>", update_share_in_nextcloud),
 ]

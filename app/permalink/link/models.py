@@ -14,7 +14,7 @@ class Share(models.Model):
 
 class Link(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="link")
-    share = models.ForeignKey(Share, on_delete=models.CASCADE, related_name="share")
+    share = models.ForeignKey(Share, on_delete=models.DO_NOTHING, related_name="share")
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -31,3 +31,14 @@ class Link(models.Model):
 
     def get_permalink(self):
         return f"{get_host()}/{self.token}"
+
+
+
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
+
+@receiver(post_delete, sender=Link)
+def delete_associated_share(sender, instance, **kwargs):
+    share = instance.share
+    if share:
+        share.delete()

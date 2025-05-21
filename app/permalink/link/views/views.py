@@ -11,6 +11,7 @@ from rest_framework.generics import get_object_or_404
 from link.models import Link
 from link.views.nextcloud_views import update_shares_object
 from link.forms import LinkForm
+from link.views.nextcloud_views import update_share_in_nextcloud 
 
 
 @method_decorator([login_required], name="dispatch")
@@ -64,6 +65,7 @@ def edit_link(request, pk):
             form.save()
             response = HttpResponse()
             response["HX-Redirect"] = reverse("link-home")
+            update_share_in_nextcloud(request, link.share.uid)
             return response
     else:
         form = LinkForm(instance=link)
