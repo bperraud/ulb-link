@@ -30,7 +30,7 @@ urlpatterns = [
     path("status/", status),
     path("link/", include("link.urls")),
     path("t/<str:token>", targetURL, name="redirect"),
-    path("", RedirectView.as_view(url="/link/", permanent=False)),
+    path("", RedirectView.as_view(url="/link/", permanent=False), name='home'),
     # auth
     path("accounts/login/", login_view, name="login"),
     path("auth/callback/", auth_callback, name="auth_callback"),
