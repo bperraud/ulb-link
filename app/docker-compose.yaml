@@ -1,21 +1,21 @@
 services:
-  # db:
-  #   container_name: postgresdb
-  #   image: postgres:13.3
-  #   restart: always
-  #   env_file:
-  #     - ./env_configs/db_conn.env
-  #   volumes:
-  #     - postgresdata:/var/lib/postgresql/data
-  #   expose:
-  #     - 5432
+  db:
+    container_name: postgresdb
+    image: postgres:17.5
+    restart: always
+    env_file:
+      - ./env_configs/db_conn.env
+    volumes:
+      - postgredata:/var/lib/postgresql/data
+    expose:
+      - 5432
 
   django:
     container_name: django-permalink
     build:
       context: ./permalink
     env_file:
-      #- ./env_configs/db_conn.env
+      - ./env_configs/db_conn.env
       - ./env_configs/env_dev.env
     volumes:
       - ./permalink/:/app/
@@ -26,8 +26,8 @@ services:
       - 8000
     extra_hosts:
       - nextcloud.local:host-gateway
-    # depends_on:
-    #   - db
+    depends_on:
+      - db
 
   nginx:
     container_name: nginx
@@ -50,4 +50,4 @@ services:
       - django
 
 volumes:
-  postgresdata:
+  postgredata:

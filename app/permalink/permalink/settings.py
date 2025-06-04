@@ -89,6 +89,38 @@ DATABASES = {
     }
 }
 
+# Database
+# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
+DB_NAME = os.environ.get("POSTGRES_DB")
+DB_USERNAME = os.environ.get("POSTGRES_USER")
+DB_PASSWORD = os.environ.get("POSTGRES_PASSWORD")
+DB_HOST = os.environ.get("DATABASE_HOST")
+DB_PORT = os.environ.get("DATABASE_PORT")
+
+
+DATABASE_TYPE = os.environ.get("DATABASE_TYPE")
+
+if DATABASE_TYPE == "sqlite":
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+        }
+    }
+elif DATABASE_TYPE == "postgres":
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql_psycopg2",
+            "NAME": DB_NAME,
+            "USER": DB_USERNAME,
+            "PASSWORD": DB_PASSWORD,
+            "HOST": DB_HOST,
+            "PORT": DB_PORT,
+        }
+    }
+else:
+    raise NotImplementedError("No database configuration for " + DATABASE_TYPE)
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
