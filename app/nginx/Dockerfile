@@ -1,12 +1,10 @@
-FROM nginx:mainline-alpine
+FROM nginxinc/nginx-unprivileged
 
 ENV TZ=Europe/Brussels
 
+USER root
+
 RUN rm /etc/nginx/conf.d/default.conf
-
-RUN mkdir -p /etc/log/
-
-COPY nginx.conf /etc/nginx/nginx.conf
 
 COPY nginx.conf.template /etc/nginx/templates/nginx.conf.template
 

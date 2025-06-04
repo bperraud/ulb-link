@@ -7,8 +7,8 @@ server {
     listen 8080;
     listen [::]:8080;
 
-    access_log /dev/null;
-    error_log /etc/log/nginx.log;
+    access_log /dev/stdout;
+    error_log /dev/stderr;
 
     location / {
         proxy_pass http://django-permalink-us;
