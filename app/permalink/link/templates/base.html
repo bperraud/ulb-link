@@ -45,18 +45,26 @@
 <body>
 
 	<!-- Top Navbar -->
-	<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" style="padding-left:10px; padding-right:10px; height:70px;">
-        <img src="{% static 'ULB.png' %}" width='50px'>
-		<div class="container-fluid">
-            <a class="navbar-brand" href="#">PermaLink</a>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" style="padding-left:10px; padding-right:10px;">
+        <div class="container-fluid">
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
+                <img src="{% static 'ULB.png' %}" width="50px" class="me-2">
+                <span>PermaLink</span>
+            </a>
+            <div class="d-flex align-items-center justify-content-center">
+                <span class="" style="color: white;">{{ user.username }}&nbsp;&nbsp;&nbsp;</span>
+
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn p-0 border-0 bg-transparent">
+                        <i class="bi bi-box-arrow-right text-light" style="font-size: 1.5rem;"></i>
+                    </button>
+                </form>
+
+            </div>
         </div>
-        <div>
-            <form method="post" action="{% url 'logout' %}">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-outline-light">Logout</button>
-            </form>
-        </div>
-	</nav>
+    </nav>
+
 
 	<!-- Sidebar -->
 	<div class="sidebar border-end">
@@ -90,6 +98,10 @@
     display: flex;
     align-items: center; 
     padding-left: 25px;
+}
+
+.nav flex-column {
+    padding-top: 15px;
 }
 
 .nav-item a {

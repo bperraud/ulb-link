@@ -18,27 +18,29 @@
     </div>
 </div>
 
-<table id="links" border="1" class="table delete-row-example">
-    <thead>
-        <tr>
-            <th><input type="checkbox" id="selectAll"></th>
-            <th>Permalink</th>
-            <th>Target URL</th>
-            <th>Path</th>
-            <th>Expiration</th>
-            <th>Updated At</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for link in links %}
-            {% include "link_row.html" with link=link %}
-        {% empty %}
-        <tr>
-            <td colspan="3">You haven't created any links yet.</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="table-responsive">
+    <table id="links" border="1" class="table delete-row-example">
+        <thead>
+            <tr>
+                <th><input type="checkbox" id="selectAll"></th>
+                <th>Permalink</th>
+                <th>Target URL</th>
+                <th>Path</th>
+                <th>Expiration</th>
+                <th>Updated At</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for link in links %}
+                {% include "link_row.html" with link=link %}
+            {% empty %}
+            <tr>
+                <td colspan="3">You haven't created any links yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
 <script>
 
