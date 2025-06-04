@@ -15,7 +15,7 @@ from urllib.parse import unquote
 from link.auth import CustomJWTAuthentication
 
 
-def generate_unique_token(length=10):
+def generate_unique_token(length=10) -> str:
     chars = string.ascii_letters + string.digits
 
     while True:
@@ -41,7 +41,6 @@ class LinkEditSerializer(serializers.Serializer):
     target_url = serializers.URLField()
     token = serializers.CharField()
 
-
 class ExternalLinkAPIView(APIView):
     authentication_classes = [CustomJWTAuthentication]
 
@@ -62,6 +61,7 @@ class ExternalLinkAPIView(APIView):
     def post(self, request):
         serializer = ShareCreateSerializer(data=request.data)
         if serializer.is_valid():
+            print(serializer.validated_data)
             share = Share.objects.create(**serializer.validated_data)
             link = Link.objects.create(
                 user=request.user, share=share, token=generate_unique_token()
@@ -108,7 +108,7 @@ class ExternalLinkAPIView(APIView):
             )
         try:
             permalink = Link.objects.get(
-                user=request.user, share__target_url=unquote(target_url)
+                user=request.user, sharelink__target_url=unquote(target_url)
             )
         except Link.DoesNotExist:
             return Response(
