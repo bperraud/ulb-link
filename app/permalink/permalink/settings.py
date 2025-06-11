@@ -30,9 +30,15 @@ SITE_DOMAIN = os.environ.get("SITE_DOMAIN")
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG") == "True"
 
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "*").split(",")
+
+
+CSRF = os.environ.get("CSRF_TRUSTED_ORIGINS")
+
+if CSRF :
+    CSRF_TRUSTED_ORIGINS = CSRF.split(",")
 
 # Application definition
 
