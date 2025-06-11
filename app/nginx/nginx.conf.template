@@ -24,16 +24,9 @@ server {
         send_timeout 180;
     }
 
-    error_page 502 503 504 /500.html;
-    location = /500.html {
-        root /app/doc/;
-        internal;
-    }
-
     location /static/ {
         alias /app/static_root/;
     }
-
 
     location /media/ {
         alias /app/media_root/;

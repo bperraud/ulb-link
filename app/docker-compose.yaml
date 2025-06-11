@@ -14,8 +14,8 @@ services:
     container_name: django-permalink
     build:
       context: ./permalink
-      target: prd
-      # target: dev
+      # target: prd
+      target: dev
     env_file:
       - ./env_configs/db_conn.env
       - ./env_configs/env_dev.env

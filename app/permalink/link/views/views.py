@@ -21,8 +21,10 @@ class LinkListView(ListView):
     context_object_name = "links"
 
 
+    # raise Exception()
     def get_queryset(self):
         update_shares_object(self.request)
+        # return Test.objects.filter(user=self.request.user)
         return Link.objects.filter(user=self.request.user)
 
 
