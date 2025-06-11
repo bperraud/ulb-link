@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+FROM python:3.12-slim AS base
 
 WORKDIR /app
 
@@ -18,4 +18,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 8000
 
+FROM base AS dev
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+
+# production stage
+FROM base AS prod
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "1", "--threads", "8", "--timeout", "60", "permalink.wsgi:application"]

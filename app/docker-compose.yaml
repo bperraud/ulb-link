@@ -14,6 +14,7 @@ services:
     container_name: django-permalink
     build:
       context: ./permalink
+      target: dev
     env_file:
       - ./env_configs/db_conn.env
       - ./env_configs/env_dev.env
@@ -21,7 +22,7 @@ services:
       - ./permalink/:/app/
     #   - mediaroot:/app/media_root
     #   - staticroot:/app/static_root
-    #   - pylab_logs:/var/log/pylab
+      - pylab_logs:/var/log/
     expose:
       - 8000
     extra_hosts:
@@ -51,3 +52,4 @@ services:
 
 volumes:
   postgredata:
+  pylab_logs:

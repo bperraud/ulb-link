@@ -180,3 +180,53 @@ AUTHLIB_OAUTH_CLIENTS = {
         "scope": "openid profile email"  # adjust based on what Nextcloud provides
     },
 }
+
+import sys
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "simplified": {
+            "format": "{levelname} : {name} - {module} : {message}",
+            "style": "{",
+        },
+        "normal": {
+            "format": "{levelname} : {asctime} : {name} - {module} : {message}",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console_info": {
+            "class": "logging.StreamHandler",
+            "formatter": "simplified",
+            "stream": sys.stdout,
+            "level": "INFO",
+        },
+        "console_error": {
+            "class": "logging.StreamHandler",
+            "formatter": "simplified",
+            "stream": sys.stderr,
+            "level": "ERROR",
+        },
+        "django_error_handler": {
+            "class": "logging.FileHandler",
+            "level": "ERROR",
+            "filename" : "/var/log/permalink.log",
+            # "filename": config(
+            #     "LOGGING_DJANGO_FILENAME"
+            # ),  # Custom log file for Django errors
+            "formatter": "normal",
+        },
+    },
+    "loggers": {
+        # django
+        "django": {
+            "handlers": ["django_error_handler", "console_info", "console_error"],
+            "level": "INFO",
+            "propagate": True,
+        },
+    },
+}
+
