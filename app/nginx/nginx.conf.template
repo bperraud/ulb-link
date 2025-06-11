@@ -30,6 +30,11 @@ server {
         internal;
     }
 
+    location /static/ {
+        alias /app/static_root/;
+    }
+
+
     location /media/ {
         alias /app/media_root/;
     }
