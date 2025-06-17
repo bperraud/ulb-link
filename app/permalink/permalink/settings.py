@@ -151,11 +151,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
 LANGUAGE_CODE = "en-us"
-
 TIME_ZONE = "UTC"
-
 USE_I18N = True
-
 USE_TZ = True
 
 
@@ -220,14 +217,10 @@ LOGGING = {
             "class": "logging.FileHandler",
             "level": "ERROR",
             "filename" : "/var/log/permalink.log",
-            # "filename": config(
-            #     "LOGGING_DJANGO_FILENAME"
-            # ),  # Custom log file for Django errors
             "formatter": "normal",
         },
     },
     "loggers": {
-        # django
         "django": {
             "handlers": ["django_error_handler", "console_info", "console_error"],
             "level": "INFO",

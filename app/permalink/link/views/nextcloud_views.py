@@ -6,6 +6,7 @@ import requests
 from link.models import Share
 
 import xml.etree.ElementTree as ET
+from django.conf import settings
 
 def parse_xml(xml_data: str):
     root = ET.fromstring(xml_data)
@@ -38,8 +39,9 @@ def update_share_in_nextcloud(request, id):
 
     # Use the token to make an API call
     headers = {"Authorization": f"Bearer {access_token}"}
+
     response = requests.put(
-        f"http://nextcloud.local/ocs/v2.php/apps/files_sharing/api/v1/shares/{id}",
+        f"{settings.NEXTCLOUD_URL}/ocs/v2.php/apps/files_sharing/api/v1/shares/{id}",
         headers=headers,
         data=data,
     )
@@ -56,7 +58,7 @@ def update_shares_object(request):
     # Use the token to make an API call
     headers = {"Authorization": f"Bearer {access_token}"}
     response = requests.get(
-        "http://nextcloud.local/ocs/v2.php/apps/files_sharing/api/v1/shares",
+        f"{settings.NEXTCLOUD_URL}/ocs/v2.php/apps/files_sharing/api/v1/shares",
         headers=headers,
     )
 

@@ -18,6 +18,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . /app/
 
+RUN chmod -R u=rX,g=rwx,o= /app/static_root
+RUN chmod -R u=rX,g=rwx,o= /var/log
+
 RUN chmod +x /app/entrypoint.sh
 
 ENTRYPOINT ["/app/entrypoint.sh"]
