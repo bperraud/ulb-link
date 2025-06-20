@@ -108,7 +108,7 @@ class ExternalLinkAPIView(APIView):
             )
         try:
             permalink = Link.objects.get(
-                user=request.user, sharelink__target_url=unquote(target_url)
+                user=request.user, share__target_url=unquote(target_url)
             )
         except Link.DoesNotExist:
             return Response(
