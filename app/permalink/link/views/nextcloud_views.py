@@ -25,37 +25,32 @@ def parse_xml(xml_data: str):
             pass
 
 def update_share_in_nextcloud(request, id):
-
     access_token = get_valid_access_token(request)
-
     if not access_token:
-        return redirect("login")  # or raise 403
+        return redirect("login")
 
     share = get_object_or_404(Share, uid=id)
+    if (not share.expiration):
+         return HttpResponse(200)
 
     data = {
         "expireDate": share.expiration.strftime('%Y-%m-%d')
     }
-
-    # Use the token to make an API call
+    # use the token to make an API call
     headers = {"Authorization": f"Bearer {access_token}"}
-
     response = requests.put(
         f"{settings.NEXTCLOUD_URL}/ocs/v2.php/apps/files_sharing/api/v1/shares/{id}",
         headers=headers,
         data=data,
     )
-
     return HttpResponse(response.text,status=response.status_code)
 
 def update_shares_object(request):
-
     access_token = get_valid_access_token(request)
-
     if not access_token:
-        return redirect("login")  # or raise 403
+        return redirect("login")
 
-    # Use the token to make an API call
+    # use the token to make an API call
     headers = {"Authorization": f"Bearer {access_token}"}
     response = requests.get(
         f"{settings.NEXTCLOUD_URL}/ocs/v2.php/apps/files_sharing/api/v1/shares",
