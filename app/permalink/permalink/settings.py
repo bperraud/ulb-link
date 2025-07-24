@@ -40,6 +40,9 @@ CSRF = os.environ.get("CSRF_TRUSTED_ORIGINS")
 if CSRF :
     CSRF_TRUSTED_ORIGINS = CSRF.split(",")
 
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # keep session cookie after browser close
+SESSION_COOKIE_AGE = 86400
+
 # Application definition
 
 INSTALLED_APPS = [

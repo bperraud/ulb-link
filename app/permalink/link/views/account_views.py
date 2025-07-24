@@ -5,13 +5,12 @@ from link.auth import oauth
 
 from django.contrib.auth.models import User
 
-from datetime import datetime, timedelta
-from django.utils import timezone
-
-
 def login_view(request):
     redirect_uri = request.build_absolute_uri("/auth/callback/")
-    return oauth.nextcloud.authorize_redirect(request, redirect_uri)
+    response = oauth.nextcloud.authorize_redirect(request, redirect_uri)
+    request.session.save()  # ensure the session with state is persisted
+    print("save session")
+    return response
 
 
 def auth_callback(request):

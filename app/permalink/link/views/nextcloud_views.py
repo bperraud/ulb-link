@@ -15,6 +15,7 @@ def parse_xml(xml_data: str):
     elements = root.find("data").findall("element")
 
     for el in elements:
+        print(el)
         id = el.findtext("id")
         try :
             share = Share.objects.get(uid=el.findtext("id"))
