@@ -1,6 +1,6 @@
-from django.shortcuts import get_object_or_404, render, redirect
+from django.shortcuts import get_object_or_404, redirect
 from link.auth import get_valid_access_token
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 import requests
 
 from link.models import Share
@@ -10,16 +10,15 @@ from django.conf import settings
 
 def parse_xml(xml_data: str):
     root = ET.fromstring(xml_data)
-
-    # Namespace handling is not required here as the XML has no default NS
+    # namespace handling is not required here as the XML has no default NS
     elements = root.find("data").findall("element")
 
     for el in elements:
-        print(el)
-        id = el.findtext("id")
         try :
             share = Share.objects.get(uid=el.findtext("id"))
             share.path = el.findtext("path")
+            index = share.target_url.rfind('/')
+            share.target_url = share.target_url[:index + 1] + el.findtext("token")
             share.expiration = el.findtext("expiration") if el.findtext("expiration") else None
             share.save()
         except Share.DoesNotExist:
