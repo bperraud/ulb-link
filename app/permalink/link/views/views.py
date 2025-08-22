@@ -15,14 +15,22 @@ from link.views.nextcloud_views import update_share_in_nextcloud
 
 
 @method_decorator([login_required], name="dispatch")
-class LinkListView(ListView):
+class LinkTableView(ListView):
     model = Link
-    template_name = "links.html"
     context_object_name = "links"
 
+    def get_template_names(self):
+        user = self.request.user
+        print(user.is_nextcloud_user)
+        if getattr(user, "is_nextcloud_user", True):
+            return ["mycloud/mycloud_link_table.html"]
+        else:
+            return ["link_table.html"]
+
     def get_queryset(self):
-        update_shares_object(self.request)
-        # return Test.objects.filter(user=self.request.user)
+        if getattr(self.request.user, "is_nextcloud_user", True):
+            update_shares_object(self.request)
+        print(Link.objects.filter(user=self.request.user))
         return Link.objects.filter(user=self.request.user)
 
 
@@ -30,10 +38,11 @@ class LinkListView(ListView):
 class LinkRowView(TemplateView):
     def get_template_names(self):
         user = self.request.user
+        print(user.is_nextcloud_user)
         if getattr(user, "is_nextcloud_user", True):
-            return ["mycloud/mycloud_link_table.html"]
+            return ["mycloud/mycloud_link_row.html"]
         else:
-            return ["link_table.html"]
+            return ["link_row.html"]
     # template_name = "mycloud_links_table.html"
 
     def get_context_data(self, **kwargs):
