@@ -9,16 +9,12 @@ from django.contrib.auth.models import User
 
 def login_view(request):
     return render(request, 'login_page.html')
-    # redirect_uri = request.build_absolute_uri("/auth/callback/")
-    # response = oauth.nextcloud.authorize_redirect(request, redirect_uri)
-    # request.session.save()  # ensure the session with state is persisted
-    # return response
 
-# def login_view(request):
-#     redirect_uri = request.build_absolute_uri("/auth/callback/")
-#     response = oauth.nextcloud.authorize_redirect(request, redirect_uri)
-#     request.session.save()  # ensure the session with state is persisted
-#     return response
+def mycloud_login_view(request):
+    redirect_uri = request.build_absolute_uri("/auth/callback/")
+    response = oauth.nextcloud.authorize_redirect(request, redirect_uri)
+    request.session.save()  # ensure the session with state is persisted
+    return response
 
 def auth_callback(request):
     token = oauth.nextcloud.authorize_access_token(request)

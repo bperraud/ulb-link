@@ -4,10 +4,9 @@
 
 <html  dir="ltr" lang="fr" xml:lang="fr">
 <head>
-    <title>Se connecter sur le site | UV</title>
-    <link rel="shortcut icon" href="https://uv.ulb.ac.be/pluginfile.php/1/core_admin/favicon/64x64/1755828013/favicon-_2_-_1_.png" />
+    <title>Se connecter sur le site | Permalink</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'ULB.png' %}">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="keywords" content="moodle, Se connecter sur le site | UV" />
 <link rel="stylesheet" type="text/css" href="https://uv.ulb.ac.be/theme/yui_combo.php?rollup/3.17.2/yui-moodlesimple-min.css" /><script id="firstthemesheet" type="text/css">/** Required in order to fix style inclusion problems in IE with YUI **/</script><link rel="stylesheet" type="text/css" href="https://uv.ulb.ac.be/theme/styles.php/adaptable/1755828013_1754561654/all" />
 <script>
 //<![CDATA[
@@ -21,29 +20,6 @@ M.yui.loader = {modules: {}};
 
 //]]>
 </script>
-
-<meta name="robots" content="noindex" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Twitter Card data -->
-    <meta name="twitter:card" value="summary">
-    <meta name="twitter:site" value="Université Virtuelle">
-    <meta name="twitter:title" value="Se connecter sur le site | UV">
-
-    <!-- Open Graph data -->
-    <meta property="og:title" content="Se connecter sur le site | UV">
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="">
-    <meta name="og:site_name" value="Université Virtuelle">
-
-    <!-- Chrome, Firefox OS and Opera on Android topbar color -->
-    <meta name="theme-color" content="#004A93">
-
-    <!-- Windows Phone topbar color -->
-    <meta name="msapplication-navbutton-color" content="#004A93">
-
-    <!-- iOS Safari topbar color -->
-    <meta name="apple-mobile-web-app-status-bar-style" content="#004A93">
 
 </head><body  id="page-login-index" class="format-site  path-login chrome dir-ltr lang-fr yui-skin-sam yui3-skin-sam uv-ulb-ac-be pagelayout-login course-1 context-1 notloggedin theme_adaptable two-column standard fullin"><div>
     <a class="sr-only sr-only-focusable" href="#maincontent">Passer au contenu principal</a>
@@ -74,12 +50,12 @@ document.body.className += ' jsenabled';
         </div>
         <div class="login-divider"></div>
         <h2 class="login-heading"><p><span style="color: #ffffff;">_</span></p></h2>
-                <a href="https://uv.ulb.ac.be/auth/saml2/login.php?wants&amp;idp=26454ab357647ba78287a706fad8ae76&amp;passive=off" title="Connexion ULBID">
-                    <button class="loginbtn btn login-identityprovider-btn btn-block">
-                        <img src="{% static 'nextcloud.jpg' %}" alt="Connexion ULBID" width="30" height="30"/>
-                        Connexion Mycloud
-                    </button>
-                </a>
+        <a href="{% url 'mycloud_login' %}" title="Connexion ULBID">
+            <button class="loginbtn btn login-identityprovider-btn btn-block">
+                <img src="{% static 'nextcloud.jpg' %}" alt="Connexion ULBID" width="30" height="30"/>
+                Connexion Mycloud
+            </button>
+        </a>
 </div>
 
 
