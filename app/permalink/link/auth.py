@@ -1,17 +1,12 @@
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.exceptions import AuthenticationFailed
-from django.contrib.auth import get_user_model
-import jwt
 from authlib.integrations.django_client import OAuth
 from authlib.integrations.requests_client import OAuth2Session
-
-import time
-
-from django.contrib.auth.models import User
-
 from django.conf import settings
+from link.models import User
 
-User = get_user_model()
+import jwt
+import time
 
 class CustomJWTAuthentication(BaseAuthentication):
     def authenticate(self, request):

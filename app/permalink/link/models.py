@@ -1,11 +1,16 @@
 from django.db import models
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from django.core.validators import MinLengthValidator
 
 from link.context_processors import get_host
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
 
+from django.contrib.auth.models import AbstractUser
+from django.conf import settings
+
+class User(AbstractUser):
+    is_nextcloud_user = models.BooleanField(default=False)
 
 class Share(models.Model):
     uid = models.IntegerField(primary_key=True)
@@ -15,8 +20,23 @@ class Share(models.Model):
 
 
 class Link(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="link")
-    share = models.ForeignKey(Share, on_delete=models.DO_NOTHING, related_name="share")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="link")
+
+    share = models.ForeignKey(
+        Share,
+        on_delete=models.SET_NULL,
+        related_name="share",
+        null=True,
+        blank=True,
+        help_text="Reference to a Share object, if applicable.",
+    )
+
+    direct_target_url = models.URLField(
+        null=True,
+        blank=True,
+        verbose_name="Direct Target URL",
+        help_text="Used if no Share is associated.",
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -20,8 +20,6 @@ class LinkListView(ListView):
     template_name = "links.html"
     context_object_name = "links"
 
-
-    # raise Exception()
     def get_queryset(self):
         update_shares_object(self.request)
         # return Test.objects.filter(user=self.request.user)
@@ -30,7 +28,13 @@ class LinkListView(ListView):
 
 @method_decorator([login_required], name="dispatch")
 class LinkRowView(TemplateView):
-    template_name = "link_row.html"
+    def get_template_names(self):
+        user = self.request.user
+        if getattr(user, "is_nextcloud_user", True):
+            return ["mycloud/mycloud_link_table.html"]
+        else:
+            return ["link_table.html"]
+    # template_name = "mycloud_links_table.html"
 
     def get_context_data(self, **kwargs):
         link = get_object_or_404(Link, pk=kwargs["pk"])
