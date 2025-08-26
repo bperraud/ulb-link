@@ -8,6 +8,7 @@ from django.views.decorators.http import require_http_methods
 from django.urls import reverse
 
 from rest_framework.generics import get_object_or_404
+from link.decorators import nextcloud_user_required
 from link.models import Link
 from link.views.nextcloud_views import update_shares_object
 from link.forms import LinkForm
@@ -18,53 +19,36 @@ from link.views.nextcloud_views import update_share_in_nextcloud
 class LinkTableView(ListView):
     model = Link
     context_object_name = "links"
-
-    def get_template_names(self):
-        user = self.request.user
-        print(user.is_nextcloud_user)
-        if getattr(user, "is_nextcloud_user", True):
-            return ["mycloud/mycloud_link_table.html"]
-        else:
-            return ["link_table.html"]
+    template_name = "link_table.html"
 
     def get_queryset(self):
-        if getattr(self.request.user, "is_nextcloud_user", True):
-            update_shares_object(self.request)
-        print(Link.objects.filter(user=self.request.user))
         return Link.objects.filter(user=self.request.user)
 
-@method_decorator([login_required], name="dispatch")
+@method_decorator([nextcloud_user_required, login_required], name="dispatch")
 class MycloudLinkTableView(ListView):
     model = Link
     context_object_name = "links"
-
-    def get_template_names(self):
-        user = self.request.user
-        print(user.is_nextcloud_user)
-        if getattr(user, "is_nextcloud_user", True):
-            return ["mycloud/mycloud_link_table.html"]
+    template_name = "mycloud/mycloud_links_table.html"
 
     def get_queryset(self):
-        if getattr(self.request.user, "is_nextcloud_user", True):
-            update_shares_object(self.request)
-        print(Link.objects.filter(user=self.request.user))
+        update_shares_object(self.request)
         return Link.objects.filter(user=self.request.user)
 
 @method_decorator([login_required], name="dispatch")
 class LinkRowView(TemplateView):
-    def get_template_names(self):
-        user = self.request.user
-        print(user.is_nextcloud_user)
-        if getattr(user, "is_nextcloud_user", True):
-            return ["mycloud/mycloud_link_row.html"]
-        else:
-            return ["link_row.html"]
-    # template_name = "mycloud_links_table.html"
+    template_name = "link_row.html"
 
     def get_context_data(self, **kwargs):
         link = get_object_or_404(Link, pk=kwargs["pk"])
         return {"link": link}
 
+@method_decorator([nextcloud_user_required, login_required], name="dispatch")
+class MycloudLinkRowView(TemplateView):
+    template_name = "mycloud_links_table.html"
+
+    def get_context_data(self, **kwargs):
+        link = get_object_or_404(Link, pk=kwargs["pk"])
+        return {"link": link}
 
 @require_http_methods(["GET"])
 def toolbar(request, nb):
