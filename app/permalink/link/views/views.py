@@ -33,6 +33,22 @@ class LinkTableView(ListView):
         print(Link.objects.filter(user=self.request.user))
         return Link.objects.filter(user=self.request.user)
 
+@method_decorator([login_required], name="dispatch")
+class MycloudLinkTableView(ListView):
+    model = Link
+    context_object_name = "links"
+
+    def get_template_names(self):
+        user = self.request.user
+        print(user.is_nextcloud_user)
+        if getattr(user, "is_nextcloud_user", True):
+            return ["mycloud/mycloud_link_table.html"]
+
+    def get_queryset(self):
+        if getattr(self.request.user, "is_nextcloud_user", True):
+            update_shares_object(self.request)
+        print(Link.objects.filter(user=self.request.user))
+        return Link.objects.filter(user=self.request.user)
 
 @method_decorator([login_required], name="dispatch")
 class LinkRowView(TemplateView):
