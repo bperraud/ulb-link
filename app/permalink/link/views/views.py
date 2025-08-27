@@ -95,6 +95,7 @@ def form_link(request):
             response["HX-Redirect"] = reverse("link-home")
             return response
 
+    print("render form_link get request")
     return render(request, "modal_create.html", {"form": LinkForm()})
 
 def targetURL(token):
