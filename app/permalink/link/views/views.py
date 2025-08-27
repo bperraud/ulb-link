@@ -11,7 +11,7 @@ from rest_framework.generics import get_object_or_404
 from link.decorators import nextcloud_user_required
 from link.models import Link
 from link.views.nextcloud_views import update_shares_object
-from link.forms import LinkForm
+from link.forms import LinkForm, MycloudLinkForm
 from link.views.nextcloud_views import update_share_in_nextcloud 
 
 
@@ -73,7 +73,7 @@ def delete_links(request, ids):
 def edit_link(request, pk):
     link = get_object_or_404(Link, pk=pk)
     if request.method == "POST":
-        form = LinkForm(request.POST, instance=link)
+        form = MycloudLinkForm(request.POST, instance=link)
         if form.is_valid():
             form.save()
             response = HttpResponse()
