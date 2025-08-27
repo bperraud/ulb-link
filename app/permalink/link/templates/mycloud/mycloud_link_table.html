@@ -32,7 +32,7 @@
         </thead>
         <tbody>
             {% for link in links %}
-                {% include "link_row.html" with link=link %}
+                {% include "mycloud/mycloud_link_row.html" with link=link %}
             {% empty %}
             <tr>
                 <td colspan="3">You haven't created any links yet.</td>

@@ -10,9 +10,8 @@ from django.urls import reverse
 from rest_framework.generics import get_object_or_404
 from link.decorators import nextcloud_user_required
 from link.models import Link
-from link.views.nextcloud_views import update_shares_object
-from link.forms import LinkForm, MycloudLinkForm
-from link.views.nextcloud_views import update_share_in_nextcloud 
+from link.forms import LinkForm
+from link.views.nextcloud_views import update_shares_object, update_share_in_nextcloud
 
 
 @method_decorator([login_required], name="dispatch")
@@ -22,13 +21,13 @@ class LinkTableView(ListView):
     template_name = "link_table.html"
 
     def get_queryset(self):
-        return Link.objects.filter(user=self.request.user)
+        return Link.objects.filter(user=self.request.user, share=None)
 
 @method_decorator([nextcloud_user_required, login_required], name="dispatch")
 class MycloudLinkTableView(ListView):
     model = Link
     context_object_name = "links"
-    template_name = "mycloud/mycloud_links_table.html"
+    template_name = "mycloud/mycloud_link_table.html"
 
     def get_queryset(self):
         update_shares_object(self.request)
@@ -44,7 +43,7 @@ class LinkRowView(TemplateView):
 
 @method_decorator([nextcloud_user_required, login_required], name="dispatch")
 class MycloudLinkRowView(TemplateView):
-    template_name = "mycloud_links_table.html"
+    template_name = "mycloud/mycloud_link_row.html"
 
     def get_context_data(self, **kwargs):
         link = get_object_or_404(Link, pk=kwargs["pk"])
@@ -73,7 +72,7 @@ def delete_links(request, ids):
 def edit_link(request, pk):
     link = get_object_or_404(Link, pk=pk)
     if request.method == "POST":
-        form = MycloudLinkForm(request.POST, instance=link)
+        form = LinkForm(request.POST, instance=link)
         if form.is_valid():
             form.save()
             response = HttpResponse()
@@ -85,11 +84,22 @@ def edit_link(request, pk):
 
     return render(request, "modal.html", {"form": form, "link": link})
 
+@require_http_methods(["GET", "POST"])
+def form_link(request):
+    if request.method == "POST":
+        form = LinkForm(request.POST)
+        if form.is_valid():
+            # form.save()
+            # link = form.
+            response = HttpResponse()
+            response["HX-Redirect"] = reverse("link-home")
+            return response
 
-def targetURL(request, token):
+    return render(request, "modal_create.html", {"form": LinkForm()})
+
+def targetURL(token):
     link = get_object_or_404(Link, token=token)
     return redirect(link.share.target_url)
 
-
-def status(request):
+def status():
     return JsonResponse({"message": "ok"})
