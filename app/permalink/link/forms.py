@@ -29,6 +29,10 @@ class LinkForm(ModelForm):
         if self.instance and self.instance.share:
             self.fields["target_url"].initial = self.instance.share.target_url
             self.fields["expiration"].initial = self.instance.share.expiration
+        else:
+            self.fields.pop("expiration", None)
+            self.fields["target_url"].disabled = False
+
 
     def save(self, commit=True):
         instance = super().save(commit=False)
