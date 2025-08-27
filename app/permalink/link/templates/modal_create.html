@@ -1,26 +1,19 @@
 <div class="modal-dialog modal-dialog-centered" id="modalContainer">
   <div class="modal-content">
     <div class="modal-header">
-      <h5 class="modal-title">Edit permalink</h5>
+      <h5 class="modal-title">Create permalink</h5>
     </div>
     <div class="modal-body">
-      <form 
-        method="POST" 
-        id="saveForm" 
-        hx-post="{% url 'form-link' %}" 
-        hx-target="#modalContainer" 
-        hx-swap="outerHTML"
-      >
+
+        <form method="post" id="saveForm" action="{% url 'form-link' %}">
+
         {% csrf_token %}
         {% include "form_snippet.html" %}
       </form>
     </div>
     <div class="modal-footer">
-      <button type="submit" form="saveForm" class="btn btn-primary">Save</button>
+      <button type="submit" form="saveForm" id="submitButton" class="btn btn-primary">Save</button>
       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
     </div>
   </div>
 </div>
-
-<script>
-</script>

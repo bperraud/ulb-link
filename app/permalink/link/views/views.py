@@ -89,13 +89,11 @@ def form_link(request):
     if request.method == "POST":
         form = LinkForm(request.POST)
         if form.is_valid():
-            # form.save()
-            # link = form.
-            response = HttpResponse()
-            response["HX-Redirect"] = reverse("link-home")
-            return response
+            link = form.save(commit=False)
+            link.user = request.user
+            link.save()
+            return redirect('link-home')
 
-    print("render form_link get request")
     return render(request, "modal_create.html", {"form": LinkForm()})
 
 def targetURL(token):
