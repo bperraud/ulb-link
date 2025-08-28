@@ -86,15 +86,18 @@ def edit_link(request, pk):
 
 @require_http_methods(["GET", "POST"])
 def form_link(request):
+    form = LinkForm()
     if request.method == "POST":
         form = LinkForm(request.POST)
         if form.is_valid():
             link = form.save(commit=False)
             link.user = request.user
             link.save()
-            return redirect('link-home')
+            response = HttpResponse()
+            response["HX-Redirect"] = reverse("link-home")
+            return response
 
-    return render(request, "modal_create.html", {"form": LinkForm()})
+    return render(request, "modal_create.html", {"form": form})
 
 def targetURL(token):
     link = get_object_or_404(Link, token=token)

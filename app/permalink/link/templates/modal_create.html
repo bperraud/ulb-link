@@ -5,7 +5,13 @@
     </div>
     <div class="modal-body">
 
-        <form method="post" id="saveForm" action="{% url 'form-link' %}">
+      <form 
+        method="POST" 
+        id="saveForm" 
+        hx-post="{% url 'form-link' %}" 
+        hx-target="#modalContainer" 
+        hx-swap="outerHTML"
+      >
 
         {% csrf_token %}
         {% include "form_snippet.html" %}
@@ -17,3 +23,9 @@
     </div>
   </div>
 </div>
+
+<script>
+    document.getElementById('submitButton').addEventListener('click', function() {
+        htmx.trigger(document.getElementById('saveForm'), 'submit');
+    });
+</script>
