@@ -76,9 +76,11 @@ def edit_link(request, pk):
         if form.is_valid():
             form.save()
             response = HttpResponse()
-            response["HX-Redirect"] = reverse("link-home")
             if link.share:
                 update_share_in_nextcloud(request, link.share.uid)
+                response["HX-Redirect"] = reverse("mycloud-link")
+            else:
+                response["HX-Redirect"] = reverse("link-home")
             return response
     else:
         form = LinkForm(instance=link)
