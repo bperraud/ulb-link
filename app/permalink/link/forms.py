@@ -41,6 +41,8 @@ class LinkForm(ModelForm):
         if instance.share and expiration:
             instance.share.expiration = expiration
             instance.share.save()
+        else :
+            instance.direct_target_url = self.cleaned_data.get("target_url")
         if commit:
             instance.save()
         return instance

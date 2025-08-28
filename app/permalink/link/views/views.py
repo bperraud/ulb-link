@@ -31,7 +31,7 @@ class MycloudLinkTableView(ListView):
 
     def get_queryset(self):
         update_shares_object(self.request)
-        return Link.objects.filter(user=self.request.user)
+        return Link.objects.filter(user=self.request.user, share__isnull=False)
 
 @method_decorator([login_required], name="dispatch")
 class LinkRowView(TemplateView):
