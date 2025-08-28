@@ -32,6 +32,7 @@ class LinkForm(ModelForm):
         else:
             self.fields.pop("expiration", None)
             self.fields["target_url"].disabled = False
+            self.fields["target_url"].initial = self.instance.direct_target_url
 
 
     def save(self, commit=True):
