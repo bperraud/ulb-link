@@ -79,13 +79,13 @@
 
             <br>
 
-			<li class="nav-item">
+            <li class="nav-item {% if request.resolver_match.url_name == 'link-home' %}active{% endif %}">
             <img src="{% static 'link.svg' %}" alt="link">
                 <a class="nav-link" href="{% url 'link-home' %}">Links</a>
 			</li>
-			<li class="nav-item">
+            <li class="nav-item {% if request.resolver_match.url_name == 'mycloud-link' %}active{% endif %}">
             <img src="{% static 'nextcloud.jpg' %}" width="18" height="18" alt="users">
-				<a class="nav-link" href="{% url 'mycloud-link' %}">Mycloud</a>
+                <a class="nav-link" href="{% url 'mycloud-link' %}">Mycloud</a>
 			</li>
 			<!-- Add more endpoints as needed -->
 		</ul>
@@ -121,6 +121,12 @@
 .nav-item a {
     color: inherit;
     text-decoration: none;
+}
+
+.nav-item.active {
+    font-weight: bold;
+    background-color: #e9ecef;
+    border-radius: 4px;
 }
 
 
