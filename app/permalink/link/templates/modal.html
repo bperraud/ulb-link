@@ -16,7 +16,7 @@
       </form>
     </div>
     <div class="modal-footer">
-      <button type="submit" form="editForm" class="btn btn-primary">Save</button>
+      <button type="submit" form="editForm" id="submitButton" class="btn btn-primary">Save</button>
       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
     </div>
   </div>
@@ -27,15 +27,3 @@
         htmx.trigger(document.getElementById('editForm'), 'submit');
     });
 </script>
-
-
-<style>
-
-input {
-  border: 2px solid #4A90E2; 
-  border-radius: 4px;       
-  padding: 8px;            
-}
-
-</style>
-

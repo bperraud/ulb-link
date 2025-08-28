@@ -86,7 +86,7 @@ def edit_link(request, pk):
     return render(request, "modal.html", {"form": form, "link": link})
 
 @require_http_methods(["GET", "POST"])
-def form_link(request):
+def create_link(request):
     form = LinkForm()
     if request.method == "POST":
         form = LinkForm(request.POST)
