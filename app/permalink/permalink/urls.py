@@ -33,13 +33,10 @@ urlpatterns = [
     path("", RedirectView.as_view(url="/link/", permanent=False), name='home'),
     # auth
     path("accounts/login/", login_view, name="login"),
+    path("accounts/login/quidam/", include("mozilla_django_oidc.urls")),
     path("accounts/login/mycloud/", mycloud_login_view, name="mycloud_login"),
     path("auth/callback/", auth_callback, name="auth_callback"),
-    # path(
-    #     "accounts/login/",
-    #     auth_views.LoginView.as_view(template_name="login.html", next_page="link-home"),
-    #     name="login",
-    # ),
+    path("auth/callback/quidam/", auth_callback),
     path(
         "accounts/logout/",
         auth_views.LogoutView.as_view(next_page="login"),

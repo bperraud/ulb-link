@@ -34,3 +34,22 @@ def auth_callback(request):
     login(request, user)
     request.session["oauth_token"] = token
     return redirect("/")
+
+def auth_callback_quidam(request):
+    token = oauth.nextcloud.authorize_access_token(request)
+    if not token:
+        return HttpResponse("Authorization failed", status=401)
+
+    userinfo_response = oauth.nextcloud.get(
+        "/ocs/v2.php/cloud/user?format=json", token=token
+    )
+    userinfo = userinfo_response.json()
+    # Extract the username or email (depends on Nextcloud config)
+    cloud_user = userinfo.get("ocs", {}).get("data", {})
+    username = cloud_user.get("id")
+    email = cloud_user.get("email") or f"{username}@nextcloud.local"
+    user, _ = User.objects.get_or_create(username=username, defaults={"email": email}, is_nextcloud_user=True)
+
+    login(request, user)
+    request.session["oauth_token"] = token
+    return redirect("/")

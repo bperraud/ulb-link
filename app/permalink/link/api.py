@@ -4,20 +4,17 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, serializers
 from rest_framework.generics import get_object_or_404
-
 from rest_framework.permissions import IsAuthenticated
 
 from link.models import Link, Share
-
-import string, random
+from link.auth import CustomJWTAuthentication
 from urllib.parse import unquote
 
-from link.auth import CustomJWTAuthentication
+import string, random
 
 
 def generate_unique_token(length=10) -> str:
     chars = string.ascii_letters + string.digits
-
     while True:
         token = "".join(random.choices(chars, k=length))
         if not Link.objects.filter(token=token).exists():
@@ -25,7 +22,6 @@ def generate_unique_token(length=10) -> str:
 
 
 class ShareCreateSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Share
         fields = ["uid", "expiration", "target_url", "path"]
