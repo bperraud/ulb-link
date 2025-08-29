@@ -102,7 +102,7 @@ def create_link(request):
 
     return render(request, "modal_create.html", {"form": form})
 
-def targetURL(request, token):
+def redirect_to_target_url(request, token):
     link = get_object_or_404(Link, token=token)
     targetURL = link.share.target_url if link.share else link.direct_target_url
     return redirect(targetURL)
