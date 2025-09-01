@@ -33,7 +33,7 @@ urlpatterns = [
     path("", RedirectView.as_view(url="/link/", permanent=False), name='home'),
     # auth
     path("accounts/login/", login_view, name="login"),
-    path("accounts/login/quidam/", include("mozilla_django_oidc.urls")),
+    path('oidc/', include('mozilla_django_oidc.urls')),
     path("accounts/login/mycloud/", mycloud_login_view, name="mycloud_login"),
     path("auth/callback/", auth_callback, name="auth_callback"),
     path("auth/callback/quidam/", auth_callback),
