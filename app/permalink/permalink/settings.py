@@ -191,7 +191,7 @@ AUTHLIB_OAUTH_CLIENTS = {
 }
 
 AUTHENTICATION_BACKENDS = [
-    "mozilla_django_oidc.auth.OIDCAuthenticationBackend",
+    "link.auth.OIDCCAS",
     "django.contrib.auth.backends.ModelBackend",
 ]
 
@@ -204,7 +204,7 @@ OIDC_OP_USER_ENDPOINT = "https://auth-dev.ulb.be/oidc/oidcProfile"
 OIDC_OP_JWKS_ENDPOINT = "https://auth-dev.ulb.be/oidc/jwks"
 
 OIDC_RP_SIGN_ALGO = "RS256"
-LOGIN_REDIRECT_URL = "localhost"
+LOGIN_REDIRECT_URL = "/"
 
 import sys
 
