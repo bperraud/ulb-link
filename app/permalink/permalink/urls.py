@@ -20,7 +20,7 @@ from django.urls import path, include
 from django.views.generic import RedirectView
 from django.conf.urls.static import static
 
-from link.views.views import targetURL, status
+from link.views.views import redirect_to_target_url, status
 from link.views.account_views import login_view, auth_callback, mycloud_login_view
 from django.contrib.auth import views as auth_views
 from django.conf import settings
@@ -29,17 +29,13 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("status/", status),
     path("link/", include("link.urls")),
-    path("t/<str:token>", targetURL, name="redirect"),
+    path("t/<str:token>", redirect_to_target_url, name="redirect"),
     path("", RedirectView.as_view(url="/link/", permanent=False), name='home'),
     # auth
     path("accounts/login/", login_view, name="login"),
+    path('oidc/', include('mozilla_django_oidc.urls')),
     path("accounts/login/mycloud/", mycloud_login_view, name="mycloud_login"),
     path("auth/callback/", auth_callback, name="auth_callback"),
-    # path(
-    #     "accounts/login/",
-    #     auth_views.LoginView.as_view(template_name="login.html", next_page="link-home"),
-    #     name="login",
-    # ),
     path(
         "accounts/logout/",
         auth_views.LogoutView.as_view(next_page="login"),

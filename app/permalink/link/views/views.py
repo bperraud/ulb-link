@@ -102,9 +102,10 @@ def create_link(request):
 
     return render(request, "modal_create.html", {"form": form})
 
-def targetURL(token):
+def redirect_to_target_url(request, token):
     link = get_object_or_404(Link, token=token)
-    return redirect(link.share.target_url)
+    targetURL = link.share.target_url if link.share else link.direct_target_url
+    return redirect(targetURL)
 
-def status():
+def status(request):
     return JsonResponse({"message": "ok"})

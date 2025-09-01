@@ -73,3 +73,21 @@ def refresh_token(refresh_token):
     except Exception as e:
         print(f"Token refresh failed: {e}")
         return None
+
+from mozilla_django_oidc.auth import OIDCAuthenticationBackend
+
+class OIDCCAS(OIDCAuthenticationBackend):
+    def create_user(self, claims):
+        user = super(OIDCCAS, self).create_user(claims)
+        user.username = claims.get('id', '')
+        user.email = claims.get('email', '')
+        user.save()
+
+        return user
+
+    def update_user(self, user, claims):
+        user.username = claims.get('id', '')
+        user.email = claims.get('email', '')
+        user.save()
+
+        return user

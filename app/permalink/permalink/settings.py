@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     # extensions
     "django_extensions",
     "rest_framework",
+    "mozilla_django_oidc",
     "link",
 ]
 
@@ -188,6 +189,23 @@ AUTHLIB_OAUTH_CLIENTS = {
         "scope": "openid profile email"  # adjust based on what Nextcloud provides
     },
 }
+
+AUTHENTICATION_BACKENDS = [
+    "link.auth.OIDCCAS",
+    "django.contrib.auth.backends.ModelBackend",
+]
+
+OIDC_RP_CLIENT_ID = "Permalink_clientid_dev"
+OIDC_RP_CLIENT_SECRET = "Permalink_secret_dev"
+OIDC_OP_DISCOVERY_ENDPOINT = "https://auth-dev.ulb.be/oidc/.well-known/openid-configuration"
+OIDC_OP_AUTHORIZATION_ENDPOINT="https://auth-dev.ulb.be/oidc/oidcAuthorize"
+OIDC_OP_TOKEN_ENDPOINT = "https://auth-dev.ulb.be/oidc/oidcAccessToken"
+OIDC_OP_USER_ENDPOINT = "https://auth-dev.ulb.be/oidc/oidcProfile"
+OIDC_OP_JWKS_ENDPOINT = "https://auth-dev.ulb.be/oidc/jwks"
+
+
+OIDC_RP_SIGN_ALGO = "RS256"
+LOGIN_REDIRECT_URL = "/"
 
 import sys
 

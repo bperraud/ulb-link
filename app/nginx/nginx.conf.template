@@ -4,8 +4,8 @@ upstream django-permalink-us {
 
 server {
     server_name ${SITE_DOMAIN} www.${SITE_DOMAIN};
-    listen 8080;
-    listen [::]:8080;
+    listen 80;
+    listen [::]:80;
 
     access_log /dev/stdout;
     error_log /dev/stderr;

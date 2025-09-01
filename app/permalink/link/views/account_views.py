@@ -28,8 +28,12 @@ def auth_callback(request):
     # Extract the username or email (depends on Nextcloud config)
     cloud_user = userinfo.get("ocs", {}).get("data", {})
     username = cloud_user.get("id")
-    email = cloud_user.get("email") or f"{username}@nextcloud.local"
-    user, _ = User.objects.get_or_create(username=username, defaults={"email": email}, is_nextcloud_user=True)
+    email = cloud_user.get("email")
+    user, _ = User.objects.get_or_create(username=username)
+
+    user.is_nextcloud_user = True
+    user.email = email
+    user.save()
 
     login(request, user)
     request.session["oauth_token"] = token

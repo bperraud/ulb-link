@@ -41,7 +41,7 @@ document.body.className += ' jsenabled';
         <div class="login-divider"></div>
         <div class="login-identityproviders">
             <h2 class="login-heading"><a href="/" target="_blank"><img src="{% static 'ULB-name.png' %}" width="65%" style="margin: 15px 0 35px 0;"></h2>
-                <a href="https://uv.ulb.ac.be/auth/saml2/login.php?wants&amp;idp=26454ab357647ba78287a706fad8ae76&amp;passive=off" title="Connexion ULBID">
+                <a href="{% url 'oidc_authentication_init' %}" title="Connexion ULBID">
                     <button class="loginbtn btn login-identityprovider-btn btn-block">
                         <img src="{% static 'ULB.png' %}" alt="Connexion ULBID" width="30" height="30"/>
                         Connexion ULBID
@@ -50,7 +50,7 @@ document.body.className += ' jsenabled';
         </div>
         <div class="login-divider"></div>
         <h2 class="login-heading"><p><span style="color: #ffffff;">_</span></p></h2>
-        <a href="{% url 'mycloud_login' %}" title="Connexion ULBID">
+        <a href="{% url 'mycloud_login' %}" title="Connexion Mycloud">
             <button class="loginbtn btn login-identityprovider-btn btn-block">
                 <img src="{% static 'nextcloud.jpg' %}" alt="Connexion ULBID" width="30" height="30"/>
                 Connexion Mycloud
