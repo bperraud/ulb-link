@@ -36,7 +36,6 @@ urlpatterns = [
     path('oidc/', include('mozilla_django_oidc.urls')),
     path("accounts/login/mycloud/", mycloud_login_view, name="mycloud_login"),
     path("auth/callback/", auth_callback, name="auth_callback"),
-    path("auth/callback/quidam/", auth_callback),
     path(
         "accounts/logout/",
         auth_views.LogoutView.as_view(next_page="login"),
