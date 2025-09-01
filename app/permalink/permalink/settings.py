@@ -203,6 +203,7 @@ OIDC_OP_TOKEN_ENDPOINT = "https://auth-dev.ulb.be/oidc/oidcAccessToken"
 OIDC_OP_USER_ENDPOINT = "https://auth-dev.ulb.be/oidc/oidcProfile"
 OIDC_OP_JWKS_ENDPOINT = "https://auth-dev.ulb.be/oidc/jwks"
 
+
 OIDC_RP_SIGN_ALGO = "RS256"
 LOGIN_REDIRECT_URL = "/"
 
