@@ -22,7 +22,7 @@ from django.conf.urls.static import static
 
 from link.views.views import redirect_to_target_url, status
 from link.views.account_views import login_view, auth_callback, mycloud_login_view
-from django.contrib.auth import views as auth_views
+from django.contrib.auth import views as auth_views 
 from django.conf import settings
 
 urlpatterns = [
@@ -33,6 +33,7 @@ urlpatterns = [
     path("", RedirectView.as_view(url="/link/", permanent=False), name='home'),
     # auth
     path("accounts/login/", login_view, name="login"),
+    # path("oidc/authenticate/", MyOIDCAuthRequestView.as_view(), name="oidc_authentication_init"),
     path('oidc/', include('mozilla_django_oidc.urls')),
     path("accounts/login/mycloud/", mycloud_login_view, name="mycloud_login"),
     path("auth/callback/", auth_callback, name="auth_callback"),
