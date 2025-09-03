@@ -195,14 +195,15 @@ AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
 ]
 
-OIDC_RP_CLIENT_ID = "Permalink_clientid_dev"
-OIDC_RP_CLIENT_SECRET = "Permalink_secret_dev"
-OIDC_OP_DISCOVERY_ENDPOINT = "https://auth-dev.ulb.be/oidc/.well-known/openid-configuration"
-OIDC_OP_AUTHORIZATION_ENDPOINT="https://auth-dev.ulb.be/oidc/oidcAuthorize"
-OIDC_OP_TOKEN_ENDPOINT = "https://auth-dev.ulb.be/oidc/oidcAccessToken"
-OIDC_OP_USER_ENDPOINT = "https://auth-dev.ulb.be/oidc/oidcProfile"
-OIDC_OP_JWKS_ENDPOINT = "https://auth-dev.ulb.be/oidc/jwks"
+OIDC_RP_CLIENT_ID = os.environ.get("OIDC_RP_CLIENT_ID")
+OIDC_RP_CLIENT_SECRET = os.environ.get("OIDC_RP_CLIENT_SECRET")
+OIDC_OP_DISCOVERY_ENDPOINT = os.environ.get("OIDC_OP_DISCOVERY_ENDPOINT")
+OIDC_OP_AUTHORIZATION_ENDPOINT=os.environ.get("OIDC_OP_AUTHORIZATION_ENDPOINT")
+OIDC_OP_TOKEN_ENDPOINT = os.environ.get("OIDC_OP_TOKEN_ENDPOINT")
+OIDC_OP_USER_ENDPOINT = os.environ.get("OIDC_OP_USER_ENDPOINT")
+OIDC_OP_JWKS_ENDPOINT = os.environ.get("OIDC_OP_JWKS_ENDPOINT")
 
+OIDC_REDIRECT_URI = os.environ.get("OIDC_REDIRECT_URI")
 
 OIDC_RP_SIGN_ALGO = "RS256"
 LOGIN_REDIRECT_URL = "/"
