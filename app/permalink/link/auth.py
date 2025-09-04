@@ -81,6 +81,7 @@ class OIDCCAS(OIDCAuthenticationBackend):
         user = super(OIDCCAS, self).create_user(claims)
         user.username = claims.get('id', '')
         user.email = claims.get('email', '')
+        user.is_nextcloud_user = False
         user.save()
 
         return user
@@ -88,6 +89,7 @@ class OIDCCAS(OIDCAuthenticationBackend):
     def update_user(self, user, claims):
         user.username = claims.get('id', '')
         user.email = claims.get('email', '')
+        user.is_nextcloud_user = False
         user.save()
 
         return user

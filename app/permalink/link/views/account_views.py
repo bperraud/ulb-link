@@ -26,11 +26,15 @@ def auth_callback(request):
     # Extract the username or email (depends on Nextcloud config)
     cloud_user = userinfo.get("ocs", {}).get("data", {})
     username = cloud_user.get("id")
-    email = cloud_user.get("email")
-    user, _ = User.objects.get_or_create(username=username)
+    email = cloud_user.get("email") or f"{username}@nextcloud.be"
+    # user, _ = User.objects.get_or_create(username=username)
+
+    try :
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        user = User.objects.create(username=username, email=email)
 
     user.is_nextcloud_user = True
-    user.email = email
     user.save()
 
     login(request, user)
