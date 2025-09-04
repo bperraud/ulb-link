@@ -83,10 +83,13 @@
             <img src="{% static 'link.svg' %}" alt="link">
                 <a class="nav-link" href="{% url 'link-home' %}">Links</a>
 			</li>
+
+            {% if user.is_nextcloud_user %}
             <li class="nav-item {% if request.resolver_match.url_name == 'mycloud-link' %}active{% endif %}">
             <img src="{% static 'nextcloud.jpg' %}" width="18" height="18" alt="users">
                 <a class="nav-link" href="{% url 'mycloud-link' %}">Mycloud</a>
 			</li>
+            {% endif %}
 			<!-- Add more endpoints as needed -->
 		</ul>
 	</div>
