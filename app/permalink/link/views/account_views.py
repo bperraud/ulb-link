@@ -2,6 +2,7 @@ from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from django.contrib.auth import login
 from link.auth import oauth
+from django.conf import settings
 
 from link.models import User
 
@@ -27,7 +28,6 @@ def auth_callback(request):
     cloud_user = userinfo.get("ocs", {}).get("data", {})
     username = cloud_user.get("id")
     email = cloud_user.get("email") or f"{username}@nextcloud.be"
-    # user, _ = User.objects.get_or_create(username=username)
 
     try :
         user = User.objects.get(username=username)
@@ -37,6 +37,6 @@ def auth_callback(request):
     user.is_nextcloud_user = True
     user.save()
 
-    login(request, user)
+    login(request, user, backend=settings.AUTHENTICATION_BACKENDS[1])
     request.session["oauth_token"] = token
     return redirect("/")
