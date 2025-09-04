@@ -5,8 +5,6 @@ from link.auth import oauth
 
 from link.models import User
 
-from django.contrib.auth.models import User
-
 def login_view(request):
     return render(request, 'login_page.html')
 
