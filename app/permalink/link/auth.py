@@ -24,10 +24,7 @@ class CustomJWTAuthentication(BaseAuthentication):
         except jwt.InvalidTokenError:
             raise AuthenticationFailed("Invalid JWT token")
 
-        try:
-            user = User.objects.get(username=payload.get("sub"))
-        except User.DoesNotExist:
-            raise AuthenticationFailed("User not found")
+        user, _ = User.objects.get_or_create(username=payload.get("sub"))
 
         return (user, None)
 
@@ -77,19 +74,18 @@ def refresh_token(refresh_token):
 from mozilla_django_oidc.auth import OIDCAuthenticationBackend
 
 class OIDCCAS(OIDCAuthenticationBackend):
-    def create_user(self, claims):
-        user = super(OIDCCAS, self).create_user(claims)
+
+    def save_fields(self, user, claims):
         user.username = claims.get('id', '')
         user.email = claims.get('email', '')
         user.is_nextcloud_user = False
         user.save()
 
+    def create_user(self, claims):
+        user = super(OIDCCAS, self).create_user(claims)
+        self.save_fields(user, claims)
         return user
 
     def update_user(self, user, claims):
-        user.username = claims.get('id', '')
-        user.email = claims.get('email', '')
-        user.is_nextcloud_user = False
-        user.save()
-
+        self.save_fields(user, claims)
         return user
