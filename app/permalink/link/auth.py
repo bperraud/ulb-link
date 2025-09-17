@@ -2,11 +2,15 @@ from rest_framework.authentication import BaseAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 from authlib.integrations.django_client import OAuth
 from authlib.integrations.requests_client import OAuth2Session
+from mozilla_django_oidc.auth import OIDCAuthenticationBackend
+from mozilla_django_oidc.views import OIDCAuthenticationCallbackView
 from django.conf import settings
 from link.models import User
+from django.urls import reverse
 
 import jwt
 import time
+import requests
 
 class CustomJWTAuthentication(BaseAuthentication):
     def authenticate(self, request):
@@ -71,7 +75,6 @@ def refresh_token(refresh_token):
         print(f"Token refresh failed: {e}")
         return None
 
-from mozilla_django_oidc.auth import OIDCAuthenticationBackend
 
 class OIDCCAS(OIDCAuthenticationBackend):
 
@@ -89,3 +92,29 @@ class OIDCCAS(OIDCAuthenticationBackend):
     def update_user(self, user, claims):
         self.save_fields(user, claims)
         return user
+
+
+def is_nextcloud_user(uid: str) -> bool:
+    headers = {"OCS-APIRequest": "true"}
+    try:
+        response = requests.get(
+            f"{settings.NEXTCLOUD_URL}/ocs/v2.php/cloud/users/{uid}?format=json",
+            auth=(settings.NEXTCLOUD_ADMIN_USER, settings.NEXTCLOUD_ADMIN_PASSWORD),
+            headers=headers,
+        )
+        response.raise_for_status()
+        data = response.json()
+        return data["ocs"]["meta"]["status"] == "ok"
+    except requests.exceptions.HTTPError:
+        return False
+
+
+from django.shortcuts import redirect
+
+class OIDCCallbackView(OIDCAuthenticationCallbackView):
+    def login_success(self):
+        user = self.request.user
+        if is_nextcloud_user(user.username):
+            print("is_nextcloud_user")
+            return redirect(reverse("mycloud_login"))
+        return super().login_success()
