@@ -16,7 +16,6 @@ def logout_view(request):
         "logout_url": settings.OIDC_OP_LOGOUT_ENDPOINT
     })
 
-
 def mycloud_login_view(request):
     redirect_uri = request.build_absolute_uri("/auth/callback/")
     response = oauth.nextcloud.authorize_redirect(request, redirect_uri)
