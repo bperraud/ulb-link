@@ -5,12 +5,11 @@ from authlib.integrations.requests_client import OAuth2Session
 from mozilla_django_oidc.auth import OIDCAuthenticationBackend
 from mozilla_django_oidc.views import OIDCAuthenticationCallbackView
 from django.conf import settings
-from link.models import User
 from django.urls import reverse
+from django.shortcuts import redirect
 
-import jwt
-import time
-import requests
+from link.models import User
+import jwt, time, requests
 
 class CustomJWTAuthentication(BaseAuthentication):
     def authenticate(self, request):
@@ -108,8 +107,6 @@ def is_nextcloud_user(uid: str) -> bool:
     except requests.exceptions.HTTPError:
         return False
 
-
-from django.shortcuts import redirect
 
 class OIDCCallbackView(OIDCAuthenticationCallbackView):
     def login_success(self):

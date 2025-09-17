@@ -6,13 +6,7 @@
 </head>
 <body>
     <!-- Hidden iframe calls the IdP logout URL -->
-        <iframe src="{{ logout_url }}" style="display:none;"></iframe>
-
-    <script>
-        // After a short delay, redirect user back to your app
-        setTimeout(function() {
-            window.location.href = "/";
-        }, 500);
-    </script>
+    <iframe id="logout-frame" src="{{ logout_url }}" style="display:none;"
+        onload="window.location.href = '/';"></iframe>
 </body>
 </html>
