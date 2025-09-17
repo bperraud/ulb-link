@@ -1,6 +1,6 @@
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from link.auth import oauth
 from django.conf import settings
 
@@ -8,6 +8,13 @@ from link.models import User
 
 def login_view(request):
     return render(request, 'login_page.html')
+
+def logout_view(request):
+    logout(request)
+    request.session.flush()
+    return render(request, "logout.html", {
+        "logout_url": settings.OIDC_OP_LOGOUT_ENDPOINT
+    })
 
 def mycloud_login_view(request):
     redirect_uri = request.build_absolute_uri("/auth/callback/")
@@ -39,4 +46,5 @@ def auth_callback(request):
 
     login(request, user, backend=settings.AUTHENTICATION_BACKENDS[1])
     request.session["oauth_token"] = token
+
     return redirect("/")
