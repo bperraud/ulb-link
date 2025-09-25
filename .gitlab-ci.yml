@@ -36,7 +36,6 @@ stages:
   rules:
     - if: $HELM_EXTRA_PARAMS == "" && $CI_PIPELINE_SOURCE != 'merge_request_event'
       changes:
-        - *version
         - app/$IMGNAME/**/*
 
 build:nginx:
