@@ -36,6 +36,7 @@ stages:
   rules:
     - if: $HELM_EXTRA_PARAMS == "" && $CI_PIPELINE_SOURCE != 'merge_request_event'
       changes:
+        - .gitlab-ci.yml
         - app/$IMGNAME/**/*
 
 build:nginx:
