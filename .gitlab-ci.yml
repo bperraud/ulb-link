@@ -6,21 +6,6 @@ stages:
   - build
   - deploy
 
-# .image-build-template: &image-build
-#   stage: build
-#   image: docker:20.10.16
-#   services:
-#     - docker:20.10.16-dind
-#   before_script:
-#     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-#   script:
-#     - docker build -t "$CI_REGISTRY_IMAGE/django-permalink:$CI_COMMIT_REF_SLUG"
-#     - docker push "$CI_REGISTRY_IMAGE/django-permalink:$CI_COMMIT_REF_SLUG"
-#   rules:
-#     - if: $CI_PIPELINE_SOURCE != 'merge_request_event'
-#       changes:
-#         - 
-
 .image-build-template: &image-build
   stage: build
   image: docker:20.10.16
@@ -71,5 +56,4 @@ deploy:
   only:
     refs:
       - dev
-      - stg
       - prd
