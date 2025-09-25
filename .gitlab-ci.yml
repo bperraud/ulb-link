@@ -29,8 +29,8 @@ stages:
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
-    - eval docker build $IMGARGS --pull -t "$CI_REGISTRY_IMAGE/$IMGNAME:$CI_COMMIT_REF_SLUG app/$IMGNAME
-    - docker push "$CI_REGISTRY_IMAGE/$IMGNAME:$CI_COMMIT_REF_SLUG-`cat .ci-tags/$IMGNAME`"
+    - eval docker build $IMGARGS --pull -t "$CI_REGISTRY_IMAGE/$IMGNAME:$CI_COMMIT_REF_SLUG" app/$IMGNAME
+    - docker push "$CI_REGISTRY_IMAGE/$IMGNAME:$CI_COMMIT_REF_SLUG"
   rules:
     - if: $CI_PIPELINE_SOURCE != 'merge_request_event'
       changes:
