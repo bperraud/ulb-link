@@ -46,7 +46,8 @@ deploy:
   stage: deploy
   image: $CI_REGISTRY/pole-techno/docker-images/okd-cicd-client:latest
   before_script:
-    - apk add --no-cache git
+    - cat /etc/os-release
+    - apt-get update && apt-get install -y git
     - git submodule update --init --remote
   script:
     - oc config use-context pole-techno/okd-agents:okd-$CI_COMMIT_REF_SLUG
