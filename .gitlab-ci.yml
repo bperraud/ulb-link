@@ -45,15 +45,10 @@ build:permalink:
 deploy:
   stage: deploy
   image: $CI_REGISTRY/pole-techno/docker-images/okd-cicd-client:latest
-  before_script:
-    - cat /etc/os-release
-    - apt-get update && apt-get install -y git
-    - git submodule update --init --remote
   script:
     - oc config use-context pole-techno/okd-agents:okd-$CI_COMMIT_REF_SLUG
     - oc whoami
     - oc project $HELM_NAMESPACE
-    - git submodule update --init --remote
     - cd helm/permalink
     - helm dependency update
     - helm upgrade --install -f values-$CI_COMMIT_REF_SLUG.yaml $HELM_RELEASE_NAME .
