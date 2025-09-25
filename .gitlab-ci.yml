@@ -46,10 +46,10 @@ deploy:
   stage: deploy
   image: $CI_REGISTRY/pole-techno/docker-images/okd-cicd-client:latest
   script:
-    - git clone https://gitlab.ulb.be/pole-techno/okd-apps/permalink.git helm
-    - cd helm/permalink
     - oc config use-context pole-techno/okd-agents:okd-$CI_COMMIT_REF_SLUG
     - oc project $HELM_NAMESPACE
+    - git submodule update --init --remote
+    - cd helm/permalink
     - helm dependency update
     - helm upgrade --install -f values-$CI_COMMIT_REF_SLUG.yaml $HELM_RELEASE_NAME .
     - oc rollout restart deployment django-permalink

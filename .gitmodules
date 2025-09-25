@@ -1,0 +1,4 @@
+[submodule "helm"]
+	path = helm
+	url = https://gitlab.ulb.be/pole-techno/okd-apps/permalink.git
+	branch = main
