@@ -34,7 +34,7 @@ stages:
     - eval docker build $IMGARGS --pull -t "$CI_REGISTRY_IMAGE/$IMGNAME:$CI_COMMIT_REF_SLUG-`cat .ci-tags/$IMGNAME`" docker-images/$IMGNAME
     - docker push "$CI_REGISTRY_IMAGE/$IMGNAME:$CI_COMMIT_REF_SLUG-`cat .ci-tags/$IMGNAME`"
   rules:
-    - if: $HELM_EXTRA_PARAMS == "" && $CI_PIPELINE_SOURCE != 'merge_request_event'
+    - if: $CI_PIPELINE_SOURCE != 'merge_request_event'
       changes:
         - .gitlab-ci.yml
         - app/$IMGNAME/**/*
@@ -44,7 +44,7 @@ build:nginx:
   variables:
     IMGNAME: nginx
   rules:
-    - if: $HELM_EXTRA_PARAMS == "" && $CI_PIPELINE_SOURCE != 'merge_request_event'
+    - if: $CI_PIPELINE_SOURCE != 'merge_request_event'
       changes:
         - .gitlab-ci.yml
         - app/nginx/**/*
@@ -54,7 +54,7 @@ build:django-permalink:
   variables:
     IMGNAME: php-fpm
   rules:
-    - if: $HELM_EXTRA_PARAMS == "" && $CI_PIPELINE_SOURCE != 'merge_request_event'
+    - if: $CI_PIPELINE_SOURCE != 'merge_request_event'
       changes:
         - .gitlab-ci.yml
         - app/permalink/**/*
