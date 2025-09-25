@@ -1,0 +1,41 @@
+variables:
+  HELM_RELEASE_NAME: permalink
+  HELM_NAMESPACE: pt-permalink
+
+stages:
+  - build
+  - deploy
+
+.image-build-template: &image-build
+  stage: build
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - docker build -t "$CI_REGISTRY_IMAGE/django-permalink:$CI_COMMIT_REF_SLUG"
+    - docker push "$CI_REGISTRY_IMAGE/django-permalink:$CI_COMMIT_REF_SLUG"
+  rules:
+    - if: $CI_PIPELINE_SOURCE != 'merge_request_event'
+      changes:
+        - *version
+        - $IMGNAME/*
+        - $IMGNAME/**/*
+
+deploy:
+  stage: deploy
+  image: $CI_REGISTRY/pole-techno/docker-images/okd-cicd-client:latest
+  script:
+    - git clone https://gitlab.ulb.be/pole-techno/okd-apps/permalink.git helm
+    - cd helm/permalink
+    - oc config use-context pole-techno/okd-agents:okd-$CI_COMMIT_REF_SLUG
+    - oc project $HELM_NAMESPACE
+    - helm dependency update
+    - helm upgrade --install -f values-$CI_COMMIT_REF_SLUG.yaml $HELM_RELEASE_NAME .
+    - oc rollout restart deployment django-permalink
+  only:
+    refs:
+      - dev
+      - stg
+      - prd
