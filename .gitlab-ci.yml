@@ -49,7 +49,7 @@ deploy:
     - oc config use-context pole-techno/okd-agents:okd-$CI_COMMIT_REF_SLUG
     - oc whoami
     - oc project $HELM_NAMESPACE
-    - cd helm/permalink
+    - cd helm
     - helm dependency update
     - helm upgrade --install -f values-$CI_COMMIT_REF_SLUG.yaml $HELM_RELEASE_NAME .
     - oc rollout restart deployment django-permalink
