@@ -6,6 +6,21 @@ stages:
   - build
   - deploy
 
+# .image-build-template: &image-build
+#   stage: build
+#   image: docker:20.10.16
+#   services:
+#     - docker:20.10.16-dind
+#   before_script:
+#     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+#   script:
+#     - docker build -t "$CI_REGISTRY_IMAGE/django-permalink:$CI_COMMIT_REF_SLUG"
+#     - docker push "$CI_REGISTRY_IMAGE/django-permalink:$CI_COMMIT_REF_SLUG"
+#   rules:
+#     - if: $CI_PIPELINE_SOURCE != 'merge_request_event'
+#       changes:
+#         - 
+
 .image-build-template: &image-build
   stage: build
   image: docker:20.10.16
@@ -14,14 +29,35 @@ stages:
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
-    - docker build -t "$CI_REGISTRY_IMAGE/django-permalink:$CI_COMMIT_REF_SLUG"
-    - docker push "$CI_REGISTRY_IMAGE/django-permalink:$CI_COMMIT_REF_SLUG"
+    # gitlab-ci variable substitution is FUCKING INSANE, thus eval
+    - echo "Image tag is `cat .ci-tags/$IMGNAME`"
+    - eval docker build $IMGARGS --pull -t "$CI_REGISTRY_IMAGE/$IMGNAME:$CI_COMMIT_REF_SLUG-`cat .ci-tags/$IMGNAME`" docker-images/$IMGNAME
+    - docker push "$CI_REGISTRY_IMAGE/$IMGNAME:$CI_COMMIT_REF_SLUG-`cat .ci-tags/$IMGNAME`"
   rules:
-    - if: $CI_PIPELINE_SOURCE != 'merge_request_event'
+    - if: $HELM_EXTRA_PARAMS == "" && $CI_PIPELINE_SOURCE != 'merge_request_event'
       changes:
         - *version
-        - $IMGNAME/*
-        - $IMGNAME/**/*
+        - app/$IMGNAME/**/*
+
+build:nginx:
+  <<: *image-build
+  variables:
+    IMGNAME: nginx
+  rules:
+    - if: $HELM_EXTRA_PARAMS == "" && $CI_PIPELINE_SOURCE != 'merge_request_event'
+      changes:
+        - .gitlab-ci.yml
+        - app/nginx/**/*
+
+build:django-permalink:
+  <<: *image-build
+  variables:
+    IMGNAME: php-fpm
+  rules:
+    - if: $HELM_EXTRA_PARAMS == "" && $CI_PIPELINE_SOURCE != 'merge_request_event'
+      changes:
+        - .gitlab-ci.yml
+        - app/permalink/**/*
 
 deploy:
   stage: deploy
