@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgresdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgresdb
+  template:
+    metadata:
+      labels:
+        app: postgresdb
+    spec:
+
+      containers:
+      - name: postgresdb
+        resources:
+          limits:
+            memory: "1Gi"
+        image: bitnami/postgresql:latest
+        envFrom:
+          - configMapRef:
+              name: db-config
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - name: postgresdata
+          mountPath: /var/lib/postgresql/data
+          subPath: postgres
+      volumes:
+      - name: postgresdata
+        persistentVolumeClaim:
+          claimName: postgresdata-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresdb
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5432
+    targetPort: 5432
+  selector:
+    app: postgresdb
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgresdata-pvc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+        storage: 10Gi
+

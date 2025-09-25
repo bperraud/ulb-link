@@ -1,0 +1,13 @@
+
+web:
+
+  SITE_PROTOCOL : "https"
+
+  SECRET_KEY: "django-t:55_t5&e(l@ne*(r2x34-44wch895qsr4v2nsjteq2br2e(s)"
+
+  NEXTCLOUD_URL: https://mycloud.ulb.be
+  NEXTCLOUD_CLIENT_ID: ""
+  NEXTCLOUD_SECRET_ID: ""
+
+
+acme_server: https://acme-v02.api.letsencrypt.org/directory/

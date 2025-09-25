@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      volumes:
+        - name: permalink-static
+          persistentVolumeClaim:
+            claimName: permalink-static
+      containers:
+      - name: nginx
+        resources:
+          limits:
+            memory: "128Mi"
+        image: ryukenin/nginx-permalink:latest
+        imagePullPolicy: Always
+        env:
+        - name: SITE_DOMAIN
+          value: {{ .Values.web.SITE_DOMAIN }}
+        - name: NGINX_ENVSUBST_OUTPUT_DIR
+          value: /etc/nginx/conf.d
+        ports:
+        - containerPort: 8080
+        - containerPort: 443
+        volumeMounts:
+        - name: permalink-static
+          mountPath: /app/static_root
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+spec:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+  - name: https
+    port: 443
+    targetPort: 443
+  selector:
+    app: nginx

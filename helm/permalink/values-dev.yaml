@@ -1,0 +1,31 @@
+
+web:
+
+  DEBUG: "True"
+  SECURE_SSL_REDIRECT: "False"
+
+  SITE_PROTOCOL : "https"
+  SITE_DOMAIN: "permalink.apps.dev.okd.hpda.ulb.ac.be"
+  CSRF_TRUSTED_ORIGINS: "https://permalink.apps.dev.okd.hpda.ulb.ac.be,https://mycloud.apps.dev.okd.hpda.ulb.ac.be"
+
+  SECRET_KEY: "django-t:55_t5&e(l@ne*(r2x34-44wch895qsr4v2nsjteq2br2e(s)"
+
+  # no trailling slash for nextcloud_url
+  NEXTCLOUD_URL: https://mycloud.apps.dev.okd.hpda.ulb.ac.be 
+  # NEXTCLOUD_CLIENT_ID: "PQSdKgelXR0xmuvHPpJ23hw4Ew01OrsL3ageLLGpjZJWtn8NR4RfOgE19S8DqO7e"
+  # NEXTCLOUD_SECRET_ID: "nCWuWvjD7SDppyCUNXDYhTtIsdlX8PFPIIDe4buYErSmU29T4gKnpeWn5QwpSJsx"
+  NEXTCLOUD_CLIENT_ID: "7chv1NufVletOzzWSCByjnutbtz5qpbRifNyz6j6GJrHFo11InxUINboRNubNSv0"
+  NEXTCLOUD_SECRET_ID: "NdiiAv43Dm6JFW2Zkx1V4VtDv8J59fNCt6whczJvgbuPCSy9XRP0TXfzxAU60BGf"
+
+  NEXTCLOUD_ADMIN_USER: "testadmin"
+  NEXTCLOUD_ADMIN_PASSWORD: "n9UeWq24JkA1rLzX"
+
+oidc:
+  clientId: "Permalink_clientid_dev"
+  clientSecret: "Permalink_secret_dev"
+  discoveryEndpoint: "https://auth-dev.ulb.be/oidc/.well-known/openid-configuration"
+  authorizationEndpoint: "https://auth-dev.ulb.be/oidc/oidcAuthorize"
+  tokenEndpoint: "https://auth-dev.ulb.be/oidc/oidcAccessToken"
+  userEndpoint: "https://auth-dev.ulb.be/oidc/oidcProfile"
+  jwksEndpoint: "https://auth-dev.ulb.be/oidc/jwks"
+  forceHttps: "True"

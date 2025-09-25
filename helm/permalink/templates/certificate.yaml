@@ -1,0 +1,34 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: permalink-ssl-issuer
+spec:
+  acme:
+    email: nobody@hyperion.ulb.be
+    preferredChain: ''
+    privateKeySecretRef:
+      name: permalink-ssl-privkey
+    server: https://acme-v02.api.letsencrypt.org/directory
+    solvers:
+      - http01:
+          ingress:
+            podTemplate:
+              metadata: {}
+              spec: {}
+        selector:
+          dnsNames:
+            - {{.Values.web.SITE_DOMAIN}}
+
+---
+
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: permalink-ssl-cert
+spec:
+  issuerRef:
+    name: permalink-ssl-issuer
+  dnsNames:
+    - {{.Values.web.SITE_DOMAIN}}
+  secretName: permalink-ssl-secret
+

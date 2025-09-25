@@ -1,0 +1,23 @@
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: permalink-route
+  labels:
+    app.kubernetes.io/action: common
+    app.kubernetes.io/managed-by: Helm
+spec:
+  to:
+    kind: Service
+    name: nginx
+  {{/* secretName: permalink-ssl-secret */}}
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  {{/* annotations: */}}
+  {{/*   cert-manager.io/issuer-kind: ClusterIssuer */}}
+  {{/*   cert-manager.io/issuer-name: letsencrypt-prod */}}
+  host: {{ .Values.web.SITE_DOMAIN }}
+  port:
+    targetPort: http
+  wildcardPolicy: None
+

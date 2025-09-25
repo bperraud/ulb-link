@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-permalink
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: django-permalink
+  template:
+    metadata:
+      labels:
+        app: django-permalink
+    spec:
+      volumes:
+        - name: permalink-static
+          persistentVolumeClaim:
+            claimName: permalink-static
+
+      initContainers:
+        - name: wait-for-postgres
+          resources:
+             limits:
+               memory: "128Mi"
+          image: postgres:17.5
+          env:
+            - name: PG_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config
+                  key: DATABASE_HOST
+            - name: PG_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config
+                  key: POSTGRES_USER
+            - name: PGPASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config
+                  key: POSTGRES_PASSWORD
+          command: ['sh', '-c', 'until psql -h $PG_HOST -U $PG_USER -d postgres -c "SELECT 1" >/dev/null 2>&1; do sleep 1; done;']
+
+      containers:
+      - name: django-permalink
+        resources:
+          limits:
+            memory: "1Gi"
+
+        image: ryukenin/django-permalink:log
+        imagePullPolicy: Always
+        envFrom:
+          - configMapRef:
+              name: web-config
+          - configMapRef:
+              name: db-config
+        ports:
+        - containerPort: 8000
+        volumeMounts:
+        - name: permalink-static
+          mountPath: /app/static_root
+        {{/* - name: pylab-logs */}}
+        {{/*   mountPath: /var/log/pylab */}}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: django-permalink
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8000
+    targetPort: 8000
+  selector:
+    app: django-permalink
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: permalink-static
+spec:
+  storageClassName: cephfs-sc
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+        storage: 2Gi

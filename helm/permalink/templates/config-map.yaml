@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: web-config
+data:
+    # Django settings
+    DEBUG: "{{ .Values.web.DEBUG }}"
+
+    SECRET_KEY: "{{ .Values.web.SECRET_KEY }}"
+    ALLOWED_HOSTS: "{{ .Values.web.SITE_DOMAIN }}"
+    TIME_ZONE: 'Europe/Brussels'
+
+    # Database to use: postgres, sqlite
+    DATABASE_TYPE: 'postgres'
+
+    # Security -- handled by frontend
+    SECURE_SSL_REDIRECT: "{{ .Values.web.SECURE_SSL_REDIRECT }}"
+
+    # Static
+    STATIC_ROOT: /app/static_root
+
+    # Site configuration
+    SITE_PROTOCOL: "{{ .Values.web.SITE_PROTOCOL }}"
+    CSRF_TRUSTED_ORIGINS: "{{ .Values.web.CSRF_TRUSTED_ORIGINS }}"
+    SITE_DOMAIN: "{{ .Values.web.SITE_DOMAIN }}"
+
+    # Nextcloud
+    NEXTCLOUD_URL: "{{ .Values.web.NEXTCLOUD_URL }}"
+    NEXTCLOUD_CLIENT_ID: "{{ .Values.web.NEXTCLOUD_CLIENT_ID }}"
+    NEXTCLOUD_SECRET_ID: "{{ .Values.web.NEXTCLOUD_SECRET_ID }}"
+
+    NEXTCLOUD_ADMIN_USER: "{{ .Values.web.NEXTCLOUD_ADMIN_USER }}"
+    NEXTCLOUD_ADMIN_PASSWORD: "{{ .Values.web.NEXTCLOUD_ADMIN_PASSWORD }}"
+
+    OIDC_RP_CLIENT_ID: "{{ .Values.oidc.clientId }}"
+    OIDC_RP_CLIENT_SECRET: "{{ .Values.oidc.clientSecret }}"
+    OIDC_OP_DISCOVERY_ENDPOINT: "{{ .Values.oidc.discoveryEndpoint }}"
+    OIDC_OP_AUTHORIZATION_ENDPOINT: "{{ .Values.oidc.authorizationEndpoint }}"
+    OIDC_OP_TOKEN_ENDPOINT: "{{ .Values.oidc.tokenEndpoint }}"
+    OIDC_OP_USER_ENDPOINT: "{{ .Values.oidc.userEndpoint }}"
+    OIDC_OP_JWKS_ENDPOINT: "{{ .Values.oidc.jwksEndpoint }}"
+    OIDC_FORCE_HTTPS: "{{ .Values.oidc.forceHttps }}"
