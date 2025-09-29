@@ -45,6 +45,11 @@
 </head>
 <body>
 
+    <div id="globalAlert" class="alert alert-success alert-dismissible fade" 
+         style="position: fixed; top: 20px; right: 20px; z-index: 1100; display: none;" 
+         role="alert">
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
 
 	<!-- Top Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" style="padding-left:10px; padding-right:10px;">
@@ -141,3 +146,24 @@ input {
 }
 
 </style>
+
+
+<script>
+
+function showAlert(message, type = "success", timeout = 3000) {
+  const alert = document.getElementById("globalAlert");
+  const alertMessage = document.getElementById("globalAlert");
+
+  alertMessage.textContent = message;
+  alert.style.display = "block";
+  setTimeout(() => alert.classList.add("show"), 10);
+
+  if (timeout) {
+    setTimeout(() => {
+      alert.classList.remove("show");
+      setTimeout(() => (alert.style.display = "none"), 150);
+    }, timeout);
+  }
+}
+
+</script>

@@ -12,23 +12,8 @@
 
 <script>
 function copyToClipboard() {
-  navigator.clipboard.writeText("Some text").then(() => {
-    const alert = document.getElementById("copyAlert");
-    alert.style.display = "block";
-    alert.classList.add("show");
-
-    setTimeout(() => {
-      alert.classList.remove("show");
-      setTimeout(() => alert.style.display = "none", 150);
-    }, 3000);
+  navigator.clipboard.writeText("{{ HOST }}/{{ link.token }}").then(() => {
+    showAlert("✅ permalink copied to clipboard");
   });
 }
 </script>
-
-
-<div id="copyAlert" class="alert alert-success alert-dismissible fade" 
-     style="position: fixed; top: 20px; right: 20px; z-index: 1100; display: none;" 
-     role="alert">
-  ✅ permalink copied to clipboard
-  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-</div>
