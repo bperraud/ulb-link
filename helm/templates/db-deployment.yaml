@@ -44,17 +44,3 @@ spec:
     targetPort: 5432
   selector:
     app: postgresdb
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: postgresdata-pvc
-  annotations:
-    "helm.sh/resource-policy": keep
-spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-        storage: 10Gi
-

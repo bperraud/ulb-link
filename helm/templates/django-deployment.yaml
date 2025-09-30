@@ -74,15 +74,3 @@ spec:
     targetPort: 8000
   selector:
     app: django-permalink
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: permalink-static
-spec:
-  storageClassName: cephfs-sc
-  accessModes:
-  - ReadWriteMany
-  resources:
-    requests:
-        storage: 2Gi
