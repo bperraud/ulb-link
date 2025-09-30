@@ -104,7 +104,7 @@ def is_nextcloud_user(uid: str) -> bool:
         response.raise_for_status()
         data = response.json()
         return data["ocs"]["meta"]["status"] == "ok"
-    except requests.exceptions.HTTPError:
+    except requests.exceptions.RequestException:
         return False
 
 
