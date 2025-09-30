@@ -47,7 +47,7 @@ spec:
           limits:
             memory: "1Gi"
 
-        image: ryukenin/django-permalink:log
+        image: ryukenin/django-permalink:dev
         imagePullPolicy: Always
         envFrom:
           - configMapRef:
