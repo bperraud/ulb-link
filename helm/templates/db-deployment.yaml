@@ -18,7 +18,7 @@ spec:
         resources:
           limits:
             memory: "1Gi"
-        image: bitnami/postgresql:latest
+        image: bitnamilegacy/postgresql:17.6.0
         envFrom:
           - configMapRef:
               name: db-config
