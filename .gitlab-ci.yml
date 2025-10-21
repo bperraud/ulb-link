@@ -6,7 +6,6 @@ stages:
   - build
   - deploy
 
-
 .image-build-template: &image-build
   stage: build
   image: docker:20.10.16
