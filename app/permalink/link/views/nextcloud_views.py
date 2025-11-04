@@ -18,8 +18,7 @@ def parse_xml(xml_data: str):
             share = Share.objects.get(uid=el.findtext("id"))
             share.path = el.findtext("path")
             index = share.target_url.rfind('/')
-            share.target_url = share.target_url[:index] + el.findtext("token")
-            # share.target_url = share.target_url[:index + 1] + el.findtext("token")
+            share.target_url = share.target_url[:index + 1] + el.findtext("token")
             share.expiration = el.findtext("expiration") if el.findtext("expiration") else None
             share.save()
         except Share.DoesNotExist:
