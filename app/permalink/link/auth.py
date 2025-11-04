@@ -7,6 +7,7 @@ from mozilla_django_oidc.views import OIDCAuthenticationCallbackView
 from django.conf import settings
 from django.urls import reverse
 from django.shortcuts import redirect
+from django.contrib import auth
 
 from link.models import User
 import jwt, time, requests
@@ -104,13 +105,21 @@ def is_nextcloud_user(uid: str) -> bool:
         response.raise_for_status()
         data = response.json()
         return data["ocs"]["meta"]["status"] == "ok"
-    except requests.exceptions.RequestException:
+    except requests.exceptions.RequestException as e:
+        print(e)
         return False
 
 
 class OIDCCallbackView(OIDCAuthenticationCallbackView):
     def login_success(self):
-        user = self.request.user
-        if is_nextcloud_user(user.username):
+        request_user = getattr(self.request, "user", None)
+        if (
+            not request_user
+            or not request_user.is_authenticated
+            or request_user != self.user
+        ):
+            auth.login(self.request, self.user)
+        
+        if is_nextcloud_user(self.request.user.username):
             return redirect(reverse("mycloud_login"))
         return super().login_success()

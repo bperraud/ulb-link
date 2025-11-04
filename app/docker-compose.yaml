@@ -31,21 +31,18 @@ services:
     depends_on:
       - db
 
-  nginx:
+  nginx-permalink:
     container_name: nginx
     build:
       context: ./nginx
       args:
-        SITE_DOMAIN_ARG: link.ulb.be
+        SITE_DOMAIN_ARG: localhost
     environment:
-      SITE_DOMAIN: link.ulb.be
       NGINX_ENVSUBST_OUTPUT_DIR: /etc/nginx/conf.d
     restart: always
     ports:
       - "80:80"
       - "443:443"
-      # - "8080:8080"
-      # - "443:443"
     volumes:
     #   - mediaroot:/app/media_root
       - static_root:/app/static_root
