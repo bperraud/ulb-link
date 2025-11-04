@@ -3,9 +3,9 @@ from django.http import HttpResponse
 from django.contrib.auth import login, logout
 from link.auth import oauth
 from django.conf import settings
+import urllib.parse
 
 from link.context_processors import get_host
-
 from link.models import User
 
 def login_view(request):
@@ -14,7 +14,7 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     request.session.flush()
-    return redirect(f"{settings.OIDC_OP_LOGOUT_ENDPOINT}?service={get_host()}")
+    return redirect(f"{settings.OIDC_OP_LOGOUT_ENDPOINT}?service={urllib.parse.quote(get_host())}")
 
 def mycloud_login_view(request):
     redirect_uri = request.build_absolute_uri("/auth/callback/")
