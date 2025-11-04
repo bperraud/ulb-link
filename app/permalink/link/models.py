@@ -49,7 +49,7 @@ class Link(models.Model):
     )
 
     def get_permalink(self):
-        return f"{get_host()}/{self.token}"
+        return f"{get_host()}/t/{self.token}"
 
 
 @receiver(post_delete, sender=Link)
