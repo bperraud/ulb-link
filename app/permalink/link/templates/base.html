@@ -153,9 +153,9 @@ input {
 <script>
 
 function showAlert(message, type = "success", timeout = 3000) {
-<!-- function showAlert(message, type = "success", timeout = 300000) { -->
   const alert = document.getElementById("globalAlert");
-  alert.textContent = message;
+  const innerSpan = document.getElementById("alertMessage");
+  innerSpan.textContent = message;
   alert.style.display = "block";
   setTimeout(() => alert.classList.add("show"), 10);
 
