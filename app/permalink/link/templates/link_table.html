@@ -26,7 +26,6 @@
 <div id="edit-container" hx-swap="innerHTML">
 </div>
 
-
 <!-- <div id="modals-here" -->
 <!--     class="modal modal-blur fade" -->
 <!--     aria-hidden="false" -->
@@ -36,14 +35,26 @@
 <!--     </div> -->
 <!-- </div> -->
 
-<div class="table-responsive">
-    <table id="links" border="1" class="table delete-row-example">
+<div>
+    <table id="links" border="1" >
         <thead>
             <tr>
                 <th><input type="checkbox" id="selectAll"></th>
-                <th>Permalink</th>
-                <th>Target URL</th>
-                <th>Updated At</th>
+                <th>
+                    <span class="flex items-center">
+                        Permalink
+                    </span>
+                </th>
+                <th>
+                    <span class="flex items-center">
+                        Target URL
+                    </span>
+                </th>
+                <th>
+                    <span class="flex items-center">
+                        Updated At
+                    </span>
+                </th>
             </tr>
         </thead>
         <tbody>
@@ -61,14 +72,9 @@
 <script>
 
 $(document).ready(function () {
-    $('#links').DataTable({
-        pageLength: 10,
-        columnDefs: [
-            {
-                orderable: false,
-                targets: 0
-            }
-        ]
+    const dataTable = new simpleDatatables.DataTable("#links", {
+        searchable: true,
+        sortable: false
     });
 });
 
