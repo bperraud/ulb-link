@@ -68,7 +68,7 @@ document.body.addEventListener('htmx:afterSwap', function(evt) {
             event.preventDefault();
             const ids = getSelectedIds();
             const url = `/link/edit/${ids[0]}`;
-            htmx.ajax('GET', url, '#modals-here');
+            htmx.ajax('GET', url, '#modal-content');
         });
     }
     if (evt.target && document.getElementById('delete-button')) {
