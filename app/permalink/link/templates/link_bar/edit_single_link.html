@@ -1,11 +1,9 @@
-<button
-    id="edit-button"
-    hx-target="#modals-here"
+<button id="edit-button" data-modal-target="modals-here" data-modal-toggle="modals-here"
     hx-trigger="click"
-    data-bs-toggle="modal"
-    data-bs-target="#modals-here"
-    class="btn btn-secondary">
+    hx-target="#modals-here">
     <span class="bi-pencil-square">&nbsp;Edit</span></button>
-<button id="delete-button" type="button" class="btn btn-secondary"><span class="bi-trash-fill">&nbsp;Delete</span></button>
+<button id="delete-button" type="button" ><span class="bi-trash-fill">&nbsp;Delete</span></button>
 
-
+<script>
+    initFlowbite();
+</script>

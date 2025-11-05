@@ -9,12 +9,10 @@
 
     <link rel="icon" type="image/x-icon" href="{% static 'ULB.png' %}">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css" rel="stylesheet">
-
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js"></script>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
 
     <!-- DataTables -->
@@ -45,59 +43,61 @@
 </head>
 <body>
 
-    <div id="globalAlert" class="alert alert-success alert-dismissible fade" 
-         style="position: fixed; top: 20px; right: 20px; z-index: 1100; display: none;" 
-         role="alert">
-      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <!-- Main modal -->
+    <div id="modals-here" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
     </div>
 
-	<!-- Top Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" style="padding-left:10px; padding-right:10px;">
-        <div class="container-fluid">
-            <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
-                <img src="{% static 'ULB.png' %}" width="50px" class="me-2">
-                <span>PermaLink</span>
-            </a>
-            <div class="d-flex align-items-center justify-content-center">
-                <span class="" style="color: white;">{{ user.username }}&nbsp;&nbsp;&nbsp;</span>
+    {% include "alert.html" %}
 
-                <form method="post" action="{% url 'logout' %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn p-0 border-0 bg-transparent">
-                        <i class="bi bi-box-arrow-right text-light" style="font-size: 1.5rem;"></i>
-                    </button>
-                </form>
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 right-0 bg-gray-900 text-white px-4 py-2 flex items-center justify-between z-50">
+      <div class="flex items-center space-x-2">
+        <a href="{% url 'home' %}" class="flex items-center space-x-2">
+          <img src="{% static 'ULB.png' %}" width="50" alt="Logo" />
+          <span class="text-xl font-semibold">PermaLink</span>
+        </a>
+      </div>
 
-            </div>
-        </div>
+      <div class="flex items-center space-x-4">
+        <span>{{ user.username }}</span>
+
+        <form method="post" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button type="submit"
+            class="text-white hover:text-gray-300 transition-colors duration-200">
+            <!-- Logout icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                 stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6A2.25 2.25 0 005.25 5.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+            </svg>
+          </button>
+        </form>
+      </div>
     </nav>
 
+    <!-- Sidebar -->
+    <div class="fixed top-[60px] left-0 h-[calc(100vh-60px)] w-56 border-r border-gray-300 bg-gray-50 p-4">
+      <ul class="flex flex-col space-y-2">
+        <li>
+          {% block additional_button %}
+          {% endblock %}
+        </li>
 
-	<!-- Sidebar -->
-	<div class="sidebar border-end">
-		<ul class="nav flex-column">
+        <li class="{% if request.resolver_match.url_name == 'link-home' %}bg-gray-200 font-semibold{% endif %} rounded flex items-center space-x-2 px-2 py-1 hover:bg-gray-100 transition">
+          <img src="{% static 'link.svg' %}" alt="link" class="w-4 h-4" />
+          <a href="{% url 'link-home' %}" class="text-gray-700 hover:text-gray-900">Links</a>
+        </li>
 
-            <li class="nav-item">
-            {% block additional_button %}
-            {% endblock %}
-            </li>
+        {% if user.is_nextcloud_user %}
+        <li class="{% if request.resolver_match.url_name == 'mycloud-link' %}bg-gray-200 font-semibold{% endif %} rounded flex items-center space-x-2 px-2 py-1 hover:bg-gray-100 transition">
+          <img src="{% static 'nextcloud.jpg' %}" width="18" height="18" alt="users" />
+          <a href="{% url 'mycloud-link' %}" class="text-gray-700 hover:text-gray-900">Mycloud</a>
+        </li>
+        {% endif %}
+      </ul>
+    </div>
 
-            <br>
-
-            <li class="nav-item {% if request.resolver_match.url_name == 'link-home' %}active{% endif %}">
-            <img src="{% static 'link.svg' %}" alt="link">
-                <a class="nav-link" href="{% url 'link-home' %}">Links</a>
-			</li>
-
-            {% if user.is_nextcloud_user %}
-            <li class="nav-item {% if request.resolver_match.url_name == 'mycloud-link' %}active{% endif %}">
-            <img src="{% static 'nextcloud.jpg' %}" width="18" height="18" alt="users">
-                <a class="nav-link" href="{% url 'mycloud-link' %}">Mycloud</a>
-			</li>
-            {% endif %}
-			<!-- Add more endpoints as needed -->
-		</ul>
-	</div>
 
     <div class="content">
         {% block pagecontent %}
@@ -151,10 +151,9 @@ input {
 <script>
 
 function showAlert(message, type = "success", timeout = 3000) {
+<!-- function showAlert(message, type = "success", timeout = 300000) { -->
   const alert = document.getElementById("globalAlert");
-  const alertMessage = document.getElementById("globalAlert");
-
-  alertMessage.textContent = message;
+  alert.textContent = message;
   alert.style.display = "block";
   setTimeout(() => alert.classList.add("show"), 10);
 

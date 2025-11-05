@@ -3,18 +3,21 @@
 
 {% block additional_button %}
 
-<button id="create-button" class="bg-blue-500 hover:bg-blue-700 text-base text-white py-2 px-6 rounded inline-flex items-center"
+<!-- <button id="create-button" class="bg-blue-500 hover:bg-blue-700 text-base text-white py-2 px-6 rounded inline-flex items-center" -->
+<!--     hx-get="/link/create-link/" -->
+<!--     hx-trigger="click" -->
+<!--     hx-target="#modals-here" -->
+<!--     data-bs-toggle="modal" -->
+<!--     data-bs-target="#modals-here" -->
+<!-- > -->
+<button data-modal-target="modals-here" data-modal-toggle="modals-here" class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
     hx-get="/link/create-link/"
     hx-trigger="click"
-    hx-target="#modals-here"
-    data-bs-toggle="modal"
-    data-bs-target="#modals-here"
->
-    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
-      <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
-    </svg>
-  <span>Create</span>
+    hx-target="#modals-here">
+    <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
+    Create
 </button>
+
 
 {% endblock %}
 
@@ -23,14 +26,15 @@
 <div id="edit-container" hx-swap="innerHTML">
 </div>
 
-<div id="modals-here"
-    class="modal modal-blur fade"
-    aria-hidden="false"
-    tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-        <div class="modal-content"></div>
-    </div>
-</div>
+
+<!-- <div id="modals-here" -->
+<!--     class="modal modal-blur fade" -->
+<!--     aria-hidden="false" -->
+<!--     tabindex="-1"> -->
+<!--     <div class="modal-dialog modal-lg modal-dialog-centered" role="document"> -->
+<!--         <div class="modal-content"></div> -->
+<!--     </div> -->
+<!-- </div> -->
 
 <div class="table-responsive">
     <table id="links" border="1" class="table delete-row-example">
@@ -113,6 +117,7 @@ document.body.addEventListener('htmx:afterSwap', function(evt) {
         });
     }
 });
+
 
 </script>
 

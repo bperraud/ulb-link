@@ -85,7 +85,7 @@ def edit_link(request, pk):
     else:
         form = LinkForm(instance=link)
 
-    return render(request, "modal.html", {"form": form, "link": link})
+    return render(request, "modal_edit.html", {"form": form, "link": link})
 
 @require_http_methods(["GET", "POST"])
 def create_link(request):
