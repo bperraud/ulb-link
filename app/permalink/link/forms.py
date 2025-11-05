@@ -3,25 +3,42 @@ from link.models import Link
 from django import forms
 
 from datetime import date, timedelta
+    
+
+input_style = "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+
+label_style = "block mb-2 text-sm font-medium text-gray-900 dark:text-white"
 
 class LinkForm(ModelForm):
-    target_url = forms.URLField(label="Share Target URL", required=False, disabled=True)
+
+    target_url = forms.URLField(
+        label="Share Target URL",
+        required=False,
+        disabled=True,
+        widget=forms.URLInput(
+            attrs={
+                "class": input_style
+            }
+        ),
+    )
+
     expiration = forms.DateField(
         label="Expiration Date",
         required=False,
         widget=forms.DateInput(
-            attrs={"type": "date",
-                    "min": date.today().strftime("%Y-%m-%d"),
-                    "max": (date.today() + timedelta(days=365)).strftime("%Y-%m-%d"),  # max date = 1 year from today
-                  }
-        )
+            attrs={
+                "type": "date",
+                "min": date.today().strftime("%Y-%m-%d"),
+                "max": (date.today() + timedelta(days=365)).strftime("%Y-%m-%d"),
+            }
+        ),
     )
 
     class Meta:
         model = Link
         fields = ["token"]
         widgets = {
-            "target_url": forms.TextInput(attrs={"style": "width: 100%;"}),
+            "token": forms.TextInput(attrs={"class": input_style}),
         }
 
     def __init__(self, *args, **kwargs):
