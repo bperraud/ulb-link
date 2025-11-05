@@ -85,7 +85,7 @@ def edit_link(request, pk):
     else:
         form = LinkForm(instance=link)
 
-    return render(request, "modal_edit.html", {"form": form, "link": link})
+    return render(request, "modal_edit.html", {"form": form, "link": link, "modal_title": "Edit Permalink"})
 
 @require_http_methods(["GET", "POST"])
 def create_link(request):
@@ -100,7 +100,7 @@ def create_link(request):
             response["HX-Redirect"] = reverse("link-home")
             return response
 
-    return render(request, "modal_create.html", {"form": form})
+    return render(request, "modal_create.html", {"form": form, "modal_title": "Create Permalink"})
 
 def redirect_to_target_url(request, token):
     link = get_object_or_404(Link, token=token)

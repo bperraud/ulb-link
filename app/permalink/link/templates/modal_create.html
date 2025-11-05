@@ -1,16 +1,16 @@
   
 <div>
-<form 
-    class="p-4 md:p-5"
-    method="POST" 
-    id="saveForm" 
-    hx-post="{% url 'create-link' %}" 
-    hx-target="#modalContainer"
-    hx-swap="outerHTML"
-  >
-    {% csrf_token %}
-    {% include "form_snippet.html" %}
-  </form>
+    <form 
+        class="p-4 md:p-5"
+        method="POST" 
+        id="saveForm" 
+        hx-post="{% url 'create-link' %}" 
+        hx-target="#modalContainer"
+        hx-swap="outerHTML"
+      >
+        {% csrf_token %}
+        {% include "form_snippet.html" %}
+    </form>
     <div class="flex justify-center p-4">
         <button
           type="submit"
@@ -20,18 +20,21 @@
         >
           Add new permalink
         </button>
-  </div>
+    </div>
 </div>
-    
 
+<script>
+    document.getElementById('modalTitle').textContent = 'Edit link';
+</script>
+
+{% block scripts %}
 <script>
     document.getElementById('submitButton').addEventListener('click', function() {
         htmx.trigger(document.getElementById('saveForm'), 'submit');
     });
-
-    <!-- document.getElementById('closeModalButton').addEventListener('click', () => { -->
-    <!--   modal.hide(); --> 
-    <!-- }); -->
-
+    if (document.getElementById('modalTitle')) {
+      modalTitle.textContent = "{{ modal_title|escapejs }}";
+    }
 </script>
+{% endblock %}
 
