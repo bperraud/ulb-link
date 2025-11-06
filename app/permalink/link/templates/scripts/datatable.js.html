@@ -6,6 +6,13 @@ $(document).ready(function () {
         sortable: false
     });
 
+    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', function () {
+            const url = `/link/toolbar/${getSelectedIds().length}`;
+            htmx.ajax('GET', url, '#edit-container');
+        });
+    });
+
     setTimeout(() => {
         const topSection = document.querySelector(".datatable-top");
         topSection.classList.add('items-center');
@@ -27,13 +34,6 @@ document.getElementById('selectAll').addEventListener('change', function () {
     checkboxes.forEach(cb => cb.checked = this.checked);
 });
 
-
-document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-    checkbox.addEventListener('change', function () {
-        const url = `/link/toolbar/${getSelectedIds().length}`;
-        htmx.ajax('GET', url, '#edit-container');
-    });
-});
 
 function getSelectedIds() {
     return [...document.querySelectorAll('.row-checkbox:checked')].map(cb => cb.value);
@@ -60,8 +60,15 @@ document.body.addEventListener('htmx:afterSwap', function(evt) {
             })
             .then(res => {
                 if (res.ok) {
-                    location.reload();
-                    showAlert("Link deleted");
+                    if (ids.length > 1)
+                        showAlert("Links deleted");
+                    else
+                        showAlert("Link deleted");
+                    console.log(ids);
+                    ids.forEach(id => {
+                        const row = document.querySelector(`#link-${id}`);
+                        if (row) row.remove();
+                    });
                 }
             });
         });
