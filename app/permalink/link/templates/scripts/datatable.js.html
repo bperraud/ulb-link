@@ -64,11 +64,11 @@ document.body.addEventListener('htmx:afterSwap', function(evt) {
                         showAlert("Links deleted");
                     else
                         showAlert("Link deleted");
-                    console.log(ids);
                     ids.forEach(id => {
                         const row = document.querySelector(`#link-${id}`);
                         if (row) row.remove();
                     });
+                    document.getElementById('edit-container').innerHTML = '';
                 }
             });
         });
