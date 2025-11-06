@@ -4,8 +4,8 @@
         method="POST" 
         id="editForm" 
         hx-post="{% url 'link-edit-row' link.id %}" 
-        hx-target="#modalContainer" 
-        hx-swap="outerHTML"
+        hx-target="#modal-content"
+        hx-swap="innerHTML"
       >
         {% csrf_token %}
         {% include "form_snippet.html" %}

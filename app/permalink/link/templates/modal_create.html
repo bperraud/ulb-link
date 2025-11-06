@@ -5,8 +5,8 @@
         method="POST" 
         id="saveForm" 
         hx-post="{% url 'create-link' %}" 
-        hx-target="#modalContainer"
-        hx-swap="outerHTML"
+        hx-target="#modal-content"
+        hx-swap="innerHTML"
       >
         {% csrf_token %}
         {% include "form_snippet.html" %}

@@ -29,16 +29,11 @@
 		.sidebar {
 			height: 100vh;
 			position: fixed;
-			top: 56px; /* height of top navbar */
-			left: 0;
-			width: 250px;
-			background-color: #f8f9fa;
-			padding-top: 1rem;
 		}
 		.content {
-			margin-left: 250px;
+			margin-left: 220px;
 			padding: 2rem;
-			margin-top: 56px; /* height of top navbar */
+			margin-top: 50px; /* height of top navbar */
 		}
 	</style>
 </head>
@@ -78,7 +73,7 @@
         </a>
       </div>
 
-      <div class="flex items-center space-x-4">
+          <div class="flex items-center space-x-4">
         <span>{{ user.username }}</span>
 
         <form method="post" action="{% url 'logout' %}">
@@ -141,7 +136,7 @@
 .nav-item {
     font-size: 18px;
     display: flex;
-    align-items: center; 
+    align-items: center;
     padding-left: 25px;
 }
 
@@ -155,7 +150,6 @@
     background-color: #e9ecef;
     border-radius: 4px;
 }
-
 
 input {
     border: 1px solid #ced4da;
