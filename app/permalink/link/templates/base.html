@@ -169,11 +169,12 @@ input {
 
 <script>
 
-function showAlert(message, type = "success", timeout = 3000) {
+<!-- function showAlert(message, type = "success", timeout = 3000) { -->
+function showAlert(message, type = "success", timeout = 300000) {
   const alert = document.getElementById("globalAlert");
   const innerSpan = document.getElementById("alertMessage");
   innerSpan.textContent = message;
-  alert.style.display = "block";
+  alert.style.display = "flex";
   setTimeout(() => alert.classList.add("show"), 10);
 
   if (timeout) {
