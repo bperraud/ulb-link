@@ -13,7 +13,7 @@ $(document).ready(function () {
             const editContainer = document.createElement("div");
             editContainer.id = "edit-container";
             editContainer.setAttribute("hx-swap", "innerHTML");
-            editContainer.className = "mr-auto ml-4"
+            editContainer.className = "mr-auto"
 
             if (topSection.children.length >= 1) {
                 topSection.insertBefore(editContainer, topSection.children[1]);
@@ -25,7 +25,7 @@ $(document).ready(function () {
 document.getElementById('selectAll').addEventListener('change', function () {
     const checkboxes = document.querySelectorAll('.row-checkbox');
     checkboxes.forEach(cb => cb.checked = this.checked);
-  });
+});
 
 
 document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
@@ -60,8 +60,8 @@ document.body.addEventListener('htmx:afterSwap', function(evt) {
             })
             .then(res => {
                 if (res.ok) {
-                    console.debug("delete");
                     location.reload();
+                    showAlert("Link deleted");
                 }
             });
         });

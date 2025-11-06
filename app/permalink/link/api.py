@@ -127,7 +127,6 @@ class LinkAPIView(APIView):
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
 
     def put(self, request, pk):
-        print("LinkAPIVIew put method")
         try:
             link = Link.objects.get(pk=pk)
             serializer = LinkSerializer(link, data=request.data, partial=True)
@@ -139,7 +138,6 @@ class LinkAPIView(APIView):
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
 
     def delete(self, request, pk):
-        print("LinkAPIVIew delete method")
         try:
             link = Link.objects.get(pk=pk)
             link.delete()

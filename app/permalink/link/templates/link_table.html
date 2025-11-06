@@ -42,9 +42,12 @@
             {% for link in links %}
                 {% include "link_row.html" with link=link %}
             {% empty %}
-            <tr>
-                <td colspan="3">You haven't created any links yet.</td>
-            </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
             {% endfor %}
         </tbody>
     </table>
