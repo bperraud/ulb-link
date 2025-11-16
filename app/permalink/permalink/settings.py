@@ -54,6 +54,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # extensions
+    "tailwind",
+    "theme",
     "django_extensions",
     "rest_framework",
     "mozilla_django_oidc",
@@ -90,6 +92,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "permalink.wsgi.application"
 
+TAILWIND_APP_NAME = "theme"
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
