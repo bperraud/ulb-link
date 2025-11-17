@@ -8,3 +8,8 @@
   * the scope of this path.
   */
 @source "../../../**/*.{html,py,js}";
+
+/* Optional: custom theme overrides */
+@theme {
+  --color-primary: #2563eb;
+}
