@@ -5,12 +5,12 @@ web:
   SECURE_SSL_REDIRECT: "False"
 
   SITE_PROTOCOL : "https"
-  SITE_DOMAIN: "links.ulb.be"
+  SITE_DOMAIN: "permalink.ulb.be"
 
   SECRET_KEY: "django-t:55_t5&e(l@ne*(r2x34-44wch895qsr4v2nsjteq2br2e(s)"
 
   SITE_PROTOCOL : "https"
-  SITE_DOMAIN: "permalink-pt-permalink.apps.prd.okd.hpda.ulb.ac.be"
+  # SITE_DOMAIN: "permalink-pt-permalink.apps.prd.okd.hpda.ulb.ac.be"
   CSRF_TRUSTED_ORIGINS: "https://permalink-pt-permalink.apps.prd.okd.hpda.ulb.ac.be/,https://mycloud.ulb.be"
 
   SECRET_KEY: "django-t:55_t5&e(l@ne*(r2x34-44wch895qsr4v2nsjteq2br2e(s)"
