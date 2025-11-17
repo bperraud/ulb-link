@@ -3,7 +3,8 @@
 $(document).ready(function () {
     const dataTable = new simpleDatatables.DataTable("#links", {
         searchable: true,
-        sortable: false
+        sortable: false,
+        perPage: 25,
     });
 
     document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
