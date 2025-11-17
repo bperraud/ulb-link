@@ -15,8 +15,7 @@
 
 {% block pagecontent %}
 
-
-<div>
+<div class="flex justify-center bg-neutral-primary">
     <table id="links">
         <thead>
             <tr>
@@ -63,5 +62,14 @@
 </div>
 
 {% include "scripts/datatable.js.html" %}
+
+<style>
+
+.datatable-wrapper .datatable-container {
+  border: 1px solid #ebe6e7;
+  border-radius: 12px;
+  overflow-x: auto;
+}
+</style>
 
 {% endblock %}

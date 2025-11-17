@@ -9,7 +9,7 @@
   */
 @source "../../../**/*.{html,py,js}";
 
-/* Optional: custom theme overrides */
 @theme {
   --color-primary: #2563eb;
+   --color-default: #1f2937;
 }
