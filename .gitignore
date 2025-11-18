@@ -4,6 +4,4 @@ venv/
 
 app/env_configs/.env
 
-
 helm/values-secret.yaml
-
