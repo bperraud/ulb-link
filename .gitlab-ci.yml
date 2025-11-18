@@ -51,8 +51,19 @@ deploy:
     - oc project $HELM_NAMESPACE
     - cd helm
     - helm dependency update
-    - export NEXTCLOUD_CLIENT_ID=$(oc get secret permalink-web-secret.yaml -o jsonpath="{.stringData.NEXTCLOUD_CLIENT_ID}" | base64 -d)
-    - helm upgrade --install -f values-$CI_COMMIT_REF_SLUG.yaml $HELM_RELEASE_NAME . --set web.NEXTCLOUD_CLIENT_ID=$NEXTCLOUD_CLIENT_ID
+    - export NEXTCLOUD_CLIENT_ID=$(oc get secret permalink-web-secret -o jsonpath="{.data.NEXTCLOUD_CLIENT_ID}" | base64 -d)
+    - export NEXTCLOUD_SECRET_ID=$(oc get secret permalink-web-secret -o jsonpath="{.data.NEXTCLOUD_SECRET_ID}" | base64 -d)
+    - export NEXTCLOUD_ADMIN_USER=$(oc get secret permalink-web-secret -o jsonpath="{.data.NEXTCLOUD_ADMIN_USER}" | base64 -d)
+    - export NEXTCLOUD_ADMIN_PASSWORD=$(oc get secret permalink-web-secret -o jsonpath="{.data.NEXTCLOUD_ADMIN_PASSWORD}" | base64 -d)
+    - export OIDC_CLIENT_ID=$(oc get secret permalink-web-secret -o jsonpath="{.data.OIDC_CLIENT_ID}" | base64 -d)
+    - export OIDC_SECRET_ID=$(oc get secret permalink-web-secret -o jsonpath="{.data.OIDC_SECRET_ID}" | base64 -d)
+    - helm upgrade --install -f values-$CI_COMMIT_REF_SLUG.yaml $HELM_RELEASE_NAME . \
+        --set web.NEXTCLOUD_CLIENT_ID=$NEXTCLOUD_CLIENT_ID \
+        --set web.NEXTCLOUD_SECRET_ID=$NEXTCLOUD_SECRET_ID \
+        --set web.NEXTCLOUD_ADMIN_USER=$NEXTCLOUD_ADMIN_USER \
+        --set web.NEXTCLOUD_ADMIN_PASSWORD=$NEXTCLOUD_ADMIN_PASSWORD \
+        --set web.OIDC_CLIENT_ID=$OIDC_CLIENT_ID \
+        --set web.OIDC_SECRET_ID=$OIDC_SECRET_ID
     - oc rollout restart deployment django-permalink
   only:
     refs:
