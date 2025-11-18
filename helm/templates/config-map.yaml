@@ -6,7 +6,6 @@ data:
     # Django settings
     DEBUG: "{{ .Values.web.DEBUG }}"
 
-    SECRET_KEY: "{{ .Values.web.SECRET_KEY }}"
     ALLOWED_HOSTS: "{{ .Values.web.SITE_DOMAIN }}"
     TIME_ZONE: 'Europe/Brussels'
 
