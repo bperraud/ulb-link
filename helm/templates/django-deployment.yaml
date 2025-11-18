@@ -51,12 +51,11 @@ spec:
         resources:
           limits:
             memory: "1Gi"
-
-
         image: {{ .Values.web.image }}
-
         imagePullPolicy: Always
         envFrom:
+          - secretRef:
+              name: permalink-web-secret
           - configMapRef:
               name: web-config
           - configMapRef:
