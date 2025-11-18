@@ -19,7 +19,6 @@ stages:
   rules:
     - if: $CI_PIPELINE_SOURCE != 'merge_request_event'
       changes:
-        - .gitlab-ci.yml
         - app/$IMGNAME/**/*
 
 build:nginx:
@@ -29,7 +28,6 @@ build:nginx:
   rules:
     - if: $CI_PIPELINE_SOURCE != 'merge_request_event'
       changes:
-        - .gitlab-ci.yml
         - app/nginx/**/*
 
 build:permalink:
@@ -39,7 +37,6 @@ build:permalink:
   rules:
     - if: $CI_PIPELINE_SOURCE != 'merge_request_event'
       changes:
-        - .gitlab-ci.yml
         - app/permalink/**/*
 
 deploy:
