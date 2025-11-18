@@ -51,7 +51,8 @@ deploy:
     - oc project $HELM_NAMESPACE
     - cd helm
     - helm dependency update
-    - helm upgrade --install -f values-$CI_COMMIT_REF_SLUG.yaml $HELM_RELEASE_NAME .
+    - export NEXTCLOUD_CLIENT_ID=$(oc get secret permalink-web-secret.yaml -o jsonpath="{.stringData.NEXTCLOUD_CLIENT_ID}" | base64 -d)
+    - helm upgrade --install -f values-$CI_COMMIT_REF_SLUG.yaml $HELM_RELEASE_NAME . --set web.NEXTCLOUD_CLIENT_ID=$NEXTCLOUD_CLIENT_ID
     - oc rollout restart deployment django-permalink
   only:
     refs:
