@@ -54,7 +54,7 @@ deploy:
     - export NEXTCLOUD_ADMIN_PASSWORD=$(oc get secret permalink-web-secret -o jsonpath="{.data.NEXTCLOUD_ADMIN_PASSWORD}" | base64 -d)
     - export OIDC_CLIENT_ID=$(oc get secret permalink-web-secret -o jsonpath="{.data.OIDC_CLIENT_ID}" | base64 -d)
     - export OIDC_SECRET_ID=$(oc get secret permalink-web-secret -o jsonpath="{.data.OIDC_SECRET_ID}" | base64 -d)
-    - helm upgrade --install $HELM_RELEASE_NAME . -f values-$CI_COMMIT_REF_SLUG.yaml  \
+    - helm upgrade --install $HELM_RELEASE_NAME . -f values-$CI_COMMIT_REF_SLUG.yaml \
         --set web.NEXTCLOUD_CLIENT_ID=$NEXTCLOUD_CLIENT_ID \
         --set web.NEXTCLOUD_SECRET_ID=$NEXTCLOUD_SECRET_ID \
         --set web.NEXTCLOUD_ADMIN_USER=$NEXTCLOUD_ADMIN_USER \
