@@ -15,7 +15,7 @@ web:
   SITE_DOMAIN: "permalink.ulb.be"
 
   SITE_PROTOCOL : "https"
-  CSRF_TRUSTED_ORIGINS: "https://permalink.ulb.be/,https://mycloud.ulb.be"
+  CSRF_TRUSTED_ORIGINS: "https://permalink.ulb.be,https://mycloud.ulb.be"
 
   # no trailling slash for nextcloud_url
   NEXTCLOUD_URL: https://mycloud.ulb.be
