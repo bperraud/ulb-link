@@ -54,14 +54,15 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # extensions
-    "tailwind",
-    "theme",
+    "django_tailwind_cli",
     "django_extensions",
     "rest_framework",
     "mozilla_django_oidc",
     "link",
 ]
 
+TAILWIND_CLI_PATH = "/usr/local/bin/tailwindcss"
+TAILWIND_CLI_AUTOMATIC_DOWNLOAD = False
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

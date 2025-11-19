@@ -65,9 +65,9 @@ document.body.addEventListener('htmx:afterSwap', function(evt) {
             .then(res => {
                 if (res.ok) {
                     if (ids.length > 1)
-                        showAlert("Links deleted");
+                        showAlert("links deleted");
                     else
-                        showAlert("Link deleted");
+                        showAlert("link deleted");
                     ids.forEach(id => {
                         const row = document.querySelector(`#link-${id}`);
                         if (row) row.remove();
