@@ -1,7 +1,7 @@
 {% load static %}
-{% load static tailwind_tags %}
 
 <!DOCTYPE html>
+{% load tailwind_cli %}
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
@@ -23,20 +23,7 @@
 
     {% tailwind_css %}
 
-	<style>
-		body {
-			overflow-x: hidden;
-		}
-		.sidebar {
-			height: 100vh;
-			position: fixed;
-		}
-		.content {
-			margin-left: 220px;
-			padding: 2rem;
-			margin-top: 50px; /* height of top navbar */
-		}
-	</style>
+	
 </head>
 
 <body>
@@ -101,27 +88,29 @@
       </div>
     </nav>
 
-    <!-- Sidebar -->
-    <div class="fixed top-[60px] left-0 h-[calc(100vh-60px)] w-56 border-r border-gray-300 bg-gray-50 p-4">
-      <ul class="flex flex-col space-y-2">
-        <li>
-          {% block additional_button %}
-          {% endblock %}
-        </li>
+    <aside id="default-sidebar" class="fixed left-0 z-40 w-56 h-full transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
+       <div class="h-full px-3 py-4 overflow-y-auto bg-neutral-primary-soft border-e border-default">
+        <ul class="space-y-2 font-medium">
+            <li>
+              {% block additional_button %}
+              {% endblock %}
+            </li>
 
-        <li class="{% if request.resolver_match.url_name == 'link-home' %}bg-gray-200 font-semibold{% endif %} rounded flex items-center space-x-2 px-2 py-1 hover:bg-gray-100 transition">
-          <img src="{% static 'link.svg' %}" alt="link" class="w-4 h-4" />
-          <a href="{% url 'link-home' %}" class="text-gray-700 hover:text-gray-900">Links</a>
-        </li>
+            <li class="{% if request.resolver_match.url_name == 'link-home' %}bg-gray-200 font-semibold{% endif %} rounded hover:bg-gray-100 transition">
+                <a href="{% url 'link-home' %}" class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
+                   <svg class="w-5 h-5 transition duration-75 group-hover:text-fg-brand" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6.025A7.5 7.5 0 1 0 17.975 14H10V6.025Z"/><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 3c-.169 0-.334.014-.5.025V11h7.975c.011-.166.025-.331.025-.5A7.5 7.5 0 0 0 13.5 3Z"/></svg>
+                   <span class="ms-3">Links</span>
+                </a>
+            </li>
 
-        {% if user.is_nextcloud_user %}
-        <li class="{% if request.resolver_match.url_name == 'mycloud-link' %}bg-gray-200 font-semibold{% endif %} rounded flex items-center space-x-2 px-2 py-1 hover:bg-gray-100 transition">
-          <img src="{% static 'nextcloud.jpg' %}" width="18" height="18" alt="users" />
-          <a href="{% url 'mycloud-link' %}" class="text-gray-700 hover:text-gray-900">Mycloud</a>
-        </li>
-        {% endif %}
-      </ul>
-    </div>
+            {% if user.is_nextcloud_user %}
+            <li class="{% if request.resolver_match.url_name == 'mycloud-link' %}bg-gray-200 font-semibold{% endif %} rounded flex items-center space-x-2 px-2 py-1 hover:bg-gray-100 transition">
+              <img src="{% static 'nextcloud.jpg' %}" width="18" height="18" alt="users" />
+              <a href="{% url 'mycloud-link' %}" class="text-gray-700 hover:text-gray-900">Mycloud</a>
+            </li>
+            {% endif %}
+          </ul>
+    </aside>
 
 
     <div class="content">
@@ -135,31 +124,8 @@
 
 <style> 
 
-.navbar {
-    padding-top: 3px !important;
-    padding-bottom: 3px !important;
-}
-
-.sidebar {
-    padding-top: 40px;
-}
-
-.nav-item {
-    font-size: 18px;
-    display: flex;
-    align-items: center;
-    padding-left: 25px;
-}
-
-.nav-item a {
-    color: inherit;
-    text-decoration: none;
-}
-
-.nav-item.active {
-    font-weight: 500;
-    background-color: #e9ecef;
-    border-radius: 4px;
+#default-sidebar {
+    top: 60px;
 }
 
 .datatable-wrapper .datatable-container {
@@ -168,7 +134,18 @@
   overflow-x: auto;
 }
 
+body {
+    overflow-x: hidden;
+}
+
+.content {
+    margin-left: 220px;
+    margin-top: 25px;
+    padding: 2rem;
+}
+
 </style>
+
 
 
 <script>

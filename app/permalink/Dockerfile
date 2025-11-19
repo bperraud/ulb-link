@@ -12,13 +12,19 @@ ENV PYTHONUNBUFFERED=1
 RUN apt-get update && apt-get install -y \
     libpq-dev \
     gcc \
+    curl \
+    netcat-openbsd \
     && rm -rf /var/lib/apt/lists/*
+
+RUN curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64 \
+    && chmod +x tailwindcss-linux-x64 \
+    && mv tailwindcss-linux-x64 /usr/local/bin/tailwindcss
+
 
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . /app/
 
-#RUN chmod -R u=rX,g=rwx,o= /app/static_root
 RUN chmod -R u=rX,g=rwx,o= /var/log
 
 RUN chmod +x /app/entrypoint.sh
