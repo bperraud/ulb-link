@@ -15,7 +15,6 @@ echo "Collecting statics"
 python manage.py collectstatic --noinput
 
 echo "Building tailwind"
-python manage.py tailwind install
 python manage.py tailwind build
 
 ## required for docker to continue
