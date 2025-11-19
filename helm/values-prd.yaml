@@ -1,6 +1,11 @@
 
 acme_server: https://acme-v02.api.letsencrypt.org/directory/
 
+
+
+nginx:
+  image: registry.gitlab.ulb.be/pole-techno/okd-apps/django-permalink/nginx:prd
+
 web:
 
   DEBUG: "False"
@@ -24,6 +29,8 @@ web:
 
   image: registry.gitlab.ulb.be/pole-techno/okd-apps/django-permalink/permalink:prd
 
+    
+
 oidc:
   clientId: ""
   clientSecret: ""
@@ -32,5 +39,5 @@ oidc:
   tokenEndpoint: "https://auth.ulb.be/oidc/oidcAccessToken"
   userEndpoint: "https://auth.ulb.be/oidc/oidcProfile"
   jwksEndpoint: "https://auth.ulb.be/oidc/jwks"
-  forceHttps: "True"
   logoutEndpoint: "https://auth.ulb.be/oidc/oidcLogout"
+  forceHttps: "True"
