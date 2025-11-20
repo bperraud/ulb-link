@@ -80,14 +80,15 @@ document.body.addEventListener('htmx:afterSwap', function(evt) {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-    if (sessionStorage.getItem("createAlert") === "1") {
-        showAlert("Permalink created");
-        sessionStorage.removeItem("createAlert");
+    const msg = sessionStorage.getItem("flashMessage");
+    if (msg) {
+        showAlert(msg);
+        sessionStorage.removeItem("flashMessage");
     }
 });
 
-htmx.on("createAlert", () => {
-    sessionStorage.setItem("createAlert", "1");
+document.body.addEventListener("flashMessage", function (event) {
+    sessionStorage.setItem("flashMessage", event.detail.value);
 });
 
 </script>

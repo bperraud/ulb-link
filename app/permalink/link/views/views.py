@@ -75,18 +75,20 @@ def edit_link(request, pk):
     if request.method == "POST":
         form = LinkForm(request.POST, instance=link)
         if form.is_valid():
-            form.save()
-            response = HttpResponse()
             if link.share:
                 update_share_in_nextcloud(request, link.share.uid)
-                response["HX-Redirect"] = reverse("mycloud-link")
-            else:
-                response["HX-Redirect"] = reverse("link-home")
+            form.save()
+            response = HttpResponse()
+            response["HX-Refresh"] = "true"
+            response["HX-Trigger"] = json.dumps({
+                "flashMessage": "Permalink successfully edited"
+            })
             return response
     else:
         form = LinkForm(instance=link)
 
     return render(request, "modal_edit.html", {"form": form, "link": link, "modal_title": "Edit Permalink"})
+
 
 @require_http_methods(["GET", "POST"])
 def create_link(request):
@@ -99,10 +101,13 @@ def create_link(request):
             link.save()
             response = HttpResponse()
             response["HX-Refresh"] = "true"
-            response["HX-Trigger"] = json.dumps({"createAlert": True})
+            response["HX-Trigger"] = json.dumps({
+                "flashMessage": "Permalink successfully created"
+            })
             return response
 
     return render(request, "modal_create.html", {"form": form, "modal_title": "Create Permalink"})
+
 
 def redirect_to_target_url(request, token):
     link = get_object_or_404(Link, token=token)
