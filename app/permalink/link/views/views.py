@@ -7,6 +7,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.urls import reverse
 
+import json
 from rest_framework.generics import get_object_or_404
 from link.decorators import nextcloud_user_required
 from link.models import Link
@@ -97,7 +98,8 @@ def create_link(request):
             link.user = request.user
             link.save()
             response = HttpResponse()
-            response["HX-Redirect"] = reverse("link-home")
+            response["HX-Refresh"] = "true"
+            response["HX-Trigger"] = json.dumps({"createAlert": True})
             return response
 
     return render(request, "modal_create.html", {"form": form, "modal_title": "Create Permalink"})
