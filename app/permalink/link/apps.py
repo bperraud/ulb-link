@@ -10,6 +10,8 @@ def absolutify_https(request, path):
     url = request.build_absolute_uri(path)
     if settings.OIDC_FORCE_HTTPS:
         url = url.replace("http://", "https://", 1)
+
+    print(url)
     return url
 
 mozilla_django_oidc.utils.absolutify = absolutify_https
