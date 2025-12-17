@@ -16,7 +16,7 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-AUTH_USER_MODEL = 'link.User'
+AUTH_USER_MODEL = "link.User"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -32,13 +32,11 @@ SITE_DOMAIN = os.environ.get("SITE_DOMAIN")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG") == "True"
-
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "*").split(",")
-
 
 CSRF = os.environ.get("CSRF_TRUSTED_ORIGINS")
 
-if CSRF :
+if CSRF:
     CSRF_TRUSTED_ORIGINS = CSRF.split(",")
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # keep session cookie after browser close
@@ -162,7 +160,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
 LANGUAGE_CODE = "en-us"
-TIME_ZONE = 'Europe/Brussels'
+TIME_ZONE = "Europe/Brussels"
 USE_I18N = True
 USE_TZ = True
 
@@ -205,7 +203,7 @@ AUTHENTICATION_BACKENDS = [
 OIDC_RP_CLIENT_ID = os.environ.get("OIDC_CLIENT_ID")
 OIDC_RP_CLIENT_SECRET = os.environ.get("OIDC_CLIENT_SECRET")
 OIDC_OP_DISCOVERY_ENDPOINT = os.environ.get("OIDC_DISCOVERY_ENDPOINT")
-OIDC_OP_AUTHORIZATION_ENDPOINT=os.environ.get("OIDC_AUTHORIZATION_ENDPOINT")
+OIDC_OP_AUTHORIZATION_ENDPOINT = os.environ.get("OIDC_AUTHORIZATION_ENDPOINT")
 OIDC_OP_TOKEN_ENDPOINT = os.environ.get("OIDC_TOKEN_ENDPOINT")
 OIDC_OP_USER_ENDPOINT = os.environ.get("OIDC_USER_ENDPOINT")
 OIDC_OP_JWKS_ENDPOINT = os.environ.get("OIDC_JWKS_ENDPOINT")
@@ -248,7 +246,7 @@ LOGGING = {
         "django_error_handler": {
             "class": "logging.FileHandler",
             "level": "ERROR",
-            "filename" : "/var/log/permalink.log",
+            "filename": "/var/log/permalink.log",
             "formatter": "normal",
         },
     },
@@ -260,4 +258,3 @@ LOGGING = {
         },
     },
 }
-
