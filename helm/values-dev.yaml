@@ -9,7 +9,7 @@ web:
   DEBUG: "True"
   SECURE_SSL_REDIRECT: "False"
 
-  SITE_PROTOCOL : "https"
+  SITE_PROTOCOL: "https"
   SITE_DOMAIN: "permalink.apps.dev.okd.hpda.ulb.ac.be"
   CSRF_TRUSTED_ORIGINS: "https://permalink.apps.dev.okd.hpda.ulb.ac.be,https://nc-test.ulb.ac.be"
 

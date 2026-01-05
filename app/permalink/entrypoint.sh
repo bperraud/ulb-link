@@ -11,7 +11,7 @@ echo "Making migrations and migrating the database"
 python manage.py makemigrations --noinput
 python manage.py migrate --noinput
 
-manage.py createsuperuser --noinput
+python manage.py createsuperuser --noinput
 
 echo "Collecting statics"
 python manage.py collectstatic --noinput
