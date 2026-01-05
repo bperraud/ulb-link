@@ -134,7 +134,7 @@ elif DATABASE_TYPE == "postgres":
         }
     }
 else:
-    raise NotImplementedError("No database configuration for " + DATABASE_TYPE)
+    raise NotImplementedError("No database configuration for " + str(DATABASE_TYPE))
 
 
 # Password validation

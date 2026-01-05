@@ -56,6 +56,8 @@ deploy:
     - export OIDC_CLIENT_ID=$(oc get secret permalink-web-secret -o jsonpath='{.data.OIDC_CLIENT_ID}' | base64 -d)
     - export OIDC_SECRET_ID=$(oc get secret permalink-web-secret -o jsonpath='{.data.OIDC_SECRET_ID}' | base64 -d)
     - export SECRET_KEY=$(oc get secret permalink-web-secret -o jsonpath='{.data.SECRET_KEY}' | base64 -d)
+    - export DJANGO_SUPERUSER_USERNAME=$(oc get secret permalink-web-secret -o jsonpath='{.data.DJANGO_SUPERUSER_USERNAME' | base64 -d)
+    - export DJANGO_SUPERUSER_PASSWORD=$(oc get secret permalink-web-secret -o jsonpath='{.data.DJANGO_SUPERUSER_PASSWORD' | base64 -d)
     # Helm upgrade WITHOUT overriding the secret
     - |
       helm upgrade --install "$HELM_RELEASE_NAME" . \
