@@ -15,7 +15,7 @@ server {
         proxy_pass http://django-permalink-us;
 
         proxy_hide_header X-Frame-Options; # empêche l'en-tête upstream de bloquer l'iframe
-        add_header Content-Security-Policy "frame-ancestors 'self' ${NEXTCLOUD_ORIGIN};" always; # CSP: autorise l’embarquement par Nextcloud
+        add_header Content-Security-Policy "frame-ancestors 'self' ${NEXTCLOUD_URL};" always; # CSP: autorise l’embarquement par Nextcloud
 
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
