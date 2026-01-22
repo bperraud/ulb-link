@@ -28,7 +28,7 @@ spec:
           value: "8080"
         - name: SITE_DOMAIN
           value: {{ .Values.web.SITE_DOMAIN }}
-        - name: NEXTCLOUD_ULR
+        - name: NEXTCLOUD_URL
           value: {{ .Values.web.NEXTCLOUD_URL }}
         - name: NGINX_ENVSUBST_OUTPUT_DIR
           value: /etc/nginx/conf.d
