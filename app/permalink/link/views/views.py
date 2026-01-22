@@ -66,7 +66,7 @@ def toolbar(request, nb):
             return render(request, "link_bar/edit_multiple_link.html")
 
 
-@method_decorator([login_required])
+@login_required
 @require_http_methods(["DELETE"])
 def delete_links(request, ids):
     list_ids = ids.split(",")
@@ -75,12 +75,9 @@ def delete_links(request, ids):
     return JsonResponse({"message": "ok"})
 
 
+@login_required
 @require_http_methods(["GET", "POST"])
 def edit_link(request, pk):
-    if not request.user.is_authenticated:
-        response = HttpResponse()
-        response["HX-Redirect"] = resolve_url(settings.LOGIN_REDIRECT_URL)
-        return response
     link = get_object_or_404(Link, pk=pk)
     if request.method == "POST":
         form = LinkForm(request.POST, instance=link)
@@ -104,12 +101,9 @@ def edit_link(request, pk):
     )
 
 
+@login_required
 @require_http_methods(["GET", "POST"])
 def create_link(request):
-    if not request.user.is_authenticated:
-        response = HttpResponse()
-        response["HX-Redirect"] = resolve_url(settings.LOGIN_REDIRECT_URL)
-        return response
     form = LinkForm()
     if request.method == "POST":
         form = LinkForm(request.POST)
