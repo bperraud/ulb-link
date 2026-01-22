@@ -5,7 +5,8 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
-from django.urls import reverse
+from django.conf import settings
+from django.shortcuts import resolve_url
 
 import json
 from rest_framework.generics import get_object_or_404
@@ -74,9 +75,12 @@ def delete_links(request, ids):
     return JsonResponse({"message": "ok"})
 
 
-@method_decorator([login_required])
 @require_http_methods(["GET", "POST"])
 def edit_link(request, pk):
+    if not request.user.is_authenticated:
+        response = HttpResponse()
+        response["HX-Redirect"] = resolve_url(settings.LOGIN_REDIRECT_URL)
+        return response
     link = get_object_or_404(Link, pk=pk)
     if request.method == "POST":
         form = LinkForm(request.POST, instance=link)
@@ -100,9 +104,12 @@ def edit_link(request, pk):
     )
 
 
-@method_decorator([login_required])
 @require_http_methods(["GET", "POST"])
 def create_link(request):
+    if not request.user.is_authenticated:
+        response = HttpResponse()
+        response["HX-Redirect"] = resolve_url(settings.LOGIN_REDIRECT_URL)
+        return response
     form = LinkForm()
     if request.method == "POST":
         form = LinkForm(request.POST)
