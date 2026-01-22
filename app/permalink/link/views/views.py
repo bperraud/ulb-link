@@ -24,6 +24,7 @@ class LinkTableView(ListView):
     def get_queryset(self):
         return Link.objects.filter(user=self.request.user, share=None)
 
+
 @method_decorator([nextcloud_user_required, login_required], name="dispatch")
 class MycloudLinkTableView(ListView):
     model = Link
@@ -34,6 +35,7 @@ class MycloudLinkTableView(ListView):
         update_shares_object(self.request)
         return Link.objects.filter(user=self.request.user, share__isnull=False)
 
+
 @method_decorator([login_required], name="dispatch")
 class LinkRowView(TemplateView):
     template_name = "link_row.html"
@@ -42,6 +44,7 @@ class LinkRowView(TemplateView):
         link = get_object_or_404(Link, pk=kwargs["pk"])
         return {"link": link}
 
+
 @method_decorator([nextcloud_user_required, login_required], name="dispatch")
 class MycloudLinkRowView(TemplateView):
     template_name = "mycloud/mycloud_link_row.html"
@@ -49,6 +52,7 @@ class MycloudLinkRowView(TemplateView):
     def get_context_data(self, **kwargs):
         link = get_object_or_404(Link, pk=kwargs["pk"])
         return {"link": link}
+
 
 @require_http_methods(["GET"])
 def toolbar(request, nb):
@@ -61,6 +65,7 @@ def toolbar(request, nb):
             return render(request, "link_bar/edit_multiple_link.html")
 
 
+@method_decorator([login_required])
 @require_http_methods(["DELETE"])
 def delete_links(request, ids):
     list_ids = ids.split(",")
@@ -69,6 +74,7 @@ def delete_links(request, ids):
     return JsonResponse({"message": "ok"})
 
 
+@method_decorator([login_required])
 @require_http_methods(["GET", "POST"])
 def edit_link(request, pk):
     link = get_object_or_404(Link, pk=pk)
@@ -80,16 +86,21 @@ def edit_link(request, pk):
             form.save()
             response = HttpResponse()
             response["HX-Refresh"] = "true"
-            response["HX-Trigger"] = json.dumps({
-                "flashMessage": "Permalink successfully edited"
-            })
+            response["HX-Trigger"] = json.dumps(
+                {"flashMessage": "Permalink successfully edited"}
+            )
             return response
     else:
         form = LinkForm(instance=link)
 
-    return render(request, "modal_edit.html", {"form": form, "link": link, "modal_title": "Edit Permalink"})
+    return render(
+        request,
+        "modal_edit.html",
+        {"form": form, "link": link, "modal_title": "Edit Permalink"},
+    )
 
 
+@method_decorator([login_required])
 @require_http_methods(["GET", "POST"])
 def create_link(request):
     form = LinkForm()
@@ -101,18 +112,21 @@ def create_link(request):
             link.save()
             response = HttpResponse()
             response["HX-Refresh"] = "true"
-            response["HX-Trigger"] = json.dumps({
-                "flashMessage": "Permalink successfully created"
-            })
+            response["HX-Trigger"] = json.dumps(
+                {"flashMessage": "Permalink successfully created"}
+            )
             return response
 
-    return render(request, "modal_create.html", {"form": form, "modal_title": "Create Permalink"})
+    return render(
+        request, "modal_create.html", {"form": form, "modal_title": "Create Permalink"}
+    )
 
 
 def redirect_to_target_url(request, token):
     link = get_object_or_404(Link, token=token)
     targetURL = link.share.target_url if link.share else link.direct_target_url
     return redirect(targetURL)
+
 
 def status(request):
     return JsonResponse({"message": "ok"})

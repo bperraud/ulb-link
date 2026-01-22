@@ -9,7 +9,7 @@ web:
   DEBUG: "True"
   SECURE_SSL_REDIRECT: "False"
 
-  SITE_PROTOCOL : "https"
+  SITE_PROTOCOL: "https"
   SITE_DOMAIN: "permalink.apps.dev.okd.hpda.ulb.ac.be"
   CSRF_TRUSTED_ORIGINS: "https://permalink.apps.dev.okd.hpda.ulb.ac.be,https://nc-test.ulb.ac.be"
 
@@ -24,6 +24,10 @@ web:
 
   NEXTCLOUD_ADMIN_USER: "testadmin"
   NEXTCLOUD_ADMIN_PASSWORD: "n9UeWq24JkA1rLzX"
+
+  DJANGO_SUPERUSER_EMAIL: admin@example.com
+  DJANGO_SUPERUSER_USERNAME: "admin_permalink"
+  DJANGO_SUPERUSER_PASSWORD: "admin_password"
 
   image: registry.gitlab.ulb.be/pole-techno/okd-apps/django-permalink/permalink:dev
 

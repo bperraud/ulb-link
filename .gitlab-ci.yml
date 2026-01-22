@@ -54,8 +54,10 @@ deploy:
     - export NEXTCLOUD_ADMIN_USER=$(oc get secret permalink-web-secret -o jsonpath='{.data.NEXTCLOUD_ADMIN_USER}' | base64 -d)
     - export NEXTCLOUD_ADMIN_PASSWORD=$(oc get secret permalink-web-secret -o jsonpath='{.data.NEXTCLOUD_ADMIN_PASSWORD}' | base64 -d)
     - export OIDC_CLIENT_ID=$(oc get secret permalink-web-secret -o jsonpath='{.data.OIDC_CLIENT_ID}' | base64 -d)
-    - export OIDC_SECRET_ID=$(oc get secret permalink-web-secret -o jsonpath='{.data.OIDC_SECRET_ID}' | base64 -d)
+    - export OIDC_CLIENT_SECRET=$(oc get secret permalink-web-secret -o jsonpath='{.data.OIDC_CLIENT_SECRET}' | base64 -d)
     - export SECRET_KEY=$(oc get secret permalink-web-secret -o jsonpath='{.data.SECRET_KEY}' | base64 -d)
+    - export DJANGO_SUPERUSER_USERNAME=$(oc get secret permalink-web-secret -o jsonpath='{.data.DJANGO_SUPERUSER_USERNAME' | base64 -d)
+    - export DJANGO_SUPERUSER_PASSWORD=$(oc get secret permalink-web-secret -o jsonpath='{.data.DJANGO_SUPERUSER_PASSWORD' | base64 -d)
     # Helm upgrade WITHOUT overriding the secret
     - |
       helm upgrade --install "$HELM_RELEASE_NAME" . \
@@ -65,7 +67,7 @@ deploy:
         --set web.NEXTCLOUD_ADMIN_USER="$NEXTCLOUD_ADMIN_USER" \
         --set web.NEXTCLOUD_ADMIN_PASSWORD="$NEXTCLOUD_ADMIN_PASSWORD" \
         --set oidc.clientId="$OIDC_CLIENT_ID" \
-        --set oidc.clientSecret="$OIDC_SECRET_ID" \
+        --set oidc.clientSecret="$OIDC_CLIENT_SECRET" \
         --set web.SECRET_KEY="$SECRET_KEY"
     - oc rollout restart deployment django-permalink
   only:

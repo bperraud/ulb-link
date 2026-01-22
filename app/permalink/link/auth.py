@@ -12,6 +12,7 @@ from django.contrib import auth
 from link.models import User
 import jwt, time, requests
 
+
 class CustomJWTAuthentication(BaseAuthentication):
     def authenticate(self, request):
         auth_header = request.headers.get("Authorization")
@@ -53,24 +54,16 @@ def get_valid_access_token(request):
 
 
 def refresh_token(refresh_token):
-
     client_data = {
-        "client_id" : settings.AUTHLIB_OAUTH_CLIENTS["client_id"],
-        "client_secret" : settings.AUTHLIB_OAUTH_CLIENTS["client_secret"] 
+        "client_id": settings.AUTHLIB_OAUTH_CLIENTS["client_id"],
+        "client_secret": settings.AUTHLIB_OAUTH_CLIENTS["client_secret"],
     }
-
-    client = OAuth2Session(
-        **client_data,
-        token=refresh_token
-    )
-
+    client = OAuth2Session(**client_data, token=refresh_token)
     try:
         token = client.refresh_token(
-            settings.AUTHLIB_OAUTH_CLIENTS["refresh_token_url"],
-            **client_data
+            settings.AUTHLIB_OAUTH_CLIENTS["refresh_token_url"], **client_data
         )
         return token
-
     except Exception as e:
         print(f"Token refresh failed: {e}")
         return None
@@ -79,8 +72,8 @@ def refresh_token(refresh_token):
 class OIDCCAS(OIDCAuthenticationBackend):
 
     def save_fields(self, user, claims):
-        user.username = claims.get('id', '')
-        user.email = claims.get('email', '')
+        user.username = claims.get("id", "")
+        user.email = claims.get("email", "")
         user.is_nextcloud_user = False
         user.save()
 
@@ -119,7 +112,6 @@ class OIDCCallbackView(OIDCAuthenticationCallbackView):
             or request_user != self.user
         ):
             auth.login(self.request, self.user)
-        
         if is_nextcloud_user(self.request.user.username):
             return redirect(reverse("mycloud_login"))
         return super().login_success()
