@@ -10,6 +10,8 @@ server {
     access_log /dev/stdout;
     error_log /dev/stderr;
 
+    add_header X-Frame-Options "ALLOW-FROM ${NEXTCLOUD_URL}";
+
     location / {
         proxy_pass http://django-permalink-us;
         proxy_set_header Host $host;
