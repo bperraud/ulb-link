@@ -22,9 +22,10 @@ def logout_view(request):
 
 
 def mycloud_login_view(request):
-    request.scheme = "https" if settings.OIDC_FORCE_HTTPS == "True" else "http"
     redirect_uri = request.build_absolute_uri("/auth/callback/")
-    # print(redirect_uri)
+    print(redirect_uri)
+    if settings.OIDC_FORCE_HTTPS:
+        redirect_uri = redirect_uri.replace("http://", "https://", 1)
     response = oauth.nextcloud.authorize_redirect(request, redirect_uri)
     request.session.save()  # ensure the session with state is persisted
     return response
