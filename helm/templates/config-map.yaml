@@ -31,6 +31,5 @@ data:
     OIDC_TOKEN_ENDPOINT: "{{ .Values.oidc.tokenEndpoint }}"
     OIDC_USER_ENDPOINT: "{{ .Values.oidc.userEndpoint }}"
     OIDC_JWKS_ENDPOINT: "{{ .Values.oidc.jwksEndpoint }}"
-    OIDC_FORCE_HTTPS: "{{ .Values.oidc.forceHttps }}"
 
     OIDC_LOGOUT_ENDPOINT: "{{ .Values.oidc.logoutEndpoint }}"
