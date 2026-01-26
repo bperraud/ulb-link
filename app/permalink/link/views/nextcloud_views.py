@@ -51,7 +51,6 @@ def update_share_in_nextcloud(request, id):
         return HttpResponse(200)
 
     data = {"expireDate": share.expiration.strftime("%Y-%m-%d")}
-    # use the token to make an API call
     headers = {"Authorization": f"Bearer {access_token}"}
     response = requests.put(
         f"{settings.NEXTCLOUD_URL}/ocs/v2.php/apps/files_sharing/api/v1/shares/{id}",
@@ -66,7 +65,6 @@ def update_shares_object(request):
     if not access_token:
         return redirect("login")
 
-    # use the token to make an API call
     headers = {"Authorization": f"Bearer {access_token}"}
     response = requests.get(
         f"{settings.NEXTCLOUD_URL}/ocs/v2.php/apps/files_sharing/api/v1/shares?format=json",
