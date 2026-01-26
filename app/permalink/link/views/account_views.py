@@ -26,6 +26,7 @@ def mycloud_login_view(request):
     print(redirect_uri)
     if settings.OIDC_FORCE_HTTPS:
         redirect_uri = redirect_uri.replace("http://", "https://", 1)
+    print(redirect_uri)
     response = oauth.nextcloud.authorize_redirect(request, redirect_uri)
     request.session.save()  # ensure the session with state is persisted
     return response
