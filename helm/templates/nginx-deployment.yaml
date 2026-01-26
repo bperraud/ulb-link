@@ -32,6 +32,8 @@ spec:
           value: {{ .Values.web.NEXTCLOUD_URL }}
         - name: NGINX_ENVSUBST_OUTPUT_DIR
           value: /etc/nginx/conf.d
+        - name: NGINX_SCHEME
+          value: https
         ports:
         - containerPort: 8080
         - containerPort: 443
