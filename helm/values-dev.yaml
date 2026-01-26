@@ -37,5 +37,4 @@ oidc:
   tokenEndpoint: "https://auth-dev.ulb.be/oidc/oidcAccessToken"
   userEndpoint: "https://auth-dev.ulb.be/oidc/oidcProfile"
   jwksEndpoint: "https://auth-dev.ulb.be/oidc/jwks"
-  forceHttps: "True"
   logoutEndpoint: "https://auth-dev.ulb.be/oidc/oidcLogout"

@@ -1,7 +1,4 @@
-
 acme_server: https://acme-v02.api.letsencrypt.org/directory/
-
-
 
 nginx:
   image: registry.gitlab.ulb.be/pole-techno/okd-apps/django-permalink/nginx:prd
@@ -13,8 +10,6 @@ web:
 
   SITE_PROTOCOL : "https"
   SITE_DOMAIN: "permalink.ulb.be"
-
-  SITE_PROTOCOL : "https"
   CSRF_TRUSTED_ORIGINS: "https://permalink.ulb.be,https://mycloud.ulb.be"
 
   # no trailling slash for nextcloud_url
@@ -31,8 +26,6 @@ web:
 
   image: registry.gitlab.ulb.be/pole-techno/okd-apps/django-permalink/permalink:prd
 
-    
-
 oidc:
   clientId: ""
   clientSecret: ""
@@ -42,4 +35,3 @@ oidc:
   userEndpoint: "https://auth.ulb.be/oidc/oidcProfile"
   jwksEndpoint: "https://auth.ulb.be/oidc/jwks"
   logoutEndpoint: "https://auth.ulb.be/oidc/oidcLogout"
-  forceHttps: "True"
