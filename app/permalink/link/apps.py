@@ -10,6 +10,7 @@ class PermalinkConfig(AppConfig):
 
 def absolutify_https(request, path):
     url = request.build_absolute_uri(path)
+    print(url)
     if settings.OIDC_FORCE_HTTPS:
         url = url.replace("http://", "https://", 1)
     return url
