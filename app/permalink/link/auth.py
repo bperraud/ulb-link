@@ -16,10 +16,8 @@ import jwt, time, requests
 class CustomJWTAuthentication(BaseAuthentication):
     def authenticate(self, request):
         auth_header = request.headers.get("Authorization")
-
         if not auth_header or not auth_header.startswith("Bearer "):
             return None  # Returning None lets DRF fall back to other auth classes
-
         token = auth_header.split(" ")[1]
 
         try:
@@ -30,7 +28,6 @@ class CustomJWTAuthentication(BaseAuthentication):
             raise AuthenticationFailed("Invalid JWT token")
 
         user, _ = User.objects.get_or_create(username=payload.get("sub"))
-
         return (user, None)
 
 

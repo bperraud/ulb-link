@@ -37,6 +37,7 @@ class LinkEditSerializer(serializers.Serializer):
     target_url = serializers.URLField()
     token = serializers.CharField()
 
+
 class ExternalLinkAPIView(APIView):
     authentication_classes = [CustomJWTAuthentication]
 
@@ -57,7 +58,6 @@ class ExternalLinkAPIView(APIView):
     def post(self, request):
         serializer = ShareCreateSerializer(data=request.data)
         if serializer.is_valid():
-            print(serializer.validated_data)
             share = Share.objects.create(**serializer.validated_data)
             link = Link.objects.create(
                 user=request.user, share=share, token=generate_unique_token()
