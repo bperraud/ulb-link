@@ -9,7 +9,7 @@ web:
   DEBUG: "True"
   SECURE_SSL_REDIRECT: "False"
 
-  SITE_PROTOCOL : "https"
+  SITE_PROTOCOL: "https"
   SITE_DOMAIN: "permalink.apps.dev.okd.hpda.ulb.ac.be"
   CSRF_TRUSTED_ORIGINS: "https://permalink.apps.dev.okd.hpda.ulb.ac.be,https://nc-test.ulb.ac.be"
 
@@ -17,13 +17,15 @@ web:
 
   # no trailling slash for nextcloud_url
   NEXTCLOUD_URL: https://nc-test.ulb.ac.be
-  # NEXTCLOUD_CLIENT_ID: "PQSdKgelXR0xmuvHPpJ23hw4Ew01OrsL3ageLLGpjZJWtn8NR4RfOgE19S8DqO7e"
-  # NEXTCLOUD_SECRET_ID: "nCWuWvjD7SDppyCUNXDYhTtIsdlX8PFPIIDe4buYErSmU29T4gKnpeWn5QwpSJsx"
-  NEXTCLOUD_CLIENT_ID: "rj3pe6fc4KJOnh7gwy2AOHwHVKmM6S9XWKYqRJXWHut9XXP4SBReCM6mroFgAFOR"
-  NEXTCLOUD_SECRET_ID: "bWs61BGtOASlkPSWvdLI2sKDHVsLRYGToGnnmIBXmU1a5PWzTNiWHHPEZ7V0xHmq"
+  NEXTCLOUD_CLIENT_ID: "K0iXVR1TOeQnNmJKbYjLsHsCxCz4otdJUhEP2NbCcDRmPvrgeIaReOk33wlkm3g4"
+  NEXTCLOUD_SECRET_ID: "QVug02cIhHMwIj0SYkPpk4TkBOMlPSkqWBwbnnRb3Dn01ALMkx6ymstikL3HTucC"
 
   NEXTCLOUD_ADMIN_USER: "ncadmin"
   NEXTCLOUD_ADMIN_PASSWORD: "n9UeWq24JkA1rLzX"
+
+  DJANGO_SUPERUSER_EMAIL: admin@example.com
+  DJANGO_SUPERUSER_USERNAME: "admin_permalink"
+  DJANGO_SUPERUSER_PASSWORD: "admin_password"
 
   image: registry.gitlab.ulb.be/pole-techno/okd-apps/django-permalink/permalink:dev
 
@@ -35,5 +37,4 @@ oidc:
   tokenEndpoint: "https://auth-dev.ulb.be/oidc/oidcAccessToken"
   userEndpoint: "https://auth-dev.ulb.be/oidc/oidcProfile"
   jwksEndpoint: "https://auth-dev.ulb.be/oidc/jwks"
-  forceHttps: "True"
   logoutEndpoint: "https://auth-dev.ulb.be/oidc/oidcLogout"

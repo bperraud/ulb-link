@@ -8,19 +8,25 @@ import urllib.parse
 from link.context_processors import get_host
 from link.models import User
 
+
 def login_view(request):
-    return render(request, 'login_page.html')
+    return render(request, "login_page.html")
+
 
 def logout_view(request):
     logout(request)
     request.session.flush()
-    return redirect(f"{settings.OIDC_OP_LOGOUT_ENDPOINT}?service={urllib.parse.quote(get_host(), safe='')}")
+    return redirect(
+        f"{settings.OIDC_OP_LOGOUT_ENDPOINT}?service={urllib.parse.quote(get_host(), safe='')}"
+    )
+
 
 def mycloud_login_view(request):
     redirect_uri = request.build_absolute_uri("/auth/callback/")
     response = oauth.nextcloud.authorize_redirect(request, redirect_uri)
     request.session.save()  # ensure the session with state is persisted
     return response
+
 
 def auth_callback(request):
     token = oauth.nextcloud.authorize_access_token(request)
@@ -36,7 +42,7 @@ def auth_callback(request):
     username = cloud_user.get("id")
     email = cloud_user.get("email") or f"{username}@nextcloud.be"
 
-    try :
+    try:
         user = User.objects.get(username=username)
     except User.DoesNotExist:
         user = User.objects.create(username=username, email=email)

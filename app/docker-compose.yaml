@@ -35,11 +35,12 @@ services:
     container_name: nginx
     build:
       context: ./nginx
-      args:
-        SITE_DOMAIN_ARG: localhost
-        NGINX_PORT: 80
     environment:
       NGINX_ENVSUBST_OUTPUT_DIR: /etc/nginx/conf.d
+      SITE_DOMAIN: localhost
+      NGINX_PORT: "80"
+      NEXTCLOUD_URL: nc-test.ulb.ac.be
+      NGINX_SCHEME: http
     restart: always
     ports:
       - "80:80"
