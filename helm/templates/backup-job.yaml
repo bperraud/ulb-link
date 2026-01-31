@@ -1,0 +1,41 @@
+{{/* apiVersion: batch/v1 */}}
+{{/* kind: CronJob */}}
+{{/* metadata: */}}
+{{/*   name: permalink-db-backup */}}
+{{/* spec: */}}
+{{/*   schedule: '27 23 * * *' */}}
+{{/*   concurrencyPolicy: Forbid */}}
+{{/*   jobTemplate: */}}
+{{/*     spec: */}}
+{{/*       ttlSecondsAfterFinished: 86400 */}}
+{{/*       backoffLimit: 0 */}}
+{{/*       template: */}}
+{{/*         spec: */}}
+{{/*           restartPolicy: Never */}}
+{{/*           volumes: */}}
+{{/*             - name: nextcloud-data */}}
+{{/*               persistentVolumeClaim: */}}
+{{/*                 claimName: nextcloud-data */}}
+{{/*             - name: nextcloud-scripts */}}
+{{/*               configMap: */}}
+{{/*                 name: nextcloud-scripts */}}
+{{/*                 defaultMode: 0777 */}}
+{{/*           containers: */}}
+{{/*             - env: */}}
+{{/*               - name: DBPASS */}}
+{{/*                 valueFrom: */}}
+{{/*                   secretKeyRef: */}}
+{{/*                     name: mariadb-creds */}}
+{{/*                     key: mariadb-password */}}
+{{/*               {{- if .Values.nextcloud.env.db_backup }}{{- toYaml .Values.nextcloud.env.db_backup | nindent 14 }}{{- end }} */}}
+{{/*               image: '{{ .Values.nextcloud.image.phpfpm }}' */}}
+{{/*               name: nextcloud-db-backup */}}
+{{/*               resources: */}}
+{{/*                 {{- toYaml .Values.nextcloud.resources.db_backup | nindent 16 }} */}}
+{{/*               command: */}}
+{{/*                 - /scripts/backup_db.sh */}}
+{{/*               volumeMounts: */}}
+{{/*                 - name: nextcloud-data */}}
+{{/*                   mountPath: /srv/data */}}
+{{/*                 - name: nextcloud-scripts */}}
+{{/*                   mountPath: /scripts */}}

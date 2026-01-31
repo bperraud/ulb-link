@@ -22,8 +22,6 @@ web:
   NEXTCLOUD_ADMIN_USER: ""
   NEXTCLOUD_ADMIN_PASSWORD: ""
 
-  DJANGO_SUPERUSER_EMAIL: admin@ulb.be
-
   image: registry.gitlab.ulb.be/pole-techno/okd-apps/django-permalink/permalink:prd
 
 oidc:

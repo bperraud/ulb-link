@@ -22,6 +22,18 @@ spec:
         envFrom:
           - configMapRef:
               name: db-config
+        env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-creds
+                  key: postgres-admin-user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-creds
+                  key: postgres-admin-password
+
         ports:
         - containerPort: 5432
         volumeMounts:
