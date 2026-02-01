@@ -36,14 +36,14 @@ spec:
                   key: DATABASE_HOST
             - name: PG_USER
               valueFrom:
-                configMapKeyRef:
-                  name: db-config
-                  key: POSTGRES_USER
+                secretKeyRef:
+                  name: postgres-creds
+                  key: postgres-user
             - name: PGPASSWORD
               valueFrom:
-                configMapKeyRef:
-                  name: db-config
-                  key: POSTGRES_PASSWORD
+                secretKeyRef:
+                  name: postgres-creds
+                  key: postgres-password
           command: ['sh', '-c', 'until psql -h $PG_HOST -U $PG_USER -d postgres -c "SELECT 1" >/dev/null 2>&1; do sleep 1; done;']
 
       containers:
@@ -60,6 +60,17 @@ spec:
               name: web-config
           - configMapRef:
               name: db-config
+        env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-creds
+                  key: postgres-user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-creds
+                  key: postgres-password
         ports:
         - containerPort: 8000
         volumeMounts:
