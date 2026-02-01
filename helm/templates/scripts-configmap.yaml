@@ -1,0 +1,43 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: permalink-scripts
+data: 
+  backup_db.sh: |+
+    #!/bin/bash
+
+    set -e
+    set -o pipefail
+
+    keep=10
+
+    backupdir="/var/backups"
+    lockfile="$backupdir/.lock"
+
+    if [ -z "$1" ]; then
+      backup_file="backup-`date +%d-%m-%+4Y_%H:%M`.sql.gz"
+    else
+      backup_file="$1"
+    fi
+
+    mkdir -p "$backupdir"
+
+    if [ -e "$lockfile" ]; then
+      echo "Backup lock file exists; not backup up"
+      exit 1
+    fi
+
+    trap "rm -f $lockfile" exit
+    touch "$lockfile"
+    sleep 2
+
+    echo "Backing up database from posgres primary..."
+    if ! pg_dump -h "$DATABASE_HOST" -U "$POSTGRES_USER" -d "$POSTGRES_DB" | gzip > "$backupdir/$backup_file"; then
+      rm -f $backup_file
+      echo "Backup failed!"
+      exit 1
+    fi
+
+    echo "Pruning old backups"
+    ls -tr | head -n -$keep | xargs rm -f

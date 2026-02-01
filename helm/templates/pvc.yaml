@@ -22,4 +22,16 @@ spec:
   resources:
     requests:
         storage: 10Gi
-
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-backup-pvc
+  annotations:
+    "helm.sh/resource-policy": keep
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+        storage: 3Gi
