@@ -22,6 +22,8 @@ data:
     fi
 
     mkdir -p "$backupdir"
+    cd "$backupdir"
+    ls -la
 
     if [ -e "$lockfile" ]; then
       echo "Backup lock file exists; not backup up"
@@ -33,7 +35,7 @@ data:
     sleep 2
 
     echo "Backing up database from posgres primary..."
-    if ! pg_dump -h "$DATABASE_HOST" -U "$POSTGRES_USER" -d "$POSTGRES_DB" | gzip > "$backupdir/$backup_file"; then
+    if ! pg_dump -h "$DATABASE_HOST" -U "$POSTGRES_USER" -d "$POSTGRES_DB" | gzip > "$$backup_file"; then
       rm -f $backup_file
       echo "Backup failed!"
       exit 1

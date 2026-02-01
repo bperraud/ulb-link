@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: permalink-db-backup
 spec:
-  schedule: '27 23 * * *'
+  schedule: "27 23 * * *"
   concurrencyPolicy: Forbid
   jobTemplate:
     spec:
@@ -13,34 +13,37 @@ spec:
         spec:
           restartPolicy: Never
           volumes:
-            - name: postgres-backup-pvc
+            - name: postgres-backup
               persistentVolumeClaim:
-                claimName: permalink-backup
-            - name: nextcloud-scripts
+                claimName: postgres-backup-pvc
+            - name: permalink-scripts
               configMap:
-                name: nextcloud-scripts
+                name: permalink-scripts
                 defaultMode: 0777
           containers:
-            envFrom:
-              - configMapRef:
-                name: db-config
-            env:
-              - name: POSTGRES_USER
-                valueFrom:
-                  secretKeyRef:
-                    name: postgres-creds
-                    key: postgres-user
-              - name: PGPASSWORD
-                valueFrom:
-                  secretKeyRef:
-                    name: postgres-creds
-                    key: postgres-password
-            image: postgres:17.5
-            name: permalink-db-backup
-            command:
+            - name: permalink-db-backup
+              resources:
+                limits:
+                  memory: "256Mi"
+              image: postgres:17.5
+              envFrom:
+                - configMapRef:
+                    name: db-config
+              env:
+                - name: POSTGRES_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgres-creds
+                      key: postgres-user
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgres-creds
+                      key: postgres-password
+              command:
                 - /scripts/backup_db.sh
-            volumeMounts:
-                - name: permalink-backup
+              volumeMounts:
+                - name: postgres-backup
                   mountPath: /var/backups
-                - name: nextcloud-scripts
+                - name: permalink-scripts
                   mountPath: /scripts
