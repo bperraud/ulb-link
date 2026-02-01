@@ -17,7 +17,7 @@ spec:
       - name: postgresdb
         resources:
           limits:
-            memory: "1Gi"
+            memory: "3Gi"
         image: bitnamilegacy/postgresql:17.6.0
         envFrom:
           - configMapRef:
