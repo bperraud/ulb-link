@@ -1,5 +1,7 @@
 
 acme_server: https://acme-v02.api.letsencrypt.org/directory/
+  
+ACME: "False"
 
 nginx:
   image: registry.gitlab.ulb.be/pole-techno/okd-apps/django-permalink/nginx:dev

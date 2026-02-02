@@ -5,19 +5,20 @@ metadata:
   labels:
     app.kubernetes.io/action: common
     app.kubernetes.io/managed-by: Helm
+  {{- if .Values.ACME }}
+  annotations:
+    cert-manager.io/issuer-kind: ClusterIssuer
+    cert-manager.io/issuer-name: letsencrypt-prod
+  {{- end }}
 spec:
   to:
     kind: Service
     name: nginx
-  {{/* secretName: permalink-ssl-secret */}}
+  secretName: permalink-ssl-secret
   tls:
     termination: edge
     insecureEdgeTerminationPolicy: Redirect
-  {{/* annotations: */}}
-  {{/*   cert-manager.io/issuer-kind: ClusterIssuer */}}
-  {{/*   cert-manager.io/issuer-name: letsencrypt-prod */}}
   host: {{ .Values.web.SITE_DOMAIN }}
   port:
     targetPort: http
   wildcardPolicy: None
-
