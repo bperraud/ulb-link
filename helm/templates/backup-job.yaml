@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: permalink-db-backup
 spec:
-  schedule: "27 23 * * *"
+  schedule: {{ .Values.helm.cronjob.schedule }}
   concurrencyPolicy: Forbid
   jobTemplate:
     spec:
