@@ -6,17 +6,14 @@ from datetime import date, timedelta
 
 input_style = "w-80 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 
+
 class LinkForm(ModelForm):
 
     target_url = forms.URLField(
         label="Share Target URL",
-        required=False,
+        required=True,
         disabled=True,
-        widget=forms.URLInput(
-            attrs={
-                "class": input_style
-            }
-        ),
+        widget=forms.URLInput(attrs={"class": input_style}),
     )
 
     expiration = forms.DateField(
@@ -48,7 +45,6 @@ class LinkForm(ModelForm):
             self.fields["target_url"].disabled = False
             self.fields["target_url"].initial = self.instance.direct_target_url
 
-
     def save(self, commit=True):
         instance = super().save(commit=False)
         # Update share.expiration
@@ -56,9 +52,8 @@ class LinkForm(ModelForm):
         if instance.share and expiration:
             instance.share.expiration = expiration
             instance.share.save()
-        else :
+        else:
             instance.direct_target_url = self.cleaned_data.get("target_url")
         if commit:
             instance.save()
         return instance
-
