@@ -1,6 +1,6 @@
 acme_server: https://acme-v02.api.letsencrypt.org/directory/
 
-
+ACME: "True"
 
 helm:
   nginx:
@@ -12,7 +12,6 @@ helm:
 
 web:
 
-  ACME: "True"
   DEBUG: "False"
   SECURE_SSL_REDIRECT: "False"
 
