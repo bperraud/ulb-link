@@ -27,7 +27,7 @@ spec:
           resources:
              limits:
                memory: "128Mi"
-          image: bitnamilegacy/postgresql:17.6.0
+          image: "{{ .Values.helm.postgres.image }}"
           env:
             - name: PG_HOST
               valueFrom:

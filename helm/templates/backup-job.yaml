@@ -25,7 +25,7 @@ spec:
               resources:
                 limits:
                   memory: "256Mi"
-              image: bitnamilegacy/postgresql:17.6.0
+              image: "{{ .Values.helm.postgres.image }}"
               envFrom:
                 - configMapRef:
                     name: db-config

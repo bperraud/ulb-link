@@ -8,6 +8,8 @@ helm:
     image: registry.gitlab.ulb.be/pole-techno/okd-apps/django-permalink/nginx:prd
   cronjob:
     schedule: "*/10 * * * *"
+  postgres:
+    image: docker.io/bitnamilegacy/postgresql:17.6.0
 
 web:
 
