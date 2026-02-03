@@ -6,7 +6,7 @@ helm:
   nginx:
     image: registry.gitlab.ulb.be/pole-techno/okd-apps/django-permalink/nginx:prd
   cronjob:
-    schedule: "27 23 * * *"
+    schedule: "27 */5 * * *"
   postgres:
     image: docker.io/bitnamilegacy/postgresql:17.6.0
 
