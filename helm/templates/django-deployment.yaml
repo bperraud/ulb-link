@@ -27,7 +27,7 @@ spec:
           resources:
              limits:
                memory: "128Mi"
-          image: postgres:17.5
+          image: bitnamilegacy/postgresql:17.6.0
           env:
             - name: PG_HOST
               valueFrom:
