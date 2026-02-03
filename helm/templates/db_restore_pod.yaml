@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: permalink-db-restore-pod
+spec:
+  restartPolicy: Never
+  volumes:
+    - name: postgres-backup
+      persistentVolumeClaim:
+        claimName: postgres-backup-pvc
+    - name: permalink-scripts
+      configMap:
+        name: permalink-scripts
+        defaultMode: 0777
+  containers:
+    - name: permalink-db-restore
+      image: "{{ .Values.helm.postgres.image }}"
+      resources:
+        limits:
+          memory: "512Mi"
+      envFrom:
+        - configMapRef:
+            name: db-config
+      env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: postgres-creds
+              key: postgres-user
+        - name: PGPASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-creds
+              key: postgres-password
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-creds
+              key: postgres-password
+
+      volumeMounts:
+        - name: postgres-backup
+          mountPath: /var/backups
+        - name: permalink-scripts
+          mountPath: /scripts
