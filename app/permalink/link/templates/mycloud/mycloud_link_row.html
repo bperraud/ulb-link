@@ -13,7 +13,7 @@
 
 <script>
 function copyToClipboard() {
-  navigator.clipboard.writeText("{{ HOST }}/{{ link.token }}").then(() => {
+  navigator.clipboard.writeText("{{ HOST }}/t/{{ link.token }}").then(() => {
     showAlert("Permalink copied to clipboard");
   });
 }
