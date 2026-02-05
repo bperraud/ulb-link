@@ -10,7 +10,7 @@ data:
     set -e
     set -o pipefail
 
-    keep=10
+    keep=20
 
     backupdir="/var/backups"
     lockfile="$backupdir/.lock"
