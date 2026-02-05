@@ -1,0 +1,8 @@
+<script>
+function copyToClipboard( linkToken ) {
+  navigator.clipboard.writeText("{{ HOST }}/t/" + linkToken).then(() => {
+    showAlert("Permalink copied to clipboard");
+  });
+}
+</script>
+
