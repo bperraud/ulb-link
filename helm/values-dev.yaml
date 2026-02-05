@@ -20,12 +20,10 @@ web:
   SITE_DOMAIN: "permalink.apps.dev.okd.hpda.ulb.ac.be"
   CSRF_TRUSTED_ORIGINS: "https://permalink.apps.dev.okd.hpda.ulb.ac.be,https://nc-test.ulb.ac.be"
 
-  SECRET_KEY: "django-t:55_t5&e(l@ne*(r2x34-44wch895qsr4v2nsjteq2br2e(s)"
-
   # no trailling slash for nextcloud_url
   NEXTCLOUD_URL: https://nc-test.ulb.ac.be
-  NEXTCLOUD_CLIENT_ID: "K0iXVR1TOeQnNmJKbYjLsHsCxCz4otdJUhEP2NbCcDRmPvrgeIaReOk33wlkm3g4"
-  NEXTCLOUD_SECRET_ID: "QVug02cIhHMwIj0SYkPpk4TkBOMlPSkqWBwbnnRb3Dn01ALMkx6ymstikL3HTucC"
+  NEXTCLOUD_CLIENT_ID: "5r3jSgyPDkxHxj5HrDnLjclw7ROXKx8NxovMiLUgQ5oF3FneHUP0PvZt6D4IJWkc"
+  NEXTCLOUD_SECRET_ID: "sbfAxfssSmYOLNfCm4Qih2Mpxyfi1WEYsgHPl79wYpyWF8ljhEU9tEOyvxAUtBUM"
 
   NEXTCLOUD_ADMIN_USER: "nc_admin"
   NEXTCLOUD_ADMIN_PASSWORD: "n9UeWq24JkA1rLzX"
