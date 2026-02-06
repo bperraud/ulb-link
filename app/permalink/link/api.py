@@ -69,17 +69,15 @@ class ExternalLinkAPIView(APIView):
         return Response(serializer.errors, status=400)
 
     def get(self, request):
-        target_url = request.query_params.get("target_url")
+        uid = request.query_params.get("uid")
 
-        if not target_url:
+        if not uid:
             return Response(
-                {"error": "Missing 'target_url' query parameter"},
+                {"error": "Missing 'uid' query parameter"},
                 status=400,
             )
         try:
-            permalink = Link.objects.get(
-                user=request.user, share__target_url=unquote(target_url)
-            )
+            permalink = Link.objects.get(share__uid=uid)
         except Link.DoesNotExist:
             return Response(
                 {"error": "Permalink does not exist"},

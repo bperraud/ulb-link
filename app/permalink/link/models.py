@@ -1,4 +1,5 @@
 from django.db import models
+
 # from django.contrib.auth.models import User
 from django.core.validators import MinLengthValidator
 
@@ -9,8 +10,10 @@ from django.dispatch import receiver
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 
+
 class User(AbstractUser):
     is_nextcloud_user = models.BooleanField(default=False)
+
 
 class Share(models.Model):
     uid = models.IntegerField(primary_key=True)
@@ -20,7 +23,9 @@ class Share(models.Model):
 
 
 class Link(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="link")
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="link"
+    )
 
     share = models.ForeignKey(
         Share,
