@@ -8,8 +8,6 @@ from rest_framework.permissions import IsAuthenticated
 
 from link.models import Link, Share
 from link.auth import CustomJWTAuthentication
-from urllib.parse import unquote
-
 import string, random
 
 
@@ -53,7 +51,7 @@ class ExternalLinkAPIView(APIView):
                 {"permalink": link.get_permalink()},
                 status=200,
             )
-        return Response(serializer.errors, status=400)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request):
         serializer = ShareCreateSerializer(data=request.data)
@@ -66,7 +64,7 @@ class ExternalLinkAPIView(APIView):
                 {"permalink": link.get_permalink()},
                 status=201,
             )
-        return Response(serializer.errors, status=400)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
         uid = request.query_params.get("uid")
@@ -74,14 +72,14 @@ class ExternalLinkAPIView(APIView):
         if not uid:
             return Response(
                 {"error": "Missing 'uid' query parameter"},
-                status=400,
+                status=status.HTTP_400_BAD_REQUEST,
             )
         try:
             permalink = Link.objects.get(share__uid=uid)
         except Link.DoesNotExist:
             return Response(
                 {"error": "Permalink does not exist"},
-                status=400,
+                status=status.HTTP_400_BAD_REQUEST,
             )
         return Response(
             {
@@ -93,21 +91,19 @@ class ExternalLinkAPIView(APIView):
         )
 
     def delete(self, request):
-        target_url = request.query_params.get("target_url")
+        uid = request.query_params.get("uid")
 
-        if not target_url:
+        if not uid:
             return Response(
-                {"error": "Missing 'target_url' query parameter"},
-                status=400,
+                {"error": "Missing 'uid' query parameter"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
         try:
-            permalink = Link.objects.get(
-                user=request.user, share__target_url=unquote(target_url)
-            )
+            permalink = Link.objects.get(share__uid=uid)
         except Link.DoesNotExist:
             return Response(
                 {"error": "Permalink does not exist"},
-                status=400,
+                status=status.HTTP_404_NOT_FOUND,
             )
         permalink.delete()
         return Response({"message": "Permalink deleted successfully"}, status=200)

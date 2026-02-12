@@ -5,7 +5,7 @@ from link.api import ExternalLinkAPIView, LinkAPIView
 from link.views.views import *
 
 urlpatterns = [
-    path("api/external/", ExternalLinkAPIView.as_view(), name="external-api"),
+    path("api/v1/", ExternalLinkAPIView.as_view()),
     path("api/<int:pk>", LinkAPIView.as_view(), name="link-api"),
     path("toolbar/<int:nb>", toolbar),
     path("edit/<int:pk>", edit_link, name="link-edit-row"),
