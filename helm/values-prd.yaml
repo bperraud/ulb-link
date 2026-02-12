@@ -1,6 +1,7 @@
 acme_server: https://acme-v02.api.letsencrypt.org/directory/
 
-ACME: "True"
+restore_pod: false
+ACME: true
 
 helm:
   nginx:
