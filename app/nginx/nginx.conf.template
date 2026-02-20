@@ -29,6 +29,10 @@ server {
         send_timeout 180;
     }
 
+    location = /favicon.ico {
+        alias /app/static/favicon.png;
+    }
+
     location /static/ {
         alias /app/static_root/;
     }
