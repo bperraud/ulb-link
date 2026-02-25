@@ -68,6 +68,12 @@ def refresh_token(refresh_token):
 
 class OIDCCAS(OIDCAuthenticationBackend):
 
+    def filter_users_by_claims(self, claims):
+        username = claims.get("id", "")
+        if not username:
+            username = claims.get("sub", "")
+        return User.objects.filter(username=username)
+
     def save_fields(self, user, claims):
         user.username = claims.get("id", "")
         user.email = claims.get("email", "")
