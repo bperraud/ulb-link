@@ -5,27 +5,7 @@ import requests, json
 
 from link.models import Share
 
-import xml.etree.ElementTree as ET
 from django.conf import settings
-
-
-def parse_xml(xml_data: str):
-    root = ET.fromstring(xml_data)
-    # namespace handling is not required here as the XML has no default NS
-    elements = root.find("data").findall("element")
-
-    for el in elements:
-        try:
-            share = Share.objects.get(uid=el.findtext("id"))
-            share.path = el.findtext("path")
-            index = share.target_url.rfind("/")
-            share.target_url = share.target_url[: index + 1] + el.findtext("token")
-            share.expiration = (
-                el.findtext("expiration") if el.findtext("expiration") else None
-            )
-            share.save()
-        except Share.DoesNotExist:
-            pass
 
 
 def parse_json(json_data: dict):
@@ -73,6 +53,5 @@ def update_shares_object(request):
 
     if response.status_code == 200:
         parse_json(json.loads(response.text))
-        # parse_xml(response.text)
 
     return HttpResponse(response.text)

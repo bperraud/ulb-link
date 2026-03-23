@@ -160,7 +160,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
 LANGUAGE_CODE = "en-us"
-TIME_ZONE = "Europe/Brussels"
+TIME_ZONE = os.environ.get("TIME_ZONE")
 USE_I18N = True
 USE_TZ = True
 
@@ -261,3 +261,10 @@ LOGGING = {
         },
     },
 }
+
+
+# Celery
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL")
+CELERY_TIMEZONE = os.environ.get("TIME_ZONE")
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_TASK_SERIALIZER = "json"
