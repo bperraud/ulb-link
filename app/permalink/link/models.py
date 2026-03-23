@@ -9,6 +9,7 @@ from django.dispatch import receiver
 
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
+import requests
 
 
 class User(AbstractUser):
@@ -55,6 +56,18 @@ class Link(models.Model):
 
     def get_permalink(self):
         return f"{get_host()}/t/{self.token}"
+
+    def self_test(self):
+        target_url = self.share.target_url if self.share else self.direct_target_url
+        try:
+            response = requests.get(target_url, timeout=5)
+            print(response)
+            if response.status_code < 400:
+                return True
+            return False
+        except Exception as e:
+            print(e)
+            return False
 
 
 @receiver(post_delete, sender=Link)
