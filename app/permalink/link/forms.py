@@ -19,13 +19,7 @@ class LinkForm(ModelForm):
     expiration = forms.DateField(
         label="Expiration Date",
         required=False,
-        widget=forms.DateInput(
-            attrs={
-                "type": "date",
-                "min": date.today().strftime("%Y-%m-%d"),
-                "max": (date.today() + timedelta(days=365)).strftime("%Y-%m-%d"),
-            }
-        ),
+        widget=forms.DateInput(attrs={"type": "date"}),
     )
 
     class Meta:
@@ -37,6 +31,12 @@ class LinkForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields["expiration"].widget.attrs["min"] = date.today().strftime(
+            "%Y-%m-%d"
+        )
+        self.fields["expiration"].widget.attrs["max"] = (
+            date.today() + timedelta(days=365)
+        ).strftime("%Y-%m-%d")
         if self.instance and self.instance.share:
             self.fields["target_url"].initial = self.instance.share.target_url
             self.fields["expiration"].initial = self.instance.share.expiration
