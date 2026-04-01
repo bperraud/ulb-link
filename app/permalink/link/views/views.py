@@ -13,7 +13,11 @@ from rest_framework.generics import get_object_or_404
 from link.decorators import nextcloud_user_required
 from link.models import Link
 from link.forms import LinkForm
-from link.views.nextcloud_views import update_shares_object, update_share_in_nextcloud
+from link.views.nextcloud_views import (
+    update_shares_object,
+    update_share_in_nextcloud,
+    get_nextcloud_shares,
+)
 
 
 @method_decorator([login_required], name="dispatch")
@@ -82,11 +86,17 @@ def edit_link(request, pk):
     if request.method == "POST":
         form = LinkForm(request.POST, instance=link)
         if form.is_valid():
-            if link.share:
-                update_share_in_nextcloud(request, link.share.uid)
-            form.save()
             response = HttpResponse()
             response["HX-Refresh"] = "true"
+            if link.share:
+                try:
+                    update_share_in_nextcloud(request, link.share.uid)
+                except Exception as e:
+                    response["HX-Trigger"] = json.dumps(
+                        {"flashMessage": "Error editing Permalink" + str(e)}
+                    )
+                    return response
+            form.save()
             response["HX-Trigger"] = json.dumps(
                 {"flashMessage": "Permalink successfully edited"}
             )
@@ -98,6 +108,25 @@ def edit_link(request, pk):
         request,
         "modal_edit.html",
         {"form": form, "link": link, "modal_title": "Edit Permalink"},
+    )
+
+
+@login_required
+@require_http_methods(["GET", "POST"])
+def create_bulk(request):
+    if request.method == "POST":
+        pass
+
+    json_shares = get_nextcloud_shares(request)
+    shares = json_shares["ocs"]["data"]
+
+    return render(
+        request,
+        "modal_create_bulk.html",
+        {
+            "shares": shares,
+            "modal_title": "Select shares that you want to create permalink for",
+        },
     )
 
 
