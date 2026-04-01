@@ -119,6 +119,12 @@ def create_bulk(request):
 
     json_shares = get_nextcloud_shares(request)
     shares = json_shares["ocs"]["data"]
+    links = Link.objects.filter(user=request.user, share__isnull=False)
+    permalink_share_ids = [str(link.share.uid) for link in links]
+
+    for share in shares[:]:
+        if share["id"] in permalink_share_ids:
+            shares.remove(share)
 
     return render(
         request,
