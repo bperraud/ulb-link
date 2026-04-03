@@ -1,41 +1,62 @@
 <div>
 
+  <form 
+    method="POST"
+    id="createBulkForm"
+    hx-post="{% url 'create-bulk' %}"
+    class="p-4 md:p-5"
+  >
+    {% csrf_token %}
+
+    <div class="p-4">
+      <label>
+        <input type="checkbox" id="selectAll">
+        Select All
+      </label>
+    </div>
 
     <div class="p-8">
-
-        <ul>
-
-        {% for share in shares %}
-            <li id="share-{{ share.id }}">
-                 {{ share.path }}
-            </li>
-        {% empty %}
-            {{ error_msg }}
-        {% endfor %}
-
-        </ul>
-
+      {% for share in shares %}
+        <div class="flex items-center gap-2 mb-2">
+          <input 
+            type="checkbox"
+            class="w-4 h-4 border border-default-medium rounded-xs bg-neutral-secondary-medium focus:ring-2 focus:ring-brand-soft"
+            name="share_checkbox"
+            value="{{ share.id }}"
+          >
+          <span>{{ share.path }}</span>
+        </div>
+      {% empty %}
+        <p>{{ error_msg }}</p>
+      {% endfor %}
     </div>
-    
+
     <div class="flex justify-center p-4">
-        <button
-          type="submit"
-          form="editForm"
-          id="submitButton"
-          class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        >
-            Submit
-        </button>
+      <button
+        type="submit"
+        id="submitButton"
+        class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+      >
+        Submit
+      </button>
     </div>
+
+  </form>
+
 </div>
+
 
 {% block scripts %}
 <script>
-    document.getElementById('submitButton').addEventListener('click', function() {
-        htmx.trigger(document.getElementById('editForm'), 'submit');
-    });
-    if (document.getElementById('modalTitle')) {
-      modalTitle.textContent = "{{ modal_title|escapejs }}";
-    }
+  document.getElementById('selectAll')?.addEventListener('change', function () {
+    const checkboxes = document.querySelectorAll('input[name="share_checkbox"]');
+    checkboxes.forEach(cb => cb.checked = this.checked);
+  });
+
+  const modalTitle = document.getElementById('modalTitle');
+  if (modalTitle) {
+    modalTitle.textContent = "{{ modal_title|escapejs }}";
+  }
 </script>
 {% endblock %}
+

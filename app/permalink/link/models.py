@@ -2,6 +2,7 @@ from django.db import models
 
 # from django.contrib.auth.models import User
 from django.core.validators import MinLengthValidator
+import string, random
 
 from link.context_processors import get_host
 from django.db.models.signals import post_delete
@@ -53,6 +54,18 @@ class Link(models.Model):
         unique=True,
         null=False,
     )
+
+    def save(self, *args, **kwargs):
+        if not self.token:
+            self.token = self._generate_unique_token()
+        super().save(*args, **kwargs)
+
+    def _generate_unique_token(self, length=10) -> str:
+        chars = string.ascii_letters + string.digits
+        while True:
+            token = "".join(random.choices(chars, k=length))
+            if not Link.objects.filter(token=token).exists():
+                return token
 
     def get_permalink(self):
         return f"{get_host()}/t/{self.token}"

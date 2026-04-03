@@ -5,15 +5,13 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
-from django.urls import reverse
 
 import json
 from rest_framework.generics import get_object_or_404
 from link.decorators import nextcloud_user_required
-from link.models import Link
+from link.models import Link, Share
 from link.forms import LinkForm
 from link.views.nextcloud_views import (
-    NotAuthenticated,
     update_shares_object,
     update_share_in_nextcloud,
     get_nextcloud_shares,
@@ -115,14 +113,25 @@ def edit_link(request, pk):
 @nextcloud_user_required
 @require_http_methods(["GET", "POST"])
 def create_bulk(request):
-    if request.method == "POST":
-        pass
-
     json_shares = get_nextcloud_shares(request)
     shares = json_shares["ocs"]["data"]
     links = Link.objects.filter(user=request.user, share__isnull=False)
-    permalink_share_ids = [str(link.share.uid) for link in links]
 
+    if request.method == "POST":
+        selected_ids = request.POST.getlist("share_checkbox")
+        for share in shares:
+            if share["id"] not in selected_ids:
+                continue
+            share = Share.objects.create(uid=share["id"], target_url=share["url"])
+            Link.objects.create(user=request.user, share=share)
+        response = HttpResponse()
+        response["HX-Refresh"] = "true"
+        response["HX-Trigger"] = json.dumps(
+            {"flashMessage": "Permalinks successfully created"}
+        )
+        return response
+
+    permalink_share_ids = [str(link.share.uid) for link in links]
     for share in shares[:]:
         if share["id"] in permalink_share_ids:
             shares.remove(share)
