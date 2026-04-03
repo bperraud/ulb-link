@@ -42,6 +42,8 @@ if CSRF:
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # keep session cookie after browser close
 SESSION_COOKIE_AGE = 86400
+SESSION_COOKIE_SAMESITE = "None"
+SESSION_COOKIE_SECURE = True
 
 # Application definition
 
