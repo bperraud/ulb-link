@@ -141,7 +141,7 @@ def create_bulk(request):
         "modal_create_bulk.html",
         {
             "shares": shares,
-            "modal_title": "Select shares that you want to create permalink for",
+            "modal_title": "Create permalinks for selected shares",
         },
     )
 

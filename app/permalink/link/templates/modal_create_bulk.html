@@ -1,3 +1,5 @@
+{% load static %}
+
 <div>
 
   <form 
@@ -8,12 +10,14 @@
   >
     {% csrf_token %}
 
-    <div class="p-4">
-      <label>
-        <input type="checkbox" id="selectAll">
-        Select All
-      </label>
-    </div>
+    <button
+      type="button"
+      id="toggleSelectBtn"
+      class="px-4 py-2 bg-gray-200 rounded"
+    >
+      Select All
+    </button>
+
 
     <div class="p-8">
       {% for share in shares %}
@@ -25,9 +29,12 @@
             value="{{ share.id }}"
           >
           <span>{{ share.path }}</span>
+          <a href="{{ share.url }}">
+            <img src="{% static 'folder-symlink.svg' %}" alt="link" class="w-4 h-4" />
+          </a>
         </div>
       {% empty %}
-        <p>{{ error_msg }}</p>
+        <p>You have no public share that arent associated to a permalink</p>
       {% endfor %}
     </div>
 
@@ -35,7 +42,8 @@
       <button
         type="submit"
         id="submitButton"
-        class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+        disabled
+        class="bg-blue-500 text-white font-bold py-2 px-4 rounded opacity-50"
       >
         Submit
       </button>
@@ -48,15 +56,39 @@
 
 {% block scripts %}
 <script>
-  document.getElementById('selectAll')?.addEventListener('change', function () {
-    const checkboxes = document.querySelectorAll('input[name="share_checkbox"]');
-    checkboxes.forEach(cb => cb.checked = this.checked);
+
+  document.getElementById('toggleSelectBtn').addEventListener('click', () => {
+    const boxes = document.querySelectorAll('input[name="share_checkbox"]');
+    const allChecked = [...boxes].every(cb => cb.checked);
+    boxes.forEach(cb => cb.checked = !allChecked);
+    document.getElementById('toggleSelectBtn').textContent = allChecked ? "Select All" : "Unselect All";
+    updateButtonState();
   });
 
-  const modalTitle = document.getElementById('modalTitle');
-  if (modalTitle) {
+  if (document.getElementById('modalTitle')) {
     modalTitle.textContent = "{{ modal_title|escapejs }}";
   }
+
+  function updateButtonState() {
+    const checkboxes = document.querySelectorAll('input[name="share_checkbox"]');
+    const anyChecked = [...checkboxes].some(cb => cb.checked);
+    document.getElementById('submitButton').disabled = !anyChecked;
+  }
+
+  document.querySelectorAll('input[name="share_checkbox"]').forEach(cb => {
+    cb.addEventListener('change', updateButtonState);
+  });
+
+  updateButtonState();
 </script>
+
 {% endblock %}
 
+<style>
+  button:disabled {
+    background-color: #9ca3af;
+    color: #e5e7eb;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+</style>
