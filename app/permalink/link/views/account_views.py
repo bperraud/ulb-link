@@ -50,7 +50,7 @@ def auth_callback(request):
     user.is_nextcloud_user = True
     user.save()
 
-    login(request, user, backend=settings.AUTHENTICATION_BACKENDS[1])
+    login(request, user, backend=settings.AUTHENTICATION_BACKENDS[0])
     request.session["oauth_token"] = token
 
     return redirect("/")
