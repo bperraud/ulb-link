@@ -1,14 +1,16 @@
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404
+from django.conf import settings
 from link.auth import get_valid_access_token
-from django.http import HttpResponse
 import requests, json
 
 from link.models import Share
 
-from django.conf import settings
-
 
 class NextcloudError(Exception):
+    pass
+
+
+class NotAuthenticated(Exception):
     pass
 
 
@@ -28,7 +30,7 @@ def parse_json(json_data: dict):
 def update_share_in_nextcloud(request, id):
     access_token = get_valid_access_token(request)
     if not access_token:
-        return redirect("login")
+        raise NotAuthenticated()
 
     share = get_object_or_404(Share, uid=id)
     if not share.expiration:
@@ -57,7 +59,7 @@ def update_shares_object(request):
 def get_nextcloud_shares(request) -> dict:
     access_token = get_valid_access_token(request)
     if not access_token:
-        return redirect("login")
+        raise NotAuthenticated()
 
     headers = {"Authorization": f"Bearer {access_token}"}
     try:

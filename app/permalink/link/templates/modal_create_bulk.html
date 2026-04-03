@@ -9,6 +9,8 @@
             <li id="share-{{ share.id }}">
                  {{ share.path }}
             </li>
+        {% empty %}
+            {{ error_msg }}
         {% endfor %}
 
         </ul>
