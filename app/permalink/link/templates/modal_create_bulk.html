@@ -1,0 +1,94 @@
+{% load static %}
+
+<div>
+
+  <form 
+    method="POST"
+    id="createBulkForm"
+    hx-post="{% url 'create-bulk' %}"
+    class="p-4 md:p-5"
+  >
+    {% csrf_token %}
+
+    <button
+      type="button"
+      id="toggleSelectBtn"
+      class="px-4 py-2 bg-gray-200 rounded"
+    >
+      Select All
+    </button>
+
+
+    <div class="p-8">
+      {% for share in shares %}
+        <div class="flex items-center gap-2 mb-2">
+          <input 
+            type="checkbox"
+            class="w-4 h-4 border border-default-medium rounded-xs bg-neutral-secondary-medium focus:ring-2 focus:ring-brand-soft"
+            name="share_checkbox"
+            value="{{ share.id }}"
+          >
+          <span>{{ share.path }}</span>
+          <a href="{{ share.url }}">
+            <img src="{% static 'folder-symlink.svg' %}" alt="link" class="w-4 h-4" />
+          </a>
+        </div>
+      {% empty %}
+        <p>You have no public share that arent associated to a permalink</p>
+      {% endfor %}
+    </div>
+
+    <div class="flex justify-center p-4">
+      <button
+        type="submit"
+        id="submitButton"
+        disabled
+        class="bg-blue-500 text-white font-bold py-2 px-4 rounded opacity-50"
+      >
+        Submit
+      </button>
+    </div>
+
+  </form>
+
+</div>
+
+
+{% block scripts %}
+<script>
+
+  document.getElementById('toggleSelectBtn').addEventListener('click', () => {
+    const boxes = document.querySelectorAll('input[name="share_checkbox"]');
+    const allChecked = [...boxes].every(cb => cb.checked);
+    boxes.forEach(cb => cb.checked = !allChecked);
+    document.getElementById('toggleSelectBtn').textContent = allChecked ? "Select All" : "Unselect All";
+    updateButtonState();
+  });
+
+  if (document.getElementById('modalTitle')) {
+    modalTitle.textContent = "{{ modal_title|escapejs }}";
+  }
+
+  function updateButtonState() {
+    const checkboxes = document.querySelectorAll('input[name="share_checkbox"]');
+    const anyChecked = [...checkboxes].some(cb => cb.checked);
+    document.getElementById('submitButton').disabled = !anyChecked;
+  }
+
+  document.querySelectorAll('input[name="share_checkbox"]').forEach(cb => {
+    cb.addEventListener('change', updateButtonState);
+  });
+
+  updateButtonState();
+</script>
+
+{% endblock %}
+
+<style>
+  button:disabled {
+    background-color: #9ca3af;
+    color: #e5e7eb;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+</style>

@@ -11,14 +11,6 @@ from link.auth import CustomJWTAuthentication
 import string, random
 
 
-def generate_unique_token(length=10) -> str:
-    chars = string.ascii_letters + string.digits
-    while True:
-        token = "".join(random.choices(chars, k=length))
-        if not Link.objects.filter(token=token).exists():
-            return token
-
-
 class ShareCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Share
