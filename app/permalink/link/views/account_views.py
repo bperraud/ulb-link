@@ -24,7 +24,7 @@ def logout_view(request):
 def mycloud_login_view(request):
     redirect_uri = request.build_absolute_uri("/auth/callback/")
     response = oauth.nextcloud.authorize_redirect(request, redirect_uri)
-    request.session.save()  # ensure the session with state is persisted
+    # request.session.save()  # ensure the session with state is persisted
     return response
 
 
