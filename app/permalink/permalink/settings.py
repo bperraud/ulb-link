@@ -267,7 +267,7 @@ LOGGING = {
 
 
 # Celery
-CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL")
+CELERY_BROKER_URL = "redis://redis-permalink:6379/0"
 CELERY_TIMEZONE = os.environ.get("TIME_ZONE")
 CELERY_ACCEPT_CONTENT = ["application/json"]
 CELERY_TASK_SERIALIZER = "json"
