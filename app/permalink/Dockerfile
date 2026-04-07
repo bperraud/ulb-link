@@ -37,4 +37,4 @@ FROM base AS dev
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
 
 FROM base AS prd
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "1", "--threads", "8", "--timeout", "60", "--forwarded-allow-ips=*", "permalink.wsgi:application"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "1", "--threads", "8", "--timeout", "60", "permalink.wsgi:application"]
