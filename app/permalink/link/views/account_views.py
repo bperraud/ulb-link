@@ -30,8 +30,6 @@ def mycloud_login_view(request):
 
 def auth_callback(request):
 
-    print(request.is_secure())
-
     token = oauth.nextcloud.authorize_access_token(request)
     if not token:
         return HttpResponse("Authorization failed", status=401)

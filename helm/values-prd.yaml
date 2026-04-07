@@ -32,3 +32,4 @@ oidc:
   userEndpoint: "https://auth.ulb.be/oidc/oidcProfile"
   jwksEndpoint: "https://auth.ulb.be/oidc/jwks"
   logoutEndpoint: "https://auth.ulb.be/oidc/oidcLogout"
+  rpScopes: "id email"
