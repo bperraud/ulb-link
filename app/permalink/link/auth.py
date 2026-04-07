@@ -68,6 +68,10 @@ def refresh_token(refresh_token):
 
 class OIDCCAS(OIDCAuthenticationBackend):
 
+    def verify_claims(self, claims):
+        print(claims)
+        return True
+
     def filter_users_by_claims(self, claims):
         username = claims.get("id", "")
         if not username:
