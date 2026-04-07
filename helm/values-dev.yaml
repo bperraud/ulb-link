@@ -42,4 +42,4 @@ oidc:
   userEndpoint: "https://auth-dev.ulb.be/oidc/oidcProfile"
   jwksEndpoint: "https://auth-dev.ulb.be/oidc/jwks"
   logoutEndpoint: "https://auth-dev.ulb.be/oidc/oidcLogout"
-  rpScopes: "None"
+  rpScopes: "openid"
