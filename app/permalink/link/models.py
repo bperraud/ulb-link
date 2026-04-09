@@ -86,5 +86,9 @@ class Link(models.Model):
 @receiver(post_delete, sender=Link)
 def delete_associated_share(sender, instance, **kwargs):
     share = instance.share
-    if share:
+    if not share:
+        return
+
+    still_used = Link.objects.filter(share=share).exists()
+    if not still_used:
         share.delete()
