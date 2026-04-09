@@ -138,7 +138,7 @@ def create_bulk(request):
 
     permalink_share_ids = [str(link.share.uid) for link in links]
     for share in shares[:]:
-        if share["id"] in permalink_share_ids:
+        if share["id"] in permalink_share_ids or share["share_type"] != 3:
             shares.remove(share)
 
     return render(
