@@ -8,13 +8,14 @@ from rest_framework.permissions import IsAuthenticated
 
 from link.models import Link, Share
 from link.auth import CustomJWTAuthentication
-import string, random
 
 
 class ShareCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Share
         fields = ["uid", "expiration", "target_url", "path"]
+
+        extra_kwargs: dict = {"uid": {"validators": []}}
 
 
 class LinkSerializer(serializers.ModelSerializer):
@@ -54,7 +55,6 @@ class ExternalLinkAPIView(APIView):
                 {"permalink": link.get_permalink()},
                 status=201,
             )
-        print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
