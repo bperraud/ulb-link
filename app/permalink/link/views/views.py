@@ -120,7 +120,7 @@ def create_bulk(request):
     if request.method == "POST":
         selected_ids = request.POST.getlist("share_checkbox")
         for share in shares:
-            if share["id"] not in selected_ids or share["share_type"] != 3:
+            if share["id"] not in selected_ids:
                 continue
             share = Share.objects.create(uid=share["id"], target_url=share["url"])
             Link.objects.create(user=request.user, share=share)
@@ -133,7 +133,7 @@ def create_bulk(request):
 
     permalink_share_ids = [str(link.share.uid) for link in links]
     for share in shares[:]:
-        if share["id"] in permalink_share_ids:
+        if share["id"] in permalink_share_ids or share["share_type"] != 3:
             shares.remove(share)
 
     return render(
