@@ -123,7 +123,9 @@ def create_bulk(request):
             print(share)
             if share["id"] not in selected_ids:
                 continue
-            share = Share.objects.create(uid=share["id"], target_url=share["url"])
+            share, _ = Share.objects.get_or_create(
+                uid=share["id"], target_url=share["url"]
+            )
             Link.objects.create(user=request.user, share=share)
         response = HttpResponse()
         response["HX-Refresh"] = "true"
