@@ -49,9 +49,7 @@ class ExternalLinkAPIView(APIView):
         serializer = ShareCreateSerializer(data=request.data)
         if serializer.is_valid():
             share = Share.objects.create(**serializer.validated_data)
-            link = Link.objects.create(
-                user=request.user, share=share, token=generate_unique_token()
-            )
+            link = Link.objects.create(user=request.user, share=share)
             return Response(
                 {"permalink": link.get_permalink()},
                 status=201,
