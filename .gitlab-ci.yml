@@ -45,7 +45,7 @@ deploy:
   script:
     - echo "KUBECONFIG=$KUBECONFIG"
     - oc config get-contexts
-    - oc config use-context pole-techno/okd-agents:okd-$CI_COMMIT_REF_SLUG
+    - oc config use-context pole-techno/team-infrastructure-et-plateformes/okd-agents:okd-$CI_COMMIT_REF_SLUG
     - oc whoami
     - oc project $HELM_NAMESPACE
     - cd helm
