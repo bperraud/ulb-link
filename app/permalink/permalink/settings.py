@@ -273,3 +273,11 @@ CELERY_BROKER_URL = "redis://redis-permalink:6379/0"
 CELERY_TIMEZONE = os.environ.get("TIME_ZONE")
 CELERY_ACCEPT_CONTENT = ["application/json"]
 CELERY_TASK_SERIALIZER = "json"
+
+# Mail
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_PORT = 25
+EMAIL_HOST = "smtp.ulb.be"
+EMAIL_USE_TLS = False
+EMAIL_TIMEOUT = 60
+DEFAULT_FROM_EMAIL = "permalink@ulb.be"
