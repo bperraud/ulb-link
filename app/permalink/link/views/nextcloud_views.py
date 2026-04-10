@@ -73,4 +73,7 @@ def get_nextcloud_shares(request) -> dict:
     if response.status_code != 200:
         raise NextcloudError("Error reaching Nextcloud Api")
 
+    print("nextcloud shares")
+    print(response)
+
     return json.loads(response.text)
