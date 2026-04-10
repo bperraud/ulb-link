@@ -92,7 +92,7 @@ class ExternalLinkAPIView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         try:
-            permalink = Link.objects.get(share__uid=uid)
+            permalink = Link.objects.get(user=request.user, share__uid=uid)
         except Link.DoesNotExist:
             return Response(
                 {"error": "Permalink does not exist"},
