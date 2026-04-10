@@ -74,6 +74,6 @@ def get_nextcloud_shares(request) -> dict:
         raise NextcloudError("Error reaching Nextcloud Api")
 
     print("nextcloud shares")
-    print(response)
+    print(json.loads(response.text))
 
     return json.loads(response.text)
