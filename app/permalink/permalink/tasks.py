@@ -8,12 +8,43 @@ from link.context_processors import get_host
 
 from django.core import mail
 
+from django_celery_beat.models import (
+    PeriodicTask,
+    CrontabSchedule,
+)
+from permalink.settings import TIME_ZONE
+
+# crontab, _ = CrontabSchedule.objects.get_or_create(
+#     minute="30",
+#     hour="8",
+#     day_of_week="*",
+#     day_of_month="*",
+#     month_of_year="*",
+#     timezone=TIME_ZONE,
+# )
+
+# PeriodicTask.objects.get_or_create(
+#     crontab=crontab,
+#     name="Validate URLs",
+#     task="permalink.tasks.validate_all_links",
+# )
+
 
 @shared_task
 def validate_all_links(name="test"):
     for user in User.objects.all():
         invalid_links = []
         for link in Link.objects.filter(user=user):
+            if not link.self_test():
+                invalid_links.append(link)
+
+
+@shared_task
+def fast_validate_all_links(name="fasttest"):
+    users = User.objects.prefetch_related("link_set")
+    for user in users:
+        invalid_links = []
+        for link in user.link_set.all():
             if not link.self_test():
                 invalid_links.append(link)
 
@@ -26,7 +57,7 @@ def test_mail(request):
     )
 
 
-def send_test_mail():
+def send_test_mail(user: User, context: dict):
 
     html_content = render_to_string("email/mail.html")
     text_content = strip_tags(html_content)
@@ -35,7 +66,7 @@ def send_test_mail():
         subject="Nouvelle activité",
         body=text_content,
         from_email=None,
-        to=["benjamin.perraudin@ulb.be"],
+        to=[user.email],
     )
 
     email.attach_alternative(html_content, "text/html")

@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     "django_extensions",
     "rest_framework",
     "mozilla_django_oidc",
+    "django_celery_beat",
     "link",
 ]
 
