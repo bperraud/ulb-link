@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Liens invalides détectés</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f3f4f6; font-family:Arial, sans-serif;">
+
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f3f4f6; padding:40px 0;">
+    <tr>
+      <td align="center">
+
+        <!-- Main container -->
+        <table width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff; border-radius:8px; padding:30px; text-align:center;">
+          
+          <tr>
+            <td style="padding:20px 16px;">
+                <img src="http://localhost:8080/static/ULB.png" width="50" alt="Logo" />
+            </td>
+          </tr>
+
+          <!-- Greeting -->
+          <tr>
+            <td style="font-size:18px; color:#111827; padding-bottom:20px;">
+              Bonjour {{ user.username }},
+            </td>
+          </tr>
+
+          <!-- Message -->
+          <tr>
+            <td style="font-size:16px; color:#374151; padding-bottom:20px;">
+              Nous avons détecté des liens invalides dans 
+            <a href="{{ site_domain }}" style="text-decoration:none;">
+              <span style="background-color:#fef08a; padding:2px 4px; font-weight:500; color:#000000;">
+                Permalink
+              </span>
+            </a>
+            </td>
+          </tr>
+
+          <!-- List of invalid links -->
+          <tr>
+            <td style="padding-bottom:20px;">
+              <table width="100%" cellpadding="0" cellspacing="0" style="text-align:left;">
+
+                {% for link in invalid_links %}
+                <tr>
+                  <td style="padding:10px 0; border-bottom:1px solid #e5e7eb;">
+                    
+                    <!-- URL -->
+                    <a href="{{ link.direct_target_url }}" style="text-decoration:none;">
+                        <p style="margin:0; font-size:14px; color:#1f2937; font-weight:bold;">
+                          {{ link.direct_target_url }}
+                        </p>
+                    </a>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td style="font-size:14px; color:#6b7280;">
+                    Aucun lien invalide détecté.
+                  </td>
+                </tr>
+                {% endfor %}
+
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+          <td>
+            <a href="{{ site_domain }}"
+                 style="display:inline-block; padding:10px 18px; margin-bottom:10px;background-color:#1e40af; color:#ffffff; text-decoration:none; border-radius:5px; font-size:13px; ">
+                Corriger les liens
+              </a>
+          </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="border-top:1px solid #e5e7eb; padding-top:20px; font-size:11px; color:#9ca3af;">
+              <p style="margin:0 0 5px 0;">
+                Permalink - A ULB collaborative service
+              </p>
+              <p style="margin:0;">
+                Ceci est un e-mail envoyé automatiquement, veuillez ne pas y répondre.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>
