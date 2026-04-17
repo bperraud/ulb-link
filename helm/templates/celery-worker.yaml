@@ -23,8 +23,21 @@ spec:
             limits:
               memory: "512Mi"
               cpu: "250m"
+          envFrom:
+            - secretRef:
+                name: permalink-web-secret
+            - configMapRef:
+                name: web-config
+            - configMapRef:
+                name: db-config
           env:
-            - name: CELERY_BROKER_URL
-              value: redis://redis:6379/0
-            - name: CELERY_RESULT_BACKEND
-              value: redis://redis:6379/0
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-creds
+                  key: postgres-user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-creds
+                  key: postgres-password
