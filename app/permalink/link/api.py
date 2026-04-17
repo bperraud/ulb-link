@@ -49,14 +49,12 @@ class ExternalLinkAPIView(APIView):
     def post(self, request):
         serializer = ShareCreateSerializer(data=request.data)
         if serializer.is_valid():
-            print(serializer.validated_data)
             share, _ = Share.objects.get_or_create(**serializer.validated_data)
             link = Link.objects.create(user=request.user, share=share)
             return Response(
                 {"permalink": link.get_permalink()},
                 status=201,
             )
-        print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
