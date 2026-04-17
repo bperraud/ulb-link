@@ -16,6 +16,13 @@ spec:
         - name: worker
           image: {{ .Values.web.image }}
           command: ["celery", "-A", "permalink", "worker", "-l", "info"]
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "50m"
+            limits:
+              memory: "512Mi"
+              cpu: "250m"
           env:
             - name: CELERY_BROKER_URL
               value: redis://redis:6379/0
