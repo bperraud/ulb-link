@@ -18,8 +18,8 @@ spec:
           command: ["celery", "-A", "permalink", "worker", "-l", "info"]
           resources:
             requests:
-              memory: "128Mi"
-              cpu: "50m"
+              memory: "512Mi"
+              cpu: "250m"
             limits:
               memory: "512Mi"
               cpu: "250m"
