@@ -45,7 +45,7 @@ spec:
       - name: django-permalink
         resources:
           limits:
-            memory: "2Gi"
+            memory: "1Gi"
         image: {{ .Values.web.image }}
         imagePullPolicy: Always
         envFrom:
