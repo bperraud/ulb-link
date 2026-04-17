@@ -4,6 +4,8 @@ from link.views.nextcloud_views import update_share_in_nextcloud
 from link.api import ExternalLinkAPIView, LinkAPIView
 from link.views.views import *
 
+from permalink.tasks import test_mail
+
 urlpatterns = [
     path("api/v1/", ExternalLinkAPIView.as_view()),
     path("api/<int:pk>", LinkAPIView.as_view(), name="link-api"),
@@ -17,4 +19,5 @@ urlpatterns = [
     path("", LinkTableView.as_view(), name="link-home"),
     path("mycloud", MycloudLinkTableView.as_view(), name="mycloud-link"),
     path("update/share/<int:id>", update_share_in_nextcloud),
+    path("testmail", test_mail),
 ]
