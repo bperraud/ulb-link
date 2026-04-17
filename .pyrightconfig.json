@@ -4,5 +4,5 @@
     "python.venvPath": ".direnv/python-3.12.3/bin/python3.12",
     "python.analysis.extraPaths": [
         ".direnv/python-3.12.3/lib/python3.12/site-packages"
-      ]
+    ]
 }
