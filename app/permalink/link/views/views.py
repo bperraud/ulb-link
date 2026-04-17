@@ -84,7 +84,6 @@ def edit_link(request, pk):
     if request.method == "POST":
         form = LinkForm(request.POST, instance=link)
         if form.is_valid():
-            link.self_test()
             response = HttpResponse()
             response["HX-Refresh"] = "true"
             if link.share:
@@ -96,6 +95,7 @@ def edit_link(request, pk):
                     )
                     return response
             form.save()
+            link.self_test()
             response["HX-Trigger"] = json.dumps(
                 {"flashMessage": "Permalink successfully edited"}
             )
