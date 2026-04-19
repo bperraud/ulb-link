@@ -16,7 +16,7 @@ def validate_all_links():
             if not link.self_test():
                 invalid_links.append(link)
         context = {"invalid_links": invalid_links, "site_domain": get_host()}
-        if len(invalid_links):
+        if invalid_links:
             send_test_mail(user, context)
 
 

@@ -95,7 +95,6 @@ def edit_link(request, pk):
                     )
                     return response
             form.save()
-            link.self_test()
             response["HX-Trigger"] = json.dumps(
                 {"flashMessage": "Permalink successfully edited"}
             )

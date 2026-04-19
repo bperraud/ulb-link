@@ -59,6 +59,7 @@ class Link(models.Model):
     def save(self, *args, **kwargs):
         if not self.token:
             self.token = self._generate_unique_token()
+        self.self_test()
         super().save(*args, **kwargs)
 
     def _generate_unique_token(self, length=10) -> str:
