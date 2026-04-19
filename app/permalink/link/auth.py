@@ -117,6 +117,6 @@ class OIDCCallbackView(OIDCAuthenticationCallbackView):
             or request_user != self.user
         ):
             auth.login(self.request, self.user)
-        if is_nextcloud_user(self.request.user.username):
+        if is_nextcloud_user(self.request.user.get_username()):
             return redirect(reverse("mycloud_login"))
         return super().login_success()

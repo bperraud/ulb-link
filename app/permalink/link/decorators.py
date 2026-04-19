@@ -2,7 +2,8 @@ from django.http import HttpResponseForbidden
 from functools import wraps
 from django.conf import settings
 from link.auth import get_valid_access_token
-from django.shortcuts import redirect, reverse
+from django.shortcuts import redirect
+from django.urls import reverse
 
 
 def nextcloud_user_required(view_func):
