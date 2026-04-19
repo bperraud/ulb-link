@@ -61,7 +61,7 @@ class MycloudLinkRowView(TemplateView):
 def toolbar(request, nb):
     match nb:
         case 0:
-            return HttpResponse("")
+            return HttpResponse(b"")
         case 1:
             return render(request, "link_bar/edit_single_link.html")
         case _:

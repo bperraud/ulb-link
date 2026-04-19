@@ -13,7 +13,7 @@ import string, random
 
 
 class User(AbstractUser):
-    is_nextcloud_user = models.BooleanField(default=False)
+    is_nextcloud_user = models.BooleanField(default=False)  # type: ignore
 
 
 class Share(models.Model):
@@ -54,7 +54,7 @@ class Link(models.Model):
         null=False,
     )
 
-    is_valid = models.BooleanField(default=True)
+    is_valid = models.BooleanField(default=True)  # type: ignore
 
     def save(self, *args, **kwargs):
         if not self.token:

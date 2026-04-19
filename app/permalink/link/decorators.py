@@ -16,7 +16,7 @@ def nextcloud_user_required(view_func):
         if getattr(request.user, "is_nextcloud_user", True):
             return view_func(request, *args, **kwargs)
         return HttpResponseForbidden(
-            "You need to log with nextcloud to view this page."
+            b"You need to log with nextcloud to view this page."
         )
 
     return _wrapped_view
