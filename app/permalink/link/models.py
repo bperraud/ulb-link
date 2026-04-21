@@ -59,7 +59,7 @@ class Link(models.Model):
     def save(self, *args, **kwargs):
         if not self.token:
             self.token = self._generate_unique_token()
-        self.self_test()
+        self.is_valid = self.self_test()
         super().save(*args, **kwargs)
 
     def _generate_unique_token(self, length=10) -> str:
@@ -77,7 +77,6 @@ class Link(models.Model):
 
         if not target_url:
             self.is_valid = False
-            self.save(update_fields=["is_valid"])
             return False
 
         try:
@@ -86,9 +85,6 @@ class Link(models.Model):
 
         except Exception as e:
             is_valid = False
-
-        self.is_valid = is_valid
-        self.save(update_fields=["is_valid"])
 
         return is_valid
 

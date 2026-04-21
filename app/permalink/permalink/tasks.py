@@ -13,7 +13,8 @@ def validate_all_links():
     for user in users:
         invalid_links = []
         for link in user.link.all():
-            if not link.self_test():
+            link.save()
+            if not link.is_valid:
                 invalid_links.append(link)
         context = {"invalid_links": invalid_links, "site_domain": get_host()}
         if invalid_links:
