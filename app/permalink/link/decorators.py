@@ -2,7 +2,8 @@ from django.http import HttpResponseForbidden
 from functools import wraps
 from django.conf import settings
 from link.auth import get_valid_access_token
-from django.shortcuts import redirect, reverse
+from django.shortcuts import redirect
+from django.urls import reverse
 
 
 def nextcloud_user_required(view_func):
@@ -16,7 +17,7 @@ def nextcloud_user_required(view_func):
         if getattr(request.user, "is_nextcloud_user", True):
             return view_func(request, *args, **kwargs)
         return HttpResponseForbidden(
-            "You need to log with nextcloud to view this page."
+            b"You need to log with nextcloud to view this page."
         )
 
     return _wrapped_view

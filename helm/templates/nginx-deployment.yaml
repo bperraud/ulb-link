@@ -20,7 +20,7 @@ spec:
       - name: nginx
         resources:
           limits:
-            memory: "256Mi"
+            memory: "128Mi"
         image: {{ .Values.helm.nginx.image }}
         imagePullPolicy: Always
         env:

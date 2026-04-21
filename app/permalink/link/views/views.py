@@ -61,7 +61,7 @@ class MycloudLinkRowView(TemplateView):
 def toolbar(request, nb):
     match nb:
         case 0:
-            return HttpResponse("")
+            return HttpResponse(b"")
         case 1:
             return render(request, "link_bar/edit_single_link.html")
         case _:
@@ -120,10 +120,11 @@ def create_bulk(request):
     if request.method == "POST":
         selected_ids = request.POST.getlist("share_checkbox")
         for share in shares:
-            print(share)
             if share["id"] not in selected_ids:
                 continue
-            share = Share.objects.create(uid=share["id"], target_url=share["url"])
+            share, _ = Share.objects.get_or_create(
+                uid=share["id"], target_url=share["url"]
+            )
             Link.objects.create(user=request.user, share=share)
         response = HttpResponse()
         response["HX-Refresh"] = "true"

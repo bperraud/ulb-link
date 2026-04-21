@@ -18,7 +18,7 @@ spec:
       image: "{{ .Values.helm.postgres.image }}"
       resources:
         limits:
-          memory: "512Mi"
+          memory: "256Mi"
       envFrom:
         - configMapRef:
             name: db-config
