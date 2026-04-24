@@ -7,7 +7,7 @@ from django.shortcuts import render
 from link.context_processors import get_host
 from link.utils import webdav_to_jstree
 
-from link.views.nextcloud_views import get_nextcloud_files
+from link.views.nextcloud_views import get_nextcloud_files, create_share_in_nextcloud
 
 
 @shared_task
@@ -27,6 +27,8 @@ def validate_all_links():
 def test_profind(request):
     response = get_nextcloud_files(request)
     tree_data = webdav_to_jstree(response, request.user.username)
+
+    create_share_in_nextcloud(request, "/Assistant/2026-02-20_08.52.46 recording.wav")
 
     return render(request, "jstree.html", tree_data)
 

@@ -37,7 +37,7 @@ def update_share_in_nextcloud(request, id):
         raise NextcloudError("Share does not have an expiration date")
 
     data = {"expireDate": share.expiration.strftime("%Y-%m-%d")}
-    headers = {"Authorization": f"Bearer {access_token}"}
+    headers = {"Authorization": f"Bearer {access_token}", "OCS-APIRequest": "true"}
     try:
         response = requests.put(
             f"{settings.NEXTCLOUD_URL}/ocs/v2.php/apps/files_sharing/api/v1/shares/{id}",
@@ -49,6 +49,28 @@ def update_share_in_nextcloud(request, id):
 
     if response.status_code != 200:
         raise NextcloudError("Error reaching Nextcloud Api")
+
+
+def create_share_in_nextcloud(request, path):
+    access_token = get_valid_access_token(request)
+    if not access_token:
+        raise NotAuthenticated()
+
+    data = {"path": path, "shareType": 3, "permissions": 1}
+    headers = {"Authorization": f"Bearer {access_token}", "OCS-APIRequest": "true"}
+    try:
+        response = requests.post(
+            f"{settings.NEXTCLOUD_URL}/ocs/v2.php/apps/files_sharing/api/v1/shares",
+            headers=headers,
+            data=data,
+        )
+        print(response.text)
+    except Exception as e:
+        print(e)
+        raise NextcloudError("Error reaching Nextcloud Api")
+
+    # if response.status_code != 200:
+    #     raise NextcloudError("Error reaching Nextcloud Api")
 
 
 def update_shares_object(request):
@@ -108,10 +130,3 @@ def get_nextcloud_files(request):
         raise NextcloudError("Error reaching Nextcloud Api")
 
     return response.content
-
-
-def test_profind(request):
-    response = get_nextcloud_files(request)
-    tree_data = webdav_to_jstree(response, request.user.username)
-
-    return render(request, "jstree.html", tree_data)
