@@ -17,6 +17,7 @@ from link.views.nextcloud_views import (
     update_share_in_nextcloud,
     get_nextcloud_shares,
     get_nextcloud_files,
+    create_share_in_nextcloud,
 )
 
 
@@ -155,22 +156,17 @@ def create_bulk(request):
 @require_http_methods(["GET", "POST"])
 def create_nextcloud_bulk(request):
     response_xml = get_nextcloud_files(request)
+    tree_data = webdav_to_jstree(response_xml, request.user)
 
-    links = Link.objects.filter(user=request.user, share__isnull=False)
-
-    tree_data = webdav_to_jstree(response_xml, request.user.username)
-
-    return render(request, "jstree.html", tree_data)
+    # return render(request, "jstree.html", tree_data)
 
     if request.method == "POST":
-        selected_ids = request.POST.getlist("share_checkbox")
-        for share in shares:
-            if share["id"] not in selected_ids:
-                continue
-            share, _ = Share.objects.get_or_create(
-                uid=share["id"], target_url=share["url"]
-            )
-            Link.objects.create(user=request.user, share=share)
+        selected_path = request.POST.getlist("share_checkbox")
+        for path in selected_path:
+            try:
+                create_share_in_nextcloud(request, path)
+            except Exception as e:
+                print(e)
         response = HttpResponse()
         response["HX-Refresh"] = "true"
         response["HX-Trigger"] = json.dumps(
@@ -178,10 +174,7 @@ def create_nextcloud_bulk(request):
         )
         return response
 
-    permalink_share_ids = [str(link.share.uid) for link in links]
-    for share in shares[:]:
-        if share["id"] in permalink_share_ids or share["share_type"] != 3:
-            shares.remove(share)
+    return render(request, "jstree.html", tree_data)
 
     return render(
         request,

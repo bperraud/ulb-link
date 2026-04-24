@@ -26,7 +26,7 @@ def validate_all_links():
 
 def test_profind(request):
     response = get_nextcloud_files(request)
-    tree_data = webdav_to_jstree(response, request.user.username)
+    tree_data = webdav_to_jstree(response, request.user)
 
     create_share_in_nextcloud(request, "/Assistant/2026-02-20_08.52.46 recording.wav")
 
