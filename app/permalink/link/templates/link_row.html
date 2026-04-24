@@ -6,12 +6,16 @@
         </svg>
 </button> </td>
     <td><a style="font-weight:bold;" href="{{ link.direct_target_url }}">{{ link.direct_target_url }}</a></td>
-    <td>
+    <td class="relative">
       {% if link.is_valid %}
-        ✅
+        <span data-tooltip-target="tooltip-{{ link.id }}">✅</span>
       {% else %}
-        ❌
+        <span data-tooltip-target="tooltip-{{ link.id }}">❌</span>
       {% endif %}
+      <div id="tooltip-{{ link.id }}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-800 rounded shadow-xs opacity-0 tooltip">
+        {% if link.is_valid %}Link is working{% else %}Link is broken or unreachable{% endif %}
+        <div class="tooltip-arrow" data-popper-arrow></div>
+      </div>
     </td>
     <td>{{ link.updated_at }}</td>
 </tr>

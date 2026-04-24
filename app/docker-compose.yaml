@@ -31,29 +31,29 @@ services:
     depends_on:
       - db
 
-  celery:
-    container_name: celery-permalink
-    command: celery -A permalink worker --loglevel=info
-    build:
-      context: ./permalink
-      # target: prd
-      target: dev
-    env_file:
-      - ./env_configs/db_conn.env
-      - ./env_configs/env_dev.env
-    volumes:
-      - ./permalink/:/app/
-    extra_hosts:
-      - nextcloud.local:host-gateway
-    depends_on:
-      - db
+  # celery:
+  #   container_name: celery-permalink
+  #   command: celery -A permalink worker --loglevel=info
+  #   build:
+  #     context: ./permalink
+  #     # target: prd
+  #     target: dev
+  #   env_file:
+  #     - ./env_configs/db_conn.env
+  #     - ./env_configs/env_dev.env
+  #   volumes:
+  #     - ./permalink/:/app/
+  #   extra_hosts:
+  #     - nextcloud.local:host-gateway
+  #   depends_on:
+  #     - db
 
-  redis:
-    container_name: redis-permalink
-    image: redis
-    restart: always
-    expose:
-      - 6379
+  # redis:
+  #   container_name: redis-permalink
+  #   image: redis
+  #   restart: always
+  #   expose:
+  #     - 6379
 
 
   nginx-permalink:
