@@ -25,7 +25,11 @@ def test_mail(request):
     return render(
         request,
         "email/mail.html",
-        {"invalid_links": Link.objects.all(), "site_domain": get_host()},
+        {
+            "invalid_links": Link.objects.all(),
+            "site_domain": get_host(),
+            "user": request.user,
+        },
     )
 
 
