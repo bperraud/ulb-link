@@ -34,6 +34,7 @@ def test_mail(request):
 
 
 def send_test_mail(user: User, context: dict):
+    context["user"] = user
     html_content = render_to_string("email/mail.html", context)
     text_content = strip_tags(html_content)
 
