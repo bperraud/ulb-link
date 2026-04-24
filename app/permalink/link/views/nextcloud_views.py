@@ -73,3 +73,45 @@ def get_nextcloud_shares(request) -> dict:
         raise NextcloudError("Error reaching Nextcloud Api")
 
     return json.loads(response.text)
+
+
+def get_nextcloud_files(request):
+    access_token = get_valid_access_token(request)
+    if not access_token:
+        raise NotAuthenticated()
+
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Depth": "2",
+        "Content-Type": "application/xml",
+    }
+
+    xml_body = """<?xml version="1.0"?>
+    <d:propfind xmlns:d="DAV:">
+      <d:prop>
+        <d:getlastmodified/>
+        <d:getcontentlength/>
+        <d:resourcetype/>
+      </d:prop>
+    </d:propfind>
+    """
+    try:
+        response = requests.request(
+            headers=headers,
+            method="PROPFIND",
+            url=f"{settings.NEXTCLOUD_URL}/remote.php/dav/files/{request.user.username}",
+            data=xml_body,
+        )
+    except:
+        raise NextcloudError("Error reaching Nextcloud Api")
+    if response.status_code > 300:
+        raise NextcloudError("Error reaching Nextcloud Api")
+
+    return response.content
+
+
+def test_profind(request):
+    response = get_nextcloud_files(request)
+    tree_data = webdav_to_jstree(response, request.user.username)
+
+    return render(request, "jstree.html", tree_data)

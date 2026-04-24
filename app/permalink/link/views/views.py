@@ -5,6 +5,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
+from link.utils import webdav_to_jstree
 
 import json
 from rest_framework.generics import get_object_or_404
@@ -15,6 +16,7 @@ from link.views.nextcloud_views import (
     update_shares_object,
     update_share_in_nextcloud,
     get_nextcloud_shares,
+    get_nextcloud_files,
 )
 
 
@@ -116,6 +118,49 @@ def create_bulk(request):
     json_shares = get_nextcloud_shares(request)
     shares = json_shares["ocs"]["data"]
     links = Link.objects.filter(user=request.user, share__isnull=False)
+
+    if request.method == "POST":
+        selected_ids = request.POST.getlist("share_checkbox")
+        for share in shares:
+            if share["id"] not in selected_ids:
+                continue
+            share, _ = Share.objects.get_or_create(
+                uid=share["id"], target_url=share["url"]
+            )
+            Link.objects.create(user=request.user, share=share)
+        response = HttpResponse()
+        response["HX-Refresh"] = "true"
+        response["HX-Trigger"] = json.dumps(
+            {"flashMessage": "Permalinks successfully created"}
+        )
+        return response
+
+    permalink_share_ids = [str(link.share.uid) for link in links]
+    for share in shares[:]:
+        if share["id"] in permalink_share_ids or share["share_type"] != 3:
+            shares.remove(share)
+
+    return render(
+        request,
+        "modal_create_bulk.html",
+        {
+            "shares": shares,
+            "modal_title": "Create permalinks for selected shares",
+        },
+    )
+
+
+@login_required
+@nextcloud_user_required
+@require_http_methods(["GET", "POST"])
+def create_nextcloud_bulk(request):
+    response_xml = get_nextcloud_files(request)
+
+    links = Link.objects.filter(user=request.user, share__isnull=False)
+
+    tree_data = webdav_to_jstree(response_xml, request.user.username)
+
+    return render(request, "jstree.html", tree_data)
 
     if request.method == "POST":
         selected_ids = request.POST.getlist("share_checkbox")

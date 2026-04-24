@@ -14,20 +14,20 @@
 
 <script>
 
-
-console.log({{ data|safe }})
-
 $(function () {
   $('#jstree').jstree({
     core: {
         data: {{ data|safe }}
-    }
+    },
+    plugins: ['checkbox']
   });
 
   $('#jstree').on("changed.jstree", function (e, data) {
     console.log("Selected:", data.selected);
   });
+
 });
+
 </script>
 
 {% endblock %}
