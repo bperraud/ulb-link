@@ -13,7 +13,6 @@
 
     <div class="px-4 overflow-y-auto" id="main-div">
     <div id="jstree"></div>
-
         <div class="flex items-center gap-2 mb-2">
           <button
             type="submit"
@@ -25,46 +24,40 @@
           </button>
         </div>
     </div>
-
   </form>
 
 </div>
 
-
 <script>
 
-$(function () {
-  $('#jstree').jstree({
-    core: {
-        data: {{ data|safe }}
-    },
-    plugins: ['checkbox']
-  }).on('ready.jstree', function () {
-      // Open all first-level nodes under the root
-      $('#jstree').jstree('open_all');
+htmx.onLoad(function (root) {
+
+    const $tree = $('#jstree');
+
+   $tree.jstree({
+        core: {
+            data: {{ data|safe }}
+        },
+        plugins: ['checkbox']
     });
 
-  $('#jstree').on("changed.jstree", function (e, data) {
-    document.getElementById('submitButton').disabled = data.selected.length === 0;
-  });
+    $tree.on('ready.jstree', function () {
 
-$('#createBulkForm').on('submit', function () {
+        const tree = $tree.jstree(true);
 
-    const selected = $('#jstree').jstree(true).get_checked();
+        // open depth 1 only
+        tree.get_node('#').children.forEach(function (nodeId) {
+            tree.open_node(nodeId);
+        });
+    });
 
-    $('<input>')
-        .attr('type', 'hidden')
-        .attr('name', 'selected_nodes')
-        .val(JSON.stringify(selected))
-        .appendTo(this);
+    $tree.on('changed.jstree', function(e, data) {
+        document.getElementById('submitButton').disabled =
+            data.selected.length === 0;
+    });
 });
 
-});
-
-  if (document.getElementById('modalTitle')) {
-    modalTitle.textContent = "{{ modal_title|escapejs }}";
-  }
-
+if (document.getElementById('modalTitle')) { modalTitle.textContent = "{{ modal_title|escapejs }}"; }
 
 </script>
 
