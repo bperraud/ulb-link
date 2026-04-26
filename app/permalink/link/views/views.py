@@ -107,7 +107,7 @@ def edit_link(request, pk):
 
     return render(
         request,
-        "modal_edit.html",
+        "modals/modal_edit.html",
         {"form": form, "link": link, "modal_title": "Edit Permalink"},
     )
 
@@ -143,7 +143,7 @@ def create_bulk(request):
 
     return render(
         request,
-        "modal_create_bulk.html",
+        "modals/modal_create_bulk.html",
         {
             "shares": shares,
             "modal_title": "Create permalinks for selected shares",
@@ -158,15 +158,13 @@ def create_nextcloud_bulk(request):
     response_xml = get_nextcloud_files(request)
     tree_data = webdav_to_jstree(response_xml, request.user)
 
-    # return render(request, "jstree.html", tree_data)
-
     if request.method == "POST":
-        selected_path = request.POST.getlist("share_checkbox")
+        selected_path = request.POST.get("selected_nodes")
+        selected_path = eval(selected_path)
         for path in selected_path:
-            try:
-                create_share_in_nextcloud(request, path)
-            except Exception as e:
-                print(e)
+            share_id, target_url = create_share_in_nextcloud(request, path)
+            share = Share.objects.create(uid=share_id, path=path, target_url=target_url)
+            Link.objects.create(user=request.user, share=share)
         response = HttpResponse()
         response["HX-Refresh"] = "true"
         response["HX-Trigger"] = json.dumps(
@@ -174,15 +172,11 @@ def create_nextcloud_bulk(request):
         )
         return response
 
-    return render(request, "jstree.html", tree_data)
-
+    tree_data["modal_title"] = "Create permalinks for selected files"
     return render(
         request,
-        "modal_create_bulk.html",
-        {
-            "shares": shares,
-            "modal_title": "Create permalinks for selected shares",
-        },
+        "modals/modal_create_nextcloud_bulk.html",
+        tree_data,
     )
 
 
@@ -204,7 +198,9 @@ def create_link(request):
             return response
 
     return render(
-        request, "modal_create.html", {"form": form, "modal_title": "Create Permalink"}
+        request,
+        "modals/modal_create.html",
+        {"form": form, "modal_title": "Create Permalink"},
     )
 
 

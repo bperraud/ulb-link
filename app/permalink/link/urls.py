@@ -13,6 +13,7 @@ urlpatterns = [
     path("edit/<int:pk>", edit_link, name="link-edit-row"),
     path("create-link/", create_link, name="create-link"),
     path("create-bulk/", create_bulk, name="create-bulk"),
+    path("create-nextcloud-bulk/", create_nextcloud_bulk, name="create-nextcloud-bulk"),
     path("delete/<str:ids>", delete_links),
     path("row/<int:pk>", LinkRowView.as_view(), name="link-row"),
     path("mycloud/row/<int:pk>", MycloudLinkRowView.as_view(), name="mycloud-link-row"),
