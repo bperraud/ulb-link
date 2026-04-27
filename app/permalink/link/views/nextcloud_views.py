@@ -62,8 +62,13 @@ def create_share_in_nextcloud(request, path):
     headers = {"Authorization": f"Bearer {access_token}", "OCS-APIRequest": "true"}
 
     try:
+        # response = requests.post(
+        #     f"{settings.NEXTCLOUD_URL}/ocs/v2.php/apps/files_sharing/api/v1/shares",
+        #     headers=headers,
+        #     data=data,
+        # )
         response = requests.post(
-            f"{settings.NEXTCLOUD_URL}/ocs/v2.php/apps/files_sharing/api/v1/shares",
+            f"https://nc-test.ulb.be/ocs/v2.php/apps/files_sharing/api/v1/shares",
             headers=headers,
             data=data,
         )
@@ -111,7 +116,7 @@ def get_nextcloud_files(request):
 
     headers = {
         "Authorization": f"Bearer {access_token}",
-        "Depth": "2",
+        "Depth": "infinity",
         "Content-Type": "application/xml",
     }
 

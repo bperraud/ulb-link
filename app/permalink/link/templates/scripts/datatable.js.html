@@ -79,17 +79,6 @@ document.body.addEventListener('htmx:afterSwap', function(evt) {
     }
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-    const msg = sessionStorage.getItem("flashMessage");
-    if (msg) {
-        showAlert(msg);
-        sessionStorage.removeItem("flashMessage");
-    }
-});
-
-document.body.addEventListener("flashMessage", function (event) {
-    sessionStorage.setItem("flashMessage", event.detail.value);
-});
 
 </script>
 

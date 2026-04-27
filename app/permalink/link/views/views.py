@@ -38,7 +38,10 @@ class MycloudLinkTableView(ListView):
     template_name = "mycloud/mycloud_link_table.html"
 
     def get_queryset(self):
-        update_shares_object(self.request)
+        try:
+            update_shares_object(self.request)
+        except:
+            pass
         return Link.objects.filter(user=self.request.user, share__isnull=False)
 
 
@@ -94,7 +97,7 @@ def edit_link(request, pk):
                     update_share_in_nextcloud(request, link.share.uid)
                 except Exception as e:
                     response["HX-Trigger"] = json.dumps(
-                        {"flashMessage": "Error editing Permalink" + str(e)}
+                        {"flashMessage": "Error editing Permalink : " + str(e)}
                     )
                     return response
             form.save()
@@ -155,12 +158,11 @@ def create_bulk(request):
 @nextcloud_user_required
 @require_http_methods(["GET", "POST"])
 def create_nextcloud_bulk(request):
-    response_xml = get_nextcloud_files(request)
+    response_xml = get_nextcloud_files(request)  # can throw error
     tree_data = webdav_to_jstree(response_xml, request.user)
 
     if request.method == "POST":
         selected_path = request.POST.get("selected_nodes")
-        print(selected_path)
         selected_path = eval(selected_path)
         response = HttpResponse()
         response["HX-Refresh"] = "true"
@@ -169,7 +171,10 @@ def create_nextcloud_bulk(request):
                 share_id, target_url = create_share_in_nextcloud(request, path)
             except Exception as e:
                 response["HX-Trigger"] = json.dumps(
-                    {"flashMessage": "Error editing Permalink" + str(e)}
+                    {
+                        "flashMessage": "Error while creating permalink : " + str(e),
+                        "type": "error",
+                    }
                 )
                 return response
             share = Share.objects.create(uid=share_id, path=path, target_url=target_url)

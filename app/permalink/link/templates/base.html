@@ -159,19 +159,49 @@ body {
 
 <script>
 
-function showAlert(message, type = "success", timeout = 3000) {
-  const alert = document.getElementById("globalAlert");
-  const innerSpan = document.getElementById("alertMessage");
-  innerSpan.textContent = message;
-  alert.style.display = "flex";
-  setTimeout(() => alert.classList.add("show"), 10);
+function showAlert(message, type = "success", timeout = 30000) {
+    let alert;
+    let innerSpan;
+    if (type == "success") {
+        alert = document.getElementById("greenAlert");
+        innerSpan = document.getElementById("infoMessage");
+    }
+    else {
+        alert = document.getElementById("redAlert");
+        innerSpan = document.getElementById("alertMessage");
+    }
+    innerSpan.textContent = message;
+    alert.style.display = "flex";
+    setTimeout(() => alert.classList.add("show"), 10);
 
-  if (timeout) {
-    setTimeout(() => {
-      alert.classList.remove("show");
-      setTimeout(() => (alert.style.display = "none"), 150);
-    }, timeout);
-  }
+    if (timeout) {
+        setTimeout(() => {
+          alert.classList.remove("show");
+          setTimeout(() => (alert.style.display = "none"), 150);
+        }, timeout);
+    }
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    const msg = sessionStorage.getItem("flashMessage");
+    let type = sessionStorage.getItem("type");
+
+    if (type == undefined) {
+        type = "success";
+    }
+    if (msg) {
+        showAlert(msg, type);
+        sessionStorage.removeItem("flashMessage");
+        sessionStorage.removeItem("type");
+    }
+});
+
+document.body.addEventListener("flashMessage", function (event) {
+    sessionStorage.setItem("flashMessage", event.detail.value);
+});
+
+document.body.addEventListener("type", function (event) {
+    sessionStorage.setItem("type", event.detail.value);
+});
 
 </script>
