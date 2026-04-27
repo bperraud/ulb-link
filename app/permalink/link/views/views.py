@@ -160,13 +160,20 @@ def create_nextcloud_bulk(request):
 
     if request.method == "POST":
         selected_path = request.POST.get("selected_nodes")
+        print(selected_path)
         selected_path = eval(selected_path)
-        for path in selected_path:
-            share_id, target_url = create_share_in_nextcloud(request, path)
-            share = Share.objects.create(uid=share_id, path=path, target_url=target_url)
-            Link.objects.create(user=request.user, share=share)
         response = HttpResponse()
         response["HX-Refresh"] = "true"
+        for path in selected_path:
+            try:
+                share_id, target_url = create_share_in_nextcloud(request, path)
+            except Exception as e:
+                response["HX-Trigger"] = json.dumps(
+                    {"flashMessage": "Error editing Permalink" + str(e)}
+                )
+                return response
+            share = Share.objects.create(uid=share_id, path=path, target_url=target_url)
+            Link.objects.create(user=request.user, share=share)
         response["HX-Trigger"] = json.dumps(
             {"flashMessage": "Permalinks successfully created"}
         )

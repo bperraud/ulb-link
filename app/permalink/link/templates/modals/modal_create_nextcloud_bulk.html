@@ -55,9 +55,21 @@ htmx.onLoad(function () {
         document.getElementById('submitButton').disabled =
             data.selected.length === 0;
     });
+
 });
 
 if (document.getElementById('modalTitle')) { modalTitle.textContent = "{{ modal_title|escapejs }}"; }
+
+$('#createBulkForm').on('submit', function () {
+
+    const selected = $('#jstree').jstree(true).get_checked();
+
+    $('<input>')
+        .attr('type', 'hidden')
+        .attr('name', 'selected_nodes')
+        .val(JSON.stringify(selected))
+        .appendTo(this);
+});
 
 </script>
 

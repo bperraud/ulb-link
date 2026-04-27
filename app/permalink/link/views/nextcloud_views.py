@@ -61,28 +61,23 @@ def create_share_in_nextcloud(request, path):
     data = {"path": path, "shareType": 3, "permissions": 1}
     headers = {"Authorization": f"Bearer {access_token}", "OCS-APIRequest": "true"}
 
-    print(data)
     try:
         response = requests.post(
             f"{settings.NEXTCLOUD_URL}/ocs/v2.php/apps/files_sharing/api/v1/shares",
             headers=headers,
             data=data,
         )
-        print("STATUS:", response.status_code)
-        print(response.text)
-    except Exception as e:
-        print(e)
+    except:
+        raise NextcloudError("Error reaching Nextcloud Api")
+
+    if response.status_code > 300:
         raise NextcloudError("Error reaching Nextcloud Api")
 
     root = ET.fromstring(response.text)
 
     share_id = root.find("./data/id").text
     url = root.find("./data/url").text
-    print(share_id)
     return share_id, url
-
-    # if response.status_code != 200:
-    #     raise NextcloudError("Error reaching Nextcloud Api")
 
 
 def update_shares_object(request):
