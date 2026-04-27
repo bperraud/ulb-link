@@ -1,7 +1,5 @@
 from django.db import models
-
 from django.core.validators import MinLengthValidator
-
 from link.context_processors import get_host
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
@@ -74,7 +72,6 @@ class Link(models.Model):
 
     def self_test(self) -> bool:
         target_url = getattr(self.share, "target_url", None) or self.direct_target_url
-
         if not target_url:
             self.is_valid = False
             return False
@@ -82,7 +79,6 @@ class Link(models.Model):
         try:
             response = requests.get(target_url, timeout=5)
             is_valid = response.status_code < 400
-
         except:
             is_valid = False
 
