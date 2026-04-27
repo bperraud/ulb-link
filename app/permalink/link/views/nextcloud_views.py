@@ -1,144 +1,119 @@
-from django.shortcuts import get_object_or_404
-from django.conf import settings
-from link.auth import get_valid_access_token
-import requests, json
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from django.views.generic import TemplateView, ListView
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
+from django.views.decorators.http import require_http_methods
 
-from link.models import Share
-import xml.etree.ElementTree as ET
+import json
+from rest_framework.generics import get_object_or_404
+from link.decorators import nextcloud_connected_user_required
+from link.models import Link, Share
+from link.views.nextcloud_utils import (
+    update_shares_object,
+    get_nextcloud_shares,
+    get_nextcloud_files,
+    create_share_in_nextcloud,
+    webdav_to_jstree,
+)
 
 
-class NextcloudError(Exception):
-    pass
+@method_decorator([nextcloud_connected_user_required, login_required], name="dispatch")
+class MycloudLinkTableView(ListView):
+    model = Link
+    context_object_name = "links"
+    template_name = "mycloud/mycloud_link_table.html"
 
-
-class NotAuthenticated(Exception):
-    pass
-
-
-def parse_json(json_data: dict):
-    for el in json_data["ocs"]["data"]:
+    def get_queryset(self):
         try:
-            share = Share.objects.get(uid=el.get("id"))
-            share.path = el.get("file_target")
-            index = share.target_url.rfind("/")
-            share.target_url = share.target_url[: index + 1] + el.get("token")
-            share.expiration = el.get("expiration") if el.get("expiration") else None
-            share.save()
-        except Share.DoesNotExist:
+            update_shares_object(self.request)
+        except:
             pass
+        return Link.objects.filter(user=self.request.user, share__isnull=False)
 
 
-def update_share_in_nextcloud(request, id):
-    access_token = get_valid_access_token(request)
-    if not access_token:
-        raise NotAuthenticated()
+@method_decorator([nextcloud_connected_user_required, login_required], name="dispatch")
+class MycloudLinkRowView(TemplateView):
+    template_name = "mycloud/mycloud_link_row.html"
 
-    share = get_object_or_404(Share, uid=id)
-    if not share.expiration:
-        raise NextcloudError("Share does not have an expiration date")
+    def get_context_data(self, **kwargs):
+        link = get_object_or_404(Link, pk=kwargs["pk"])
+        return {"link": link}
 
-    data = {"expireDate": share.expiration.strftime("%Y-%m-%d")}
-    headers = {"Authorization": f"Bearer {access_token}", "OCS-APIRequest": "true"}
-    try:
-        response = requests.put(
-            f"{settings.NEXTCLOUD_URL}/ocs/v2.php/apps/files_sharing/api/v1/shares/{id}",
-            headers=headers,
-            data=data,
+
+@login_required
+@nextcloud_connected_user_required
+@require_http_methods(["GET", "POST"])
+def create_bulk(request):
+    json_shares = get_nextcloud_shares(request)
+    shares = json_shares["ocs"]["data"]
+    links = Link.objects.filter(user=request.user, share__isnull=False)
+
+    if request.method == "POST":
+        selected_ids = request.POST.getlist("share_checkbox")
+        for share in shares:
+            if share["id"] not in selected_ids:
+                continue
+            share, _ = Share.objects.get_or_create(
+                uid=share["id"], target_url=share["url"]
+            )
+            Link.objects.create(user=request.user, share=share)
+        response = HttpResponse()
+        response["HX-Refresh"] = "true"
+        response["HX-Trigger"] = json.dumps(
+            {"flashMessage": "Permalinks successfully created"}
         )
-        print(response)
-    except:
-        raise NextcloudError("Error reaching Nextcloud Api")
+        return response
 
-    if response.status_code != 200:
-        raise NextcloudError("Error reaching Nextcloud Api")
+    permalink_share_ids = [str(link.share.uid) for link in links]
+    for share in shares[:]:
+        if share["id"] in permalink_share_ids or share["share_type"] != 3:
+            shares.remove(share)
+
+    return render(
+        request,
+        "modals/modal_create_bulk.html",
+        {
+            "shares": shares,
+            "modal_title": "Create permalinks for selected shares",
+        },
+    )
 
 
-def create_share_in_nextcloud(request, path):
-    access_token = get_valid_access_token(request)
-    if not access_token:
-        raise NotAuthenticated()
+@login_required
+@nextcloud_connected_user_required
+@require_http_methods(["GET", "POST"])
+def create_nextcloud_bulk(request):
+    response_xml = get_nextcloud_files(request)  # can throw error
+    tree_data = webdav_to_jstree(response_xml, request.user)
 
-    data = {"path": path, "shareType": 3, "permissions": 1}
-    headers = {"Authorization": f"Bearer {access_token}", "OCS-APIRequest": "true"}
-
-    try:
-        # response = requests.post(
-        #     f"{settings.NEXTCLOUD_URL}/ocs/v2.php/apps/files_sharing/api/v1/shares",
-        #     headers=headers,
-        #     data=data,
-        # )
-        response = requests.post(
-            f"https://nc-test.ulb.be/ocs/v2.php/apps/files_sharing/api/v1/shares",
-            headers=headers,
-            data=data,
+    if request.method == "POST":
+        selected_path = request.POST.get("selected_nodes")
+        selected_path = eval(selected_path)
+        response = HttpResponse()
+        response["HX-Refresh"] = "true"
+        for path in selected_path:
+            try:
+                share_id, target_url = create_share_in_nextcloud(request, path)
+            except Exception as e:
+                response["HX-Trigger"] = json.dumps(
+                    {
+                        "flashMessage": "Error while creating permalink : " + str(e),
+                        "type": "error",
+                    }
+                )
+                return response
+            share = Share.objects.create(uid=share_id, path=path, target_url=target_url)
+            Link.objects.create(user=request.user, share=share)
+        response["HX-Trigger"] = json.dumps(
+            {"flashMessage": "Permalinks successfully created"}
         )
-    except:
-        raise NextcloudError("Error reaching Nextcloud Api")
+        return response
 
-    if response.status_code > 300:
-        raise NextcloudError("Error reaching Nextcloud Api")
-
-    root = ET.fromstring(response.text)
-
-    share_id = root.find("./data/id").text
-    url = root.find("./data/url").text
-    return share_id, url
-
-
-def update_shares_object(request):
-    shares = get_nextcloud_shares(request)
-    parse_json(shares)
-
-
-def get_nextcloud_shares(request) -> dict:
-    access_token = get_valid_access_token(request)
-    if not access_token:
-        raise NotAuthenticated()
-
-    headers = {"Authorization": f"Bearer {access_token}"}
-    try:
-        response = requests.get(
-            f"{settings.NEXTCLOUD_URL}/ocs/v2.php/apps/files_sharing/api/v1/shares?format=json",
-            headers=headers,
-        )
-    except:
-        raise NextcloudError("Error reaching Nextcloud Api")
-    if response.status_code != 200:
-        raise NextcloudError("Error reaching Nextcloud Api")
-
-    return json.loads(response.text)
-
-
-def get_nextcloud_files(request):
-    access_token = get_valid_access_token(request)
-    if not access_token:
-        raise NotAuthenticated()
-
-    headers = {
-        "Authorization": f"Bearer {access_token}",
-        "Depth": "infinity",
-        "Content-Type": "application/xml",
-    }
-
-    xml_body = """<?xml version="1.0"?>
-    <d:propfind xmlns:d="DAV:">
-      <d:prop>
-        <d:getlastmodified/>
-        <d:getcontentlength/>
-        <d:resourcetype/>
-      </d:prop>
-    </d:propfind>
-    """
-    try:
-        response = requests.request(
-            headers=headers,
-            method="PROPFIND",
-            url=f"{settings.NEXTCLOUD_URL}/remote.php/dav/files/{request.user.username}",
-            data=xml_body,
-        )
-    except:
-        raise NextcloudError("Error reaching Nextcloud Api")
-    if response.status_code > 300:
-        raise NextcloudError("Error reaching Nextcloud Api")
-
-    return response.content
+    tree_data["modal_title"] = "Create permalinks for selected files"
+    return render(
+        request,
+        "modals/modal_create_nextcloud_bulk.html",
+        tree_data,
+    )

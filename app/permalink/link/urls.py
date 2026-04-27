@@ -1,8 +1,8 @@
 from django.urls import path
 
-from link.views.nextcloud_views import update_share_in_nextcloud
 from link.api import ExternalLinkAPIView, LinkAPIView
 from link.views.views import *
+from link.views.nextcloud_views import *
 
 from permalink.tasks import test_profind
 

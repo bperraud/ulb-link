@@ -5,11 +5,13 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.shortcuts import render
 from link.context_processors import get_host
-from link.utils import webdav_to_jstree
+from link.views.nextcloud_utils import (
+    webdav_to_jstree,
+    get_nextcloud_files,
+    create_share_in_nextcloud,
+)
 from django.db.models import Prefetch
 from link.models import Link
-
-from link.views.nextcloud_views import get_nextcloud_files, create_share_in_nextcloud
 
 
 @shared_task
