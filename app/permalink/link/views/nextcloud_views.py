@@ -14,7 +14,7 @@ from link.views.nextcloud_utils import (
     update_shares_object,
     get_nextcloud_shares,
     get_nextcloud_files,
-    create_share_in_nextcloud,
+    get_or_create_share_in_nextcloud,
     webdav_to_jstree,
 )
 
@@ -46,7 +46,8 @@ class MycloudLinkRowView(TemplateView):
 @nextcloud_connected_user_required
 @require_http_methods(["GET", "POST"])
 def create_bulk(request):
-    json_shares = get_nextcloud_shares(request)
+    response = get_nextcloud_shares(request)
+    json_shares = json.loads(response.text)
     shares = json_shares["ocs"]["data"]
     links = Link.objects.filter(user=request.user, share__isnull=False)
 
@@ -94,17 +95,20 @@ def create_nextcloud_bulk(request):
         response = HttpResponse()
         response["HX-Refresh"] = "true"
         for path in selected_path:
-            try:
-                share_id, target_url = create_share_in_nextcloud(request, path)
-            except Exception as e:
-                response["HX-Trigger"] = json.dumps(
-                    {
-                        "flashMessage": "Error while creating permalink : " + str(e),
-                        "type": "error",
-                    }
-                )
-                return response
-            share = Share.objects.create(uid=share_id, path=path, target_url=target_url)
+            # try:
+            share = get_or_create_share_in_nextcloud(request, path)
+            # share = Share.objects.create(
+            #     uid=share_id, path=path, target_url=target_url
+            # )
+            # except Exception as e:
+            #     print(e)
+            #     response["HX-Trigger"] = json.dumps(
+            #         {
+            #             "flashMessage": "Error while creating permalink : " + str(e),
+            #             "type": "error",
+            #         }
+            #     )
+            #     return response
             Link.objects.create(user=request.user, share=share)
         response["HX-Trigger"] = json.dumps(
             {"flashMessage": "Permalinks successfully created"}

@@ -4,7 +4,6 @@ from link.auth import get_valid_access_token
 import requests, json
 from link.models import Link, User, Share
 
-# import xml.etree.ElementTree as ET
 from xml.etree import ElementTree as ET
 from urllib.parse import unquote
 
@@ -29,7 +28,6 @@ def webdav_to_jstree(xml, user: User):
     root = ET.fromstring(xml)
     base = f"/remote.php/dav/files/{user.username}/"
     nodes = []
-
     paths = Link.objects.filter(user=user, share__isnull=False).values_list(
         "share__path", flat=True
     )
@@ -38,7 +36,6 @@ def webdav_to_jstree(xml, user: User):
         href_el = resp.find("d:href", ns)
         if href_el is None:
             continue
-
         href = href_el.text
         # Extract relative path
         if not href.startswith(base):
@@ -46,9 +43,7 @@ def webdav_to_jstree(xml, user: User):
 
         rel_path = href[len(base) :]  # remove prefix
         rel_path = unquote(rel_path).rstrip("/")
-
         folder = is_folder(resp, ns)
-
         # Root folder
         if rel_path == "":
             path = "/"
@@ -57,7 +52,6 @@ def webdav_to_jstree(xml, user: User):
         else:
             path = "/" + rel_path
             name = rel_path.split("/")[-1]
-
             # Compute parent correctly
             parent_path = "/" + rel_path.rsplit("/", 1)[0] if "/" in rel_path else "/"
             parent = parent_path
@@ -125,7 +119,7 @@ def create_share_in_nextcloud(request, path):
 
     try:
         response = requests.post(
-            f"{settings.NEXTCLOUD_URL}/ocs/v2.php/apps/files_sharing/api/v1/shares",
+            f"{settings.NEXTCLOUD_URL}/ocs/v2.php/apps/files_sharing/api/v1/shares?format=json",
             headers=headers,
             data=data,
         )
@@ -136,25 +130,20 @@ def create_share_in_nextcloud(request, path):
         raise NextcloudError(
             "Error reaching Nextcloud Api " + str(response.status_code)
         )
-
-    root = ET.fromstring(response.text)
-
-    share_id = root.find("./data/id").text
-    url = root.find("./data/url").text
-    return share_id, url
+    return response
 
 
 def update_shares_object(request):
-    shares = get_nextcloud_shares(request)
-    parse_json(shares)
+    response = get_nextcloud_shares(request)
+    parse_json(json.loads(response.text))
 
 
-def get_nextcloud_shares(request) -> dict:
+def get_nextcloud_shares(request) -> requests.Response:
     access_token = get_valid_access_token(request)
     if not access_token:
         raise NotAuthenticated()
 
-    headers = {"Authorization": f"Bearer {access_token}"}
+    headers = {"Authorization": f"Bearer {access_token}", "OCS-APIRequest": "true"}
     try:
         response = requests.get(
             f"{settings.NEXTCLOUD_URL}/ocs/v2.php/apps/files_sharing/api/v1/shares?format=json",
@@ -165,7 +154,50 @@ def get_nextcloud_shares(request) -> dict:
     if response.status_code != 200:
         raise NextcloudError("Error reaching Nextcloud Api")
 
-    return json.loads(response.text)
+    return response
+
+
+def get_nextcloud_share(request, path):
+    access_token = get_valid_access_token(request)
+    if not access_token:
+        raise NotAuthenticated()
+
+    params = {
+        "path": path,
+        "format": "json",
+    }
+
+    headers = {"Authorization": f"Bearer {access_token}", "OCS-APIRequest": "true"}
+    try:
+        response = requests.get(
+            f"{settings.NEXTCLOUD_URL}/ocs/v2.php/apps/files_sharing/api/v1/shares",
+            headers=headers,
+            params=params,
+        )
+    except:
+        raise NextcloudError("Error reaching Nextcloud Api")
+    if response.status_code != 200:
+        raise NextcloudError("Error reaching Nextcloud Api")
+
+    return response
+
+
+def get_or_create_share_in_nextcloud(request, path):
+    response = get_nextcloud_share(request, path)
+    share_data = json.loads(response.text)["ocs"]["data"]
+
+    if share_data and share_data[0]["share_type"] == 3:  # share exist
+        share_data = share_data[0]
+    else:  # share doesnt exist
+        response = create_share_in_nextcloud(request, path)
+        share_data = json.loads(response.text)["ocs"]["data"]
+
+    share, _ = Share.objects.get_or_create(
+        uid=share_data["id"],
+        path=share_data["path"],
+        target_url=share_data["url"],
+    )
+    return share
 
 
 def get_nextcloud_files(request):
