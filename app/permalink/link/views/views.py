@@ -8,13 +8,10 @@ from django.views.decorators.http import require_http_methods
 
 import json
 from rest_framework.generics import get_object_or_404
-from link.decorators import nextcloud_user_required
-from link.models import Link, Share
+from link.models import Link
 from link.forms import LinkForm
-from link.views.nextcloud_views import (
-    update_shares_object,
+from link.views.nextcloud_utils import (
     update_share_in_nextcloud,
-    get_nextcloud_shares,
 )
 
 
@@ -28,29 +25,9 @@ class LinkTableView(ListView):
         return Link.objects.filter(user=self.request.user, share=None)
 
 
-@method_decorator([nextcloud_user_required, login_required], name="dispatch")
-class MycloudLinkTableView(ListView):
-    model = Link
-    context_object_name = "links"
-    template_name = "mycloud/mycloud_link_table.html"
-
-    def get_queryset(self):
-        update_shares_object(self.request)
-        return Link.objects.filter(user=self.request.user, share__isnull=False)
-
-
 @method_decorator([login_required], name="dispatch")
 class LinkRowView(TemplateView):
     template_name = "link_row.html"
-
-    def get_context_data(self, **kwargs):
-        link = get_object_or_404(Link, pk=kwargs["pk"])
-        return {"link": link}
-
-
-@method_decorator([nextcloud_user_required, login_required], name="dispatch")
-class MycloudLinkRowView(TemplateView):
-    template_name = "mycloud/mycloud_link_row.html"
 
     def get_context_data(self, **kwargs):
         link = get_object_or_404(Link, pk=kwargs["pk"])
@@ -91,7 +68,10 @@ def edit_link(request, pk):
                     update_share_in_nextcloud(request, link.share.uid)
                 except Exception as e:
                     response["HX-Trigger"] = json.dumps(
-                        {"flashMessage": "Error editing Permalink" + str(e)}
+                        {
+                            "flashMessage": "Error editing Permalink : " + str(e),
+                            "type": "error",
+                        }
                     )
                     return response
             form.save()
@@ -104,47 +84,8 @@ def edit_link(request, pk):
 
     return render(
         request,
-        "modal_edit.html",
+        "modals/modal_edit.html",
         {"form": form, "link": link, "modal_title": "Edit Permalink"},
-    )
-
-
-@login_required
-@nextcloud_user_required
-@require_http_methods(["GET", "POST"])
-def create_bulk(request):
-    json_shares = get_nextcloud_shares(request)
-    shares = json_shares["ocs"]["data"]
-    links = Link.objects.filter(user=request.user, share__isnull=False)
-
-    if request.method == "POST":
-        selected_ids = request.POST.getlist("share_checkbox")
-        for share in shares:
-            if share["id"] not in selected_ids:
-                continue
-            share, _ = Share.objects.get_or_create(
-                uid=share["id"], target_url=share["url"]
-            )
-            Link.objects.create(user=request.user, share=share)
-        response = HttpResponse()
-        response["HX-Refresh"] = "true"
-        response["HX-Trigger"] = json.dumps(
-            {"flashMessage": "Permalinks successfully created"}
-        )
-        return response
-
-    permalink_share_ids = [str(link.share.uid) for link in links]
-    for share in shares[:]:
-        if share["id"] in permalink_share_ids or share["share_type"] != 3:
-            shares.remove(share)
-
-    return render(
-        request,
-        "modal_create_bulk.html",
-        {
-            "shares": shares,
-            "modal_title": "Create permalinks for selected shares",
-        },
     )
 
 
@@ -166,7 +107,9 @@ def create_link(request):
             return response
 
     return render(
-        request, "modal_create.html", {"form": form, "modal_title": "Create Permalink"}
+        request,
+        "modals/modal_create.html",
+        {"form": form, "modal_title": "Create Permalink"},
     )
 
 

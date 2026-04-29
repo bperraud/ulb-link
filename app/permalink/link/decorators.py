@@ -6,7 +6,7 @@ from django.shortcuts import redirect
 from django.urls import reverse
 
 
-def nextcloud_user_required(view_func):
+def nextcloud_connected_user_required(view_func):
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
         access_token = get_valid_access_token(request)

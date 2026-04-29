@@ -1,7 +1,5 @@
 from django.db import models
-
 from django.core.validators import MinLengthValidator
-
 from link.context_processors import get_host
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
@@ -74,7 +72,6 @@ class Link(models.Model):
 
     def self_test(self) -> bool:
         target_url = getattr(self.share, "target_url", None) or self.direct_target_url
-
         if not target_url:
             self.is_valid = False
             return False
@@ -82,8 +79,7 @@ class Link(models.Model):
         try:
             response = requests.get(target_url, timeout=5)
             is_valid = response.status_code < 400
-
-        except Exception as e:
+        except:
             is_valid = False
 
         return is_valid
@@ -91,10 +87,9 @@ class Link(models.Model):
 
 @receiver(post_delete, sender=Link)
 def delete_associated_share(sender, instance, **kwargs):
-    share = instance.share
-    if not share:
+    share_id = instance.share_id
+    if not share_id:
         return
 
-    still_used = Link.objects.filter(share=share).exists()
-    if not still_used:
-        share.delete()
+    if not Link.objects.filter(share_id=share_id).exists():
+        Share.objects.filter(uid=share_id).delete()
