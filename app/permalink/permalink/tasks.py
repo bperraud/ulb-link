@@ -5,11 +5,6 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.shortcuts import render
 from link.context_processors import get_host
-from link.views.nextcloud_utils import (
-    webdav_to_jstree,
-    get_nextcloud_files,
-    create_share_in_nextcloud,
-)
 from django.db.models import Prefetch
 from link.models import Link
 
@@ -28,15 +23,6 @@ def validate_all_links():
         context = {"invalid_links": invalid_links, "site_domain": get_host()}
         if invalid_links:
             send_invalid_link_mail(user, context)
-
-
-def test_profind(request):
-    response = get_nextcloud_files(request)
-    tree_data = webdav_to_jstree(response, request.user)
-
-    create_share_in_nextcloud(request, "/Assistant/2026-02-20_08.52.46 recording.wav")
-
-    return render(request, "jstree.html", tree_data)
 
 
 def send_invalid_link_mail(user: User, context: dict):

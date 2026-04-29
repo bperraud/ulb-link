@@ -12,8 +12,8 @@
     {% csrf_token %}
 
     <div class="px-4 overflow-y-auto" id="main-div">
-    <div id="jstree"></div>
-        <div class="flex items-center gap-2 mb-2">
+        <div id="jstree"></div>
+        <div class="flex justify-center gap-3 mt-4 mb-2">
           <button
             type="submit"
             id="submitButton"
@@ -83,7 +83,7 @@ $('#createBulkForm').on('submit', function () {
   }
 
   #main-div {
-      max-height: 500px;
+      max-height: 1000px;
   }
 
 </style>

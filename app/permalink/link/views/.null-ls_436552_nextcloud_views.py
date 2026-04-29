@@ -95,17 +95,20 @@ def create_nextcloud_bulk(request):
         response = HttpResponse()
         response["HX-Refresh"] = "true"
         for path in selected_path:
-            try:
-                share = get_or_create_share_in_nextcloud(request, path)
-            except Exception as e:
-                print(e)
-                response["HX-Trigger"] = json.dumps(
-                    {
-                        "flashMessage": "Error while creating permalink : " + str(e),
-                        "type": "error",
-                    }
-                )
-                return response
+            # try:
+            share = get_or_create_share_in_nextcloud(request, path)
+            # share = Share.objects.create(
+            #     uid=share_id, path=path, target_url=target_url
+            # )
+            # except Exception as e:
+            #     print(e)
+            #     response["HX-Trigger"] = json.dumps(
+            #         {
+            #             "flashMessage": "Error while creating permalink : " + str(e),
+            #             "type": "error",
+            #         }
+            #     )
+            #     return response
             Link.objects.create(user=request.user, share=share)
         response["HX-Trigger"] = json.dumps(
             {"flashMessage": "Permalinks successfully created"}

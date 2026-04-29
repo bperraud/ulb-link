@@ -73,7 +73,7 @@ def parse_json(json_data: dict):
     for el in json_data["ocs"]["data"]:
         try:
             share = Share.objects.get(uid=el.get("id"))
-            share.path = el.get("file_target")
+            share.path = el.get("path")
             index = share.target_url.rfind("/")
             share.target_url = share.target_url[: index + 1] + el.get("token")
             share.expiration = el.get("expiration") if el.get("expiration") else None
@@ -125,6 +125,11 @@ def create_share_in_nextcloud(request, path):
         )
     except:
         raise NextcloudError("Error reaching Nextcloud Api")
+
+    if response.status_code == 429:
+        raise NextcloudError(
+            "Too Many Requests: you can create at most 20 shares every 10 minutes."
+        )
 
     if response.status_code > 300:
         raise NextcloudError(
