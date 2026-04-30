@@ -128,7 +128,7 @@ def create_share_in_nextcloud(request, path):
 
     if response.status_code == 429:
         raise NextcloudError(
-            "Too Many Requests: you can create at most 20 shares every 10 minutes."
+            "Too Many Requests: you can create at most 100 shares every 10 minutes."
         )
 
     if response.status_code > 300:
