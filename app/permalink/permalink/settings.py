@@ -61,8 +61,12 @@ INSTALLED_APPS = [
     "link",
 ]
 
+# TAILWIND
 TAILWIND_CLI_PATH = "/usr/local/bin/tailwindcss"
 TAILWIND_CLI_AUTOMATIC_DOWNLOAD = False
+TAILWIND_CLI_VERSION = "4.2.4"
+TAILWIND_CLI_SRC_CSS = BASE_DIR / "static_root/css/source.css"
+TAILWIND_CLI_DIST_CSS = "css/tailwind.css"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -93,8 +97,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "permalink.wsgi.application"
-
-TAILWIND_APP_NAME = "theme"
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases

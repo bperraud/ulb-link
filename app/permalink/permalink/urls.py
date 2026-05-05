@@ -21,17 +21,15 @@ from django.views.generic import RedirectView
 from django.conf.urls.static import static
 
 from mozilla_django_oidc.views import OIDCAuthenticationRequestView
-from link.views.views import redirect_to_target_url, status
 from link.auth import OIDCCallbackView
-from link.views.account_views import auth_callback, mycloud_login_view, logout_view
-
+from link.views import views, account_views
 from django.conf import settings
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("status/", status),
+    path("status/", views.status),
     path("link/", include("link.urls")),
-    path("t/<str:token>", redirect_to_target_url, name="redirect"),
+    path("t/<str:token>", views.redirect_to_target_url, name="redirect"),
     path("", RedirectView.as_view(url="/link/", permanent=False), name="home"),
     # auth
     path("accounts/login/", OIDCAuthenticationRequestView.as_view(), name="login"),
@@ -41,11 +39,15 @@ urlpatterns = [
         name="oidc_authentication_callback",
     ),
     path("oidc/", include("mozilla_django_oidc.urls")),
-    path("accounts/login/mycloud/", mycloud_login_view, name="mycloud_login"),
-    path("auth/callback/", auth_callback, name="auth_callback"),
+    path(
+        "accounts/login/mycloud/",
+        account_views.mycloud_login_view,
+        name="mycloud_login",
+    ),
+    path("auth/callback/", account_views.auth_callback, name="auth_callback"),
     path(
         "accounts/logout/",
-        logout_view,
+        account_views.logout_view,
         name="logout",
     ),
 ]

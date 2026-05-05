@@ -15,7 +15,9 @@ services:
     build:
       context: ./permalink
       # target: prd
-      target: dev
+      # target: dev
+    environment:
+      - WATCHFILES_FORCE_POLLING=true
     env_file:
       - ./env_configs/db_conn.env
       - ./env_configs/env_dev.env
@@ -26,10 +28,14 @@ services:
       - pylab_logs:/var/log/
     expose:
       - 8000
+    ports:
+      - "8000:8000"
     extra_hosts:
       - nextcloud.local:host-gateway
     depends_on:
       - db
+    command: python manage.py tailwind runserver 0.0.0.0:8000
+
 
   # celery:
   #   container_name: celery-permalink
