@@ -99,6 +99,7 @@ def create_nextcloud_bulk(request):
                 share = get_or_create_share_in_nextcloud(request, path)
             except Exception as e:
                 print(e)
+                raise e
                 response["HX-Trigger"] = json.dumps(
                     {
                         "flashMessage": "Error while creating permalink : " + str(e),
