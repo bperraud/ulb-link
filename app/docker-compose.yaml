@@ -14,8 +14,6 @@ services:
     container_name: django-permalink
     build:
       context: ./permalink
-      # target: prd
-      # target: dev
     environment:
       - WATCHFILES_FORCE_POLLING=true
     env_file:
@@ -61,9 +59,8 @@ services:
   #   expose:
   #     - 6379
 
-
-  nginx-permalink:
-    container_name: nginx
+  nginx:
+    container_name: nginx-permalink
     build:
       context: ./nginx
     environment:

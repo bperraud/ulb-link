@@ -2,7 +2,7 @@
 
 <!DOCTYPE html>
 {% load tailwind_cli %}
-<html lang="en">
+<html lang="en" class="dark">
 <head>
 	<meta charset="UTF-8">
 	<title>ULB-LINK</title>
@@ -10,14 +10,17 @@
 
     <link rel="icon" type="image/x-icon" href="{% static 'ULB.png' %}">
 
+    <!-- FlowBite -->
     <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js"></script>
-
+    
+    <!-- HTMX -->
     <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/simple-datatables@9.0.3"></script>
 
     <!-- DataTables -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.8/css/dataTables.dataTables.css" />
+    <script src="https://cdn.datatables.net/2.3.8/js/dataTables.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <!-- Jstree -->
@@ -132,16 +135,10 @@
 </body>
 </html>
 
-<style> 
+<style>
 
 #default-sidebar {
     top: 60px;
-}
-
-.datatable-wrapper .datatable-container {
-  border: 1px solid #ebe6e7;
-  border-radius: 12px;
-  overflow-x: auto;
 }
 
 body {
@@ -205,3 +202,20 @@ document.body.addEventListener("type", function (event) {
 });
 
 </script>
+
+<style>
+
+input[type="checkbox"] {
+  background-color: #1B293A !important;
+}
+
+[type=checkbox]:checked {
+  background-color: #0054a6 !important;
+}
+
+input[type="checkbox"]:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+</style>
