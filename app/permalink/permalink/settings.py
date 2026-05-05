@@ -65,8 +65,8 @@ INSTALLED_APPS = [
 TAILWIND_CLI_PATH = "/usr/local/bin/tailwindcss"
 TAILWIND_CLI_AUTOMATIC_DOWNLOAD = False
 TAILWIND_CLI_VERSION = "4.2.4"
-TAILWIND_CLI_SRC_CSS = BASE_DIR / "static_root/css/source.css"
 TAILWIND_CLI_DIST_CSS = "css/tailwind.css"
+TAILWIND_CLI_SRC_CSS = BASE_DIR / "static/css/source.css"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
