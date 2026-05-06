@@ -23,7 +23,6 @@ services:
       - ./permalink/:/app/
     #   - mediaroot:/app/media_root
       - static_root:/app/static_root
-      - pylab_logs:/var/log/
     expose:
       - 8000
     ports:
