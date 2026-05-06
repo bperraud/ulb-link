@@ -32,4 +32,6 @@ data:
     OIDC_USER_ENDPOINT: "{{ .Values.oidc.userEndpoint }}"
     OIDC_JWKS_ENDPOINT: "{{ .Values.oidc.jwksEndpoint }}"
 
+    OIDC_RP_SCOPES: "{{ .Values.oidc.rpScopes }}"
+
     OIDC_LOGOUT_ENDPOINT: "{{ .Values.oidc.logoutEndpoint }}"

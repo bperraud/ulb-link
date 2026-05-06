@@ -2,31 +2,36 @@
 
 <!DOCTYPE html>
 {% load tailwind_cli %}
-<html lang="en">
+<html lang="en" class="dark">
 <head>
 	<meta charset="UTF-8">
-	<title>ULB-LINK</title>
+	<title>Permalink</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="icon" type="image/x-icon" href="{% static 'ULB.png' %}">
 
+    <!-- FlowBite -->
     <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js"></script>
-
+    
+    <!-- HTMX -->
     <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/simple-datatables@9.0.3"></script>
 
     <!-- DataTables -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.8/css/dataTables.dataTables.css" />
+    <script src="https://cdn.datatables.net/2.3.8/js/dataTables.js"></script>
+
+    <!-- Jstree -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
 
     {% tailwind_css %}
 
-	
 </head>
 
-<body>
+<body class="bg-[#1B293A]">
 
     <!-- Main modal -->
     <div id="modalMain" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
@@ -92,16 +97,16 @@
        <div class="h-full px-3 py-4 overflow-y-auto bg-neutral-primary-soft border-e border-default">
         <ul class="space-y-2 font-medium">
 
-            <li class="{% if request.resolver_match.url_name == 'link-home' %}bg-gray-200 font-semibold{% endif %} rounded hover:bg-gray-100 transition">
-                <a href="{% url 'link-home' %}" class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
+            <li class="{% if request.resolver_match.url_name == 'link-home' %}bg-[#3A4859] font-semibold{% endif %} rounded hover:bg-[#3A4859] transition">
+                <a href="{% url 'link-home' %}" class="flex items-center text-white px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
                    <img src="{% static 'link.svg' %}" alt="link" class="w-4 h-4" />
                    <span class="ms-3">Links</span>
                 </a>
             </li>
 
             {% if user.is_nextcloud_user %}
-            <li class="{% if request.resolver_match.url_name == 'mycloud-link' %}bg-gray-200 font-semibold{% endif %} rounded hover:bg-gray-100 transition">
-                <a href="{% url 'mycloud-link' %}" class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
+            <li class="{% if request.resolver_match.url_name == 'mycloud-link' %}bg-[#3A4859] font-semibold{% endif %} rounded hover:bg-[#3A4859] transition">
+                <a href="{% url 'mycloud-link' %}" class="flex items-center text-white px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
                    <img src="{% static 'nextcloud.jpg' %}" width="18" height="18" alt="users" />
                    <span class="ms-3">Mycloud</span>
                 </a>
@@ -113,6 +118,7 @@
             <li>
               {% block additional_button %}
               {% endblock %}
+
             </li>
 
           </ul>
@@ -128,16 +134,10 @@
 </body>
 </html>
 
-<style> 
+<style>
 
 #default-sidebar {
     top: 60px;
-}
-
-.datatable-wrapper .datatable-container {
-  border: 1px solid #ebe6e7;
-  border-radius: 12px;
-  overflow-x: auto;
 }
 
 body {
@@ -156,18 +156,65 @@ body {
 <script>
 
 function showAlert(message, type = "success", timeout = 3000) {
-  const alert = document.getElementById("globalAlert");
-  const innerSpan = document.getElementById("alertMessage");
-  innerSpan.textContent = message;
-  alert.style.display = "flex";
-  setTimeout(() => alert.classList.add("show"), 10);
+    let alert;
+    let innerSpan;
+    if (type == "success") {
+        alert = document.getElementById("greenAlert");
+        innerSpan = document.getElementById("infoMessage");
+    }
+    else {
+        alert = document.getElementById("redAlert");
+        innerSpan = document.getElementById("alertMessage");
+    }
+    innerSpan.textContent = message;
+    alert.style.display = "flex";
+    setTimeout(() => alert.classList.add("show"), 10);
 
-  if (timeout) {
-    setTimeout(() => {
-      alert.classList.remove("show");
-      setTimeout(() => (alert.style.display = "none"), 150);
-    }, timeout);
-  }
+    if (timeout) {
+        setTimeout(() => {
+          alert.classList.remove("show");
+          setTimeout(() => (alert.style.display = "none"), 150);
+        }, timeout);
+    }
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+    const msg = sessionStorage.getItem("flashMessage");
+    let type = sessionStorage.getItem("type");
+
+    if (type == undefined) {
+        type = "success";
+    }
+    if (msg) {
+        showAlert(msg, type);
+        sessionStorage.removeItem("flashMessage");
+        sessionStorage.removeItem("type");
+    }
+});
+
+document.body.addEventListener("flashMessage", function (event) {
+    sessionStorage.setItem("flashMessage", event.detail.value);
+});
+
+document.body.addEventListener("type", function (event) {
+    sessionStorage.setItem("type", event.detail.value);
+});
+
 </script>
+
+<style>
+
+input[type="checkbox"] {
+  background-color: #1B293A !important;
+}
+
+[type=checkbox]:checked {
+  background-color: #0054a6 !important;
+}
+
+input[type="checkbox"]:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+</style>

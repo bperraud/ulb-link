@@ -1,10 +1,22 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block additional_button %}
+
+<button data-modal-target="modalMain" data-modal-toggle="modalMain" class="btn-primary"
+    hx-get="/link/create-nextcloud-bulk/"
+    hx-trigger="click"
+    hx-target="#modal-content">
+    <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
+    Create Bulk
+</button>
+
+{% endblock %}
+
 {% block pagecontent %}
 
 <div>
-    <table id="links" >
+    <table id="links" class="cell-border compact stripe order-column">
         <thead>
             <tr>
                 <th><input type="checkbox" id="selectAll" value="" class="w-4 h-4 border border-default-medium rounded-xs bg-neutral-secondary-medium focus:ring-2 focus:ring-brand-soft"></th>
@@ -16,6 +28,7 @@
                         </svg>
                     </span>
                 </th>
+                <th></th>
                 <th>
                     <span class="flex items-center">
                         Target URL

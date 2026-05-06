@@ -1,0 +1,93 @@
+{% load static %}
+
+
+<div>
+
+  <form 
+    method="POST"
+    id="createBulkForm"
+    hx-post="{% url 'create-nextcloud-bulk' %}"
+    class="p-4 md:p-5"
+  >
+    {% csrf_token %}
+
+    <div class="px-4 overflow-y-auto max-h-[70vh]">
+        <div id="jstree" class="text-[#e5e7eb]"></div>
+        <div class="flex justify-center gap-3 mt-4 mb-2">
+          <button
+            type="submit"
+            id="submitButton"
+            disabled
+            class="btn-primary"
+          >
+            Submit
+          </button>
+        </div>
+    </div>
+  </form>
+
+</div>
+
+<script>
+
+htmx.onLoad(function () {
+
+    const $tree = $('#jstree');
+
+   $tree.jstree({
+        core: {
+            data: {{ data|safe }}
+        },
+        plugins: ['checkbox']
+    });
+
+    $tree.on('ready.jstree', function () {
+
+        const tree = $tree.jstree(true);
+
+        // open depth 1 only
+        tree.get_node('#').children.forEach(function (nodeId) {
+            tree.open_node(nodeId);
+        });
+    });
+
+    $tree.on('changed.jstree', function(e, data) {
+        document.getElementById('submitButton').disabled =
+            data.selected.length === 0;
+    });
+
+});
+
+if (document.getElementById('modalTitle')) { modalTitle.textContent = "{{ modal_title|escapejs }}"; }
+
+$('#createBulkForm').on('submit', function () {
+
+    const selected = $('#jstree').jstree(true).get_checked();
+
+    $('<input>')
+        .attr('type', 'hidden')
+        .attr('name', 'selected_nodes')
+        .val(JSON.stringify(selected))
+        .appendTo(this);
+});
+
+</script>
+
+
+<style>
+  button:disabled {
+    background-color: #9ca3af;
+    color: #e5e7eb;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  .jstree.jstree-default .jstree-clicked {
+    background-color: #3A4859 !important;
+}
+
+  .jstree-default .jstree-hovered {
+    background-color: #2f3c4d !important;
+}
+
+</style>

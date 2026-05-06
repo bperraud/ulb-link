@@ -5,15 +5,14 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
-from django.conf import settings
-from django.shortcuts import resolve_url
 
 import json
 from rest_framework.generics import get_object_or_404
-from link.decorators import nextcloud_user_required
 from link.models import Link
 from link.forms import LinkForm
-from link.views.nextcloud_views import update_shares_object, update_share_in_nextcloud
+from link.views.nextcloud_utils import (
+    update_share_in_nextcloud,
+)
 
 
 @method_decorator([login_required], name="dispatch")
@@ -26,29 +25,9 @@ class LinkTableView(ListView):
         return Link.objects.filter(user=self.request.user, share=None)
 
 
-@method_decorator([nextcloud_user_required, login_required], name="dispatch")
-class MycloudLinkTableView(ListView):
-    model = Link
-    context_object_name = "links"
-    template_name = "mycloud/mycloud_link_table.html"
-
-    def get_queryset(self):
-        update_shares_object(self.request)
-        return Link.objects.filter(user=self.request.user, share__isnull=False)
-
-
 @method_decorator([login_required], name="dispatch")
 class LinkRowView(TemplateView):
     template_name = "link_row.html"
-
-    def get_context_data(self, **kwargs):
-        link = get_object_or_404(Link, pk=kwargs["pk"])
-        return {"link": link}
-
-
-@method_decorator([nextcloud_user_required, login_required], name="dispatch")
-class MycloudLinkRowView(TemplateView):
-    template_name = "mycloud/mycloud_link_row.html"
 
     def get_context_data(self, **kwargs):
         link = get_object_or_404(Link, pk=kwargs["pk"])
@@ -59,7 +38,7 @@ class MycloudLinkRowView(TemplateView):
 def toolbar(request, nb):
     match nb:
         case 0:
-            return HttpResponse("")
+            return HttpResponse(b"")
         case 1:
             return render(request, "link_bar/edit_single_link.html")
         case _:
@@ -82,11 +61,20 @@ def edit_link(request, pk):
     if request.method == "POST":
         form = LinkForm(request.POST, instance=link)
         if form.is_valid():
-            if link.share:
-                update_share_in_nextcloud(request, link.share.uid)
-            form.save()
             response = HttpResponse()
             response["HX-Refresh"] = "true"
+            if link.share:
+                try:
+                    update_share_in_nextcloud(request, link.share.uid)
+                except Exception as e:
+                    response["HX-Trigger"] = json.dumps(
+                        {
+                            "flashMessage": "Error editing Permalink : " + str(e),
+                            "type": "error",
+                        }
+                    )
+                    return response
+            form.save()
             response["HX-Trigger"] = json.dumps(
                 {"flashMessage": "Permalink successfully edited"}
             )
@@ -96,7 +84,7 @@ def edit_link(request, pk):
 
     return render(
         request,
-        "modal_edit.html",
+        "modals/modal_edit.html",
         {"form": form, "link": link, "modal_title": "Edit Permalink"},
     )
 
@@ -119,7 +107,9 @@ def create_link(request):
             return response
 
     return render(
-        request, "modal_create.html", {"form": form, "modal_title": "Create Permalink"}
+        request,
+        "modals/modal_create.html",
+        {"form": form, "modal_title": "Create Permalink"},
     )
 
 

@@ -14,8 +14,8 @@ services:
     container_name: django-permalink
     build:
       context: ./permalink
-      # target: prd
-      target: dev
+    environment:
+      - WATCHFILES_FORCE_POLLING=true
     env_file:
       - ./env_configs/db_conn.env
       - ./env_configs/env_dev.env
@@ -26,13 +26,41 @@ services:
       - pylab_logs:/var/log/
     expose:
       - 8000
+    ports:
+      - "8000:8000"
     extra_hosts:
       - nextcloud.local:host-gateway
     depends_on:
       - db
+    command: python manage.py tailwind runserver 0.0.0.0:8000
 
-  nginx-permalink:
-    container_name: nginx
+
+  # celery:
+  #   container_name: celery-permalink
+  #   command: celery -A permalink worker --loglevel=info
+  #   build:
+  #     context: ./permalink
+  #     # target: prd
+  #     target: dev
+  #   env_file:
+  #     - ./env_configs/db_conn.env
+  #     - ./env_configs/env_dev.env
+  #   volumes:
+  #     - ./permalink/:/app/
+  #   extra_hosts:
+  #     - nextcloud.local:host-gateway
+  #   depends_on:
+  #     - db
+
+  # redis:
+  #   container_name: redis-permalink
+  #   image: redis
+  #   restart: always
+  #   expose:
+  #     - 6379
+
+  nginx:
+    container_name: nginx-permalink
     build:
       context: ./nginx
     environment:
@@ -44,6 +72,7 @@ services:
     restart: always
     ports:
       - "8080:8080"
+      # - "8080:8080"
       # - "443:443"
     volumes:
     #   - mediaroot:/app/media_root

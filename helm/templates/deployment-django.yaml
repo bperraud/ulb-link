@@ -12,11 +12,6 @@ spec:
       labels:
         app: django-permalink
     spec:
-      hostAliases:
-        - ip: "164.15.242.18"
-          hostnames:
-            - "mycloud.ulb.be"
-            - "nc-test.ulb.ac.be"
       volumes:
         - name: permalink-static
           persistentVolumeClaim:
@@ -50,7 +45,7 @@ spec:
       - name: django-permalink
         resources:
           limits:
-            memory: "3Gi"
+            memory: "1Gi"
         image: {{ .Values.web.image }}
         imagePullPolicy: Always
         envFrom:

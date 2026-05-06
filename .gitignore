@@ -1,8 +1,10 @@
 .mypy_cache
 venv/
+.venv/
 .direnv/
 
 app/env_configs/.env
+app/permalink/static_root
 
 helm/values-secret.yaml
 

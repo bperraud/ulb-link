@@ -1,18 +1,17 @@
 from django.db import models
-
-# from django.contrib.auth.models import User
 from django.core.validators import MinLengthValidator
-
 from link.context_processors import get_host
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
 
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
+import requests
+import string, random
 
 
 class User(AbstractUser):
-    is_nextcloud_user = models.BooleanField(default=False)
+    is_nextcloud_user = models.BooleanField(default=False)  # type: ignore
 
 
 class Share(models.Model):
@@ -53,12 +52,44 @@ class Link(models.Model):
         null=False,
     )
 
+    is_valid = models.BooleanField(default=True)  # type: ignore
+
+    def save(self, *args, **kwargs):
+        if not self.token:
+            self.token = self._generate_unique_token()
+        self.is_valid = self.self_test()
+        super().save(*args, **kwargs)
+
+    def _generate_unique_token(self, length=10) -> str:
+        chars = string.ascii_letters + string.digits
+        while True:
+            token = "".join(random.choices(chars, k=length))
+            if not Link.objects.filter(token=token).exists():
+                return token
+
     def get_permalink(self):
         return f"{get_host()}/t/{self.token}"
+
+    def self_test(self) -> bool:
+        target_url = getattr(self.share, "target_url", None) or self.direct_target_url
+        if not target_url:
+            self.is_valid = False
+            return False
+
+        try:
+            response = requests.get(target_url, timeout=5)
+            is_valid = response.status_code < 400
+        except:
+            is_valid = False
+
+        return is_valid
 
 
 @receiver(post_delete, sender=Link)
 def delete_associated_share(sender, instance, **kwargs):
-    share = instance.share
-    if share:
-        share.delete()
+    share_id = instance.share_id
+    if not share_id:
+        return
+
+    if not Link.objects.filter(share_id=share_id).exists():
+        Share.objects.filter(uid=share_id).delete()

@@ -8,21 +8,14 @@ from rest_framework.permissions import IsAuthenticated
 
 from link.models import Link, Share
 from link.auth import CustomJWTAuthentication
-import string, random
-
-
-def generate_unique_token(length=10) -> str:
-    chars = string.ascii_letters + string.digits
-    while True:
-        token = "".join(random.choices(chars, k=length))
-        if not Link.objects.filter(token=token).exists():
-            return token
 
 
 class ShareCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Share
         fields = ["uid", "expiration", "target_url", "path"]
+
+        extra_kwargs: dict = {"uid": {"validators": []}}
 
 
 class LinkSerializer(serializers.ModelSerializer):
@@ -56,10 +49,8 @@ class ExternalLinkAPIView(APIView):
     def post(self, request):
         serializer = ShareCreateSerializer(data=request.data)
         if serializer.is_valid():
-            share = Share.objects.create(**serializer.validated_data)
-            link = Link.objects.create(
-                user=request.user, share=share, token=generate_unique_token()
-            )
+            share, _ = Share.objects.get_or_create(**serializer.validated_data)
+            link = Link.objects.create(user=request.user, share=share)
             return Response(
                 {"permalink": link.get_permalink()},
                 status=201,
@@ -75,7 +66,7 @@ class ExternalLinkAPIView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         try:
-            permalink = Link.objects.get(share__uid=uid)
+            permalink = Link.objects.get(user=request.user, share__uid=uid)
         except Link.DoesNotExist:
             return Response(
                 {"error": "Permalink does not exist"},
@@ -99,7 +90,7 @@ class ExternalLinkAPIView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         try:
-            permalink = Link.objects.get(share__uid=uid)
+            permalink = Link.objects.get(user=request.user, share__uid=uid)
         except Link.DoesNotExist:
             return Response(
                 {"error": "Permalink does not exist"},

@@ -21,30 +21,33 @@ from django.views.generic import RedirectView
 from django.conf.urls.static import static
 
 from mozilla_django_oidc.views import OIDCAuthenticationRequestView
-from link.views.views import redirect_to_target_url, status
 from link.auth import OIDCCallbackView
-from link.views.account_views import auth_callback, mycloud_login_view, logout_view
-# from django.contrib.auth import views as auth_views
+from link.views import views, account_views
 from django.conf import settings
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("status/", status),
+    path("status/", views.status),
     path("link/", include("link.urls")),
-    path("t/<str:token>", redirect_to_target_url, name="redirect"),
-    path("", RedirectView.as_view(url="/link/", permanent=False), name='home'),
+    path("t/<str:token>", views.redirect_to_target_url, name="redirect"),
+    path("", RedirectView.as_view(url="/link/", permanent=False), name="home"),
     # auth
-    # path("accounts/login/", login_view, name="login"),
     path("accounts/login/", OIDCAuthenticationRequestView.as_view(), name="login"),
-    # path("accounts/login/", login_view, name="login"),
-    path("oidc/callback/", OIDCCallbackView.as_view(), name="oidc_authentication_callback"),
-    path('oidc/', include('mozilla_django_oidc.urls')),
-    path("accounts/login/mycloud/", mycloud_login_view, name="mycloud_login"),
-    path("auth/callback/", auth_callback, name="auth_callback"),
+    path(
+        "oidc/callback/",
+        OIDCCallbackView.as_view(),
+        name="oidc_authentication_callback",
+    ),
+    path("oidc/", include("mozilla_django_oidc.urls")),
+    path(
+        "accounts/login/mycloud/",
+        account_views.mycloud_login_view,
+        name="mycloud_login",
+    ),
+    path("auth/callback/", account_views.auth_callback, name="auth_callback"),
     path(
         "accounts/logout/",
-        logout_view,
-        # auth_views.LogoutView.as_view(next_page="login"),
+        account_views.logout_view,
         name="logout",
     ),
 ]

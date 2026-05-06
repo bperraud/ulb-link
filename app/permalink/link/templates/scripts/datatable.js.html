@@ -79,17 +79,16 @@ document.body.addEventListener('htmx:afterSwap', function(evt) {
     }
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-    const msg = sessionStorage.getItem("flashMessage");
-    if (msg) {
-        showAlert(msg);
-        sessionStorage.removeItem("flashMessage");
-    }
-});
-
-document.body.addEventListener("flashMessage", function (event) {
-    sessionStorage.setItem("flashMessage", event.detail.value);
-});
 
 </script>
 
+
+<style>
+
+.datatable-wrapper .datatable-container {
+  border: 1px solid #374151;
+  border-radius: .5rem;
+  overflow-x: auto;
+}
+
+</style>

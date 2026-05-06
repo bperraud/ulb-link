@@ -68,6 +68,9 @@ def refresh_token(refresh_token):
 
 class OIDCCAS(OIDCAuthenticationBackend):
 
+    def verify_claims(self, claims):
+        return True
+
     def filter_users_by_claims(self, claims):
         username = claims.get("id", "")
         if not username:
@@ -101,8 +104,7 @@ def is_nextcloud_user(uid: str) -> bool:
         response.raise_for_status()
         data = response.json()
         return data["ocs"]["meta"]["status"] == "ok"
-    except requests.exceptions.RequestException as e:
-        print(e)
+    except requests.exceptions.RequestException:
         return False
 
 
@@ -115,6 +117,6 @@ class OIDCCallbackView(OIDCAuthenticationCallbackView):
             or request_user != self.user
         ):
             auth.login(self.request, self.user)
-        if is_nextcloud_user(self.request.user.username):
+        if is_nextcloud_user(self.request.user.get_username()):
             return redirect(reverse("mycloud_login"))
         return super().login_success()

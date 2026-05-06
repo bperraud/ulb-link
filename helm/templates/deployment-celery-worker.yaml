@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: celery-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: celery-worker
+  template:
+    metadata:
+      labels:
+        app: celery-worker
+    spec:
+      containers:
+        - name: worker
+          image: {{ .Values.web.image }}
+          command: ["celery", "-A", "permalink", "worker", "-l", "info"]
+          resources:
+            limits:
+              memory: "1.5Gi"
+          envFrom:
+            - secretRef:
+                name: permalink-web-secret
+            - configMapRef:
+                name: web-config
+            - configMapRef:
+                name: db-config
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-creds
+                  key: postgres-user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-creds
+                  key: postgres-password

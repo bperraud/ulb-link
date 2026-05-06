@@ -32,6 +32,7 @@ SITE_DOMAIN = os.environ.get("SITE_DOMAIN")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG") == "True"
+
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "*").split(",")
 
 CSRF = os.environ.get("CSRF_TRUSTED_ORIGINS")
@@ -56,11 +57,16 @@ INSTALLED_APPS = [
     "django_extensions",
     "rest_framework",
     "mozilla_django_oidc",
+    "django_celery_beat",
     "link",
 ]
 
+# TAILWIND
 TAILWIND_CLI_PATH = "/usr/local/bin/tailwindcss"
 TAILWIND_CLI_AUTOMATIC_DOWNLOAD = False
+TAILWIND_CLI_VERSION = "4.2.4"
+TAILWIND_CLI_DIST_CSS = "css/tailwind.css"
+TAILWIND_CLI_SRC_CSS = BASE_DIR / "static/css/source.css"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -91,8 +97,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "permalink.wsgi.application"
-
-TAILWIND_APP_NAME = "theme"
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
@@ -160,7 +164,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
 LANGUAGE_CODE = "en-us"
-TIME_ZONE = "Europe/Brussels"
+TIME_ZONE = os.environ.get("TIME_ZONE")
 USE_I18N = True
 USE_TZ = True
 
@@ -209,9 +213,13 @@ OIDC_OP_USER_ENDPOINT = os.environ.get("OIDC_USER_ENDPOINT")
 OIDC_OP_JWKS_ENDPOINT = os.environ.get("OIDC_JWKS_ENDPOINT")
 OIDC_OP_LOGOUT_ENDPOINT = os.environ.get("OIDC_LOGOUT_ENDPOINT")
 
+OIDC_RP_SCOPES = os.environ.get("OIDC_RP_SCOPES")
+
 OIDC_USERNAME_CLAIM = "sub"
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+SECURE_SSL_REDIRECT = os.environ.get("SECURE_SSL_REDIRECT") == "True"
 USE_X_FORWARDED_HOST = True
 
 OIDC_RP_SIGN_ALGO = "RS256"
@@ -261,3 +269,18 @@ LOGGING = {
         },
     },
 }
+
+
+# Celery
+CELERY_BROKER_URL = "redis://redis-permalink:6379/0"
+CELERY_TIMEZONE = os.environ.get("TIME_ZONE")
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_TASK_SERIALIZER = "json"
+
+# Mail
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_PORT = 25
+EMAIL_HOST = "smtp.ulb.be"
+EMAIL_USE_TLS = False
+EMAIL_TIMEOUT = 60
+DEFAULT_FROM_EMAIL = "permalink@ulb.be"
