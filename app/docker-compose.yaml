@@ -59,28 +59,27 @@ services:
   #   expose:
   #     - 6379
 
-  nginx:
-    container_name: nginx-permalink
-    build:
-      context: ./nginx
-    environment:
-      NGINX_ENVSUBST_OUTPUT_DIR: /etc/nginx/conf.d
-      SITE_DOMAIN: localhost
-      NGINX_PORT: "8080"
-      NEXTCLOUD_URL: nc-test.ulb.ac.be
-      NGINX_SCHEME: http
-    restart: always
-    ports:
-      - "8080:8080"
-      # - "8080:8080"
-      # - "443:443"
-    volumes:
-    #   - mediaroot:/app/media_root
-      - static_root:/app/static_root
-    depends_on:
-      - django
+  # nginx:
+  #   container_name: nginx-permalink
+  #   build:
+  #     context: ./nginx
+  #   environment:
+  #     NGINX_ENVSUBST_OUTPUT_DIR: /etc/nginx/conf.d
+  #     SITE_DOMAIN: localhost
+  #     NGINX_PORT: "8080"
+  #     NEXTCLOUD_URL: nc-test.ulb.ac.be
+  #     NGINX_SCHEME: http
+  #   restart: always
+  #   ports:
+  #     - "8080:8080"
+  #     # - "8080:8080"
+  #     # - "443:443"
+  #   volumes:
+  #   #   - mediaroot:/app/media_root
+  #     - static_root:/app/static_root
+  #   depends_on:
+  #     - django
 
 volumes:
   postgredata:
   static_root:
-  pylab_logs:

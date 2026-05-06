@@ -1,6 +1,6 @@
 <tr id="link-{{ link.id }}">
     <td><input type="checkbox" value="{{ link.id }}" name="input-checkbox"></td>
-    <td class="font-medium text-heading whitespace-nowrap mr-3"><a href="{{ HOST }}/t/{{ link.token }}">{{ HOST }}/t/{{ link.token }}</a>
+    <td class="font-medium text-heading whitespace-nowrap mr-3"><a href="{{ HOST }}/t/{{ link.token }}">{{ HOST }}/t/{{ link.token }}</a></td>
     <td>
         <button onclick="copyToClipboard('{{ link.token }}')" style="float: right;" class="mr-3">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 ml-1 inline">
@@ -8,8 +8,6 @@
             </svg>
         </button>
     </td>
-
-
     <td><a class="font-bold" href="{{ link.direct_target_url }}">{{ link.direct_target_url }}</a></td>
     <td class="relative">
       {% if link.is_valid %}
