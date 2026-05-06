@@ -22,7 +22,6 @@
       </div>
 </div>
 
-{% block scripts %}
 <script>
     document.getElementById('submitButton').addEventListener('click', function() {
         htmx.trigger(document.getElementById('editForm'), 'submit');
@@ -31,4 +30,3 @@
       modalTitle.textContent = "{{ modal_title|escapejs }}";
     }
 </script>
-{% endblock %}

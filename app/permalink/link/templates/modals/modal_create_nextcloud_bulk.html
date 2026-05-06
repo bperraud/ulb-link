@@ -8,7 +8,7 @@
     id="createBulkForm"
     hx-post="{% url 'create-nextcloud-bulk' %}"
     class="p-4 md:p-5"
-  >
+    >
     {% csrf_token %}
 
     <div class="px-4 overflow-y-auto max-h-[70vh]">
@@ -28,13 +28,13 @@
 
 </div>
 
-<script>
 
+<script>
 htmx.onLoad(function () {
 
     const $tree = $('#jstree');
 
-   $tree.jstree({
+    $tree.jstree({
         core: {
             data: {{ data|safe }}
         },
@@ -42,9 +42,7 @@ htmx.onLoad(function () {
     });
 
     $tree.on('ready.jstree', function () {
-
         const tree = $tree.jstree(true);
-
         // open depth 1 only
         tree.get_node('#').children.forEach(function (nodeId) {
             tree.open_node(nodeId);
