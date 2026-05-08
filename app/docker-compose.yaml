@@ -11,7 +11,7 @@ services:
       - 5432
 
   django:
-    container_name: django-permalink
+    container_name: django
     build:
       context: ./permalink
     environment:
