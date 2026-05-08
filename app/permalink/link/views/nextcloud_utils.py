@@ -99,7 +99,6 @@ def update_share_in_nextcloud(request, id):
             headers=headers,
             data=data,
         )
-        print(response)
     except:
         raise NextcloudError("Error reaching Nextcloud Api")
 
