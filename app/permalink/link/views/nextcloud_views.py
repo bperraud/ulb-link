@@ -92,8 +92,6 @@ def create_nextcloud_bulk(request):
     if request.method == "POST":
         selected_path = request.POST.get("selected_nodes")
         selected_files = json.loads(selected_path)
-
-        print(selected_files)
         response = HttpResponse()
         response["HX-Refresh"] = "true"
         for file in selected_files:
