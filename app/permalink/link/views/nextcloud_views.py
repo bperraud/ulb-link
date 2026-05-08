@@ -94,6 +94,7 @@ def create_nextcloud_bulk(request):
         selected_files = json.loads(selected_path)
         response = HttpResponse()
         response["HX-Refresh"] = "true"
+        link_created = False
         for file in selected_files:
             if file["icon"] == "jstree-folder":
                 continue
@@ -108,9 +109,11 @@ def create_nextcloud_bulk(request):
                 )
                 return response
             Link.objects.create(user=request.user, share=share)
-        response["HX-Trigger"] = json.dumps(
-            {"flashMessage": "Permalinks successfully created"}
-        )
+            link_created = True
+        if link_created:
+            response["HX-Trigger"] = json.dumps(
+                {"flashMessage": "Permalinks successfully created"}
+            )
         return response
 
     tree_data["modal_title"] = "Create permalinks for selected files"
