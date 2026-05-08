@@ -60,7 +60,7 @@ if (document.getElementById('modalTitle')) { modalTitle.textContent = "{{ modal_
 
 $('#createBulkForm').on('submit', function () {
 
-    const selected = $('#jstree').jstree(true).get_checked();
+    const selected = $('#jstree').jstree(true).get_checked(true);
 
     $('<input>')
         .attr('type', 'hidden')

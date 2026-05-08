@@ -9,3 +9,5 @@ app/permalink/static_root
 helm/values-secret.yaml
 
 app/permalink/static_root
+
+**/.null-ls*

@@ -91,12 +91,14 @@ def create_nextcloud_bulk(request):
 
     if request.method == "POST":
         selected_path = request.POST.get("selected_nodes")
-        selected_path = eval(selected_path)
+        selected_files = json.loads(selected_path)
         response = HttpResponse()
         response["HX-Refresh"] = "true"
-        for path in selected_path:
+        for file in selected_files:
+            if file["icon"] == "jstree-folder":
+                continue
             try:
-                share = get_or_create_share_in_nextcloud(request, path)
+                share = get_or_create_share_in_nextcloud(request, file["path"])
             except Exception as e:
                 response["HX-Trigger"] = json.dumps(
                     {

@@ -191,6 +191,8 @@ def get_or_create_share_in_nextcloud(request, path):
     share_data = json.loads(response.text)["ocs"]["data"]
     share_exist = False
 
+    print(path)
+
     if share_data:  # share exist -> need to parse all shares
         for share in share_data:
             if share["share_type"] == 3:
