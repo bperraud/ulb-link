@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     "mozilla_django_oidc",
     "django_celery_beat",
     "link",
+    "permalink",
 ]
 
 # TAILWIND
