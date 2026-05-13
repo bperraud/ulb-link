@@ -3,7 +3,6 @@ from django.urls import path
 from link.api import ExternalLinkAPIView, LinkAPIView
 from link.views import views
 from link.views import nextcloud_views
-from link.views import nextcloud_utils
 
 urlpatterns = [
     path("api/v1/", ExternalLinkAPIView.as_view()),
@@ -28,5 +27,4 @@ urlpatterns = [
     path(
         "mycloud", nextcloud_views.MycloudLinkTableView.as_view(), name="mycloud-link"
     ),
-    path("update/share/<int:id>", nextcloud_utils.update_share_in_nextcloud),
 ]

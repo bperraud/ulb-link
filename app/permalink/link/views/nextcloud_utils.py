@@ -1,11 +1,11 @@
 from django.shortcuts import get_object_or_404
 from django.conf import settings
-from link.auth import get_valid_access_token
-import requests, json
+from link.auth import get_access_token
 from link.models import Link, User, Share
 
 from xml.etree import ElementTree as ET
 from urllib.parse import unquote
+import requests
 
 
 class NextcloudError(Exception):
@@ -16,14 +16,14 @@ class NotAuthenticated(Exception):
     pass
 
 
-def is_folder(resp, ns):
-    resourcetype = resp.find("d:propstat/d:prop/d:resourcetype", ns)
-    if resourcetype is not None:
-        return resourcetype.find("d:collection", ns) is not None
-    return False
-
-
 def webdav_to_jstree(xml, user: User):
+
+    def is_folder(resp, ns):
+        resourcetype = resp.find("d:propstat/d:prop/d:resourcetype", ns)
+        if resourcetype is not None:
+            return resourcetype.find("d:collection", ns) is not None
+        return False
+
     ns = {"d": "DAV:"}
     root = ET.fromstring(xml)
     base = f"/remote.php/dav/files/{user.username}/"
@@ -69,126 +69,23 @@ def webdav_to_jstree(xml, user: User):
     return {"data": nodes}
 
 
-def parse_json(json_data: dict):
-    for el in json_data["ocs"]["data"]:
+def update_shares_object(request):
+    response = mycloud_api.get_shares(request)
+    for el in response.json()["ocs"]["data"]:
         try:
             share = Share.objects.get(uid=el.get("id"))
-            share.path = el.get("path")
-            index = share.target_url.rfind("/")
-            share.target_url = share.target_url[: index + 1] + el.get("token")
-            share.expiration = el.get("expiration") if el.get("expiration") else None
-            share.save()
         except Share.DoesNotExist:
-            pass
-
-
-def update_share_in_nextcloud(request, id):
-    access_token = get_valid_access_token(request)
-    if not access_token:
-        raise NotAuthenticated()
-
-    share = get_object_or_404(Share, uid=id)
-    if not share.expiration:
-        raise NextcloudError("Share does not have an expiration date")
-
-    data = {"expireDate": share.expiration.strftime("%Y-%m-%d")}
-    headers = {"Authorization": f"Bearer {access_token}", "OCS-APIRequest": "true"}
-    try:
-        response = requests.put(
-            f"{settings.NEXTCLOUD_URL}/ocs/v2.php/apps/files_sharing/api/v1/shares/{id}",
-            headers=headers,
-            data=data,
-        )
-    except:
-        raise NextcloudError("Error reaching Nextcloud Api")
-
-    if response.status_code != 200:
-        raise NextcloudError(
-            "Error reaching Nextcloud Api " + str(response.status_code)
-        )
-
-
-def create_share_in_nextcloud(request, path):
-    access_token = get_valid_access_token(request)
-    if not access_token:
-        raise NotAuthenticated()
-
-    data = {"path": path, "shareType": 3, "permissions": 1}
-    headers = {"Authorization": f"Bearer {access_token}", "OCS-APIRequest": "true"}
-
-    try:
-        response = requests.post(
-            f"{settings.NEXTCLOUD_URL}/ocs/v2.php/apps/files_sharing/api/v1/shares?format=json",
-            headers=headers,
-            data=data,
-        )
-    except:
-        raise NextcloudError("Error reaching Nextcloud Api")
-
-    if response.status_code == 429:
-        raise NextcloudError(
-            "Too Many Requests: you can create at most 100 shares every 10 minutes."
-        )
-
-    if response.status_code > 300:
-        raise NextcloudError(
-            "Error reaching Nextcloud Api " + str(response.status_code)
-        )
-    return response
-
-
-def update_shares_object(request):
-    response = get_nextcloud_shares(request)
-    parse_json(json.loads(response.text))
-
-
-def get_nextcloud_shares(request) -> requests.Response:
-    access_token = get_valid_access_token(request)
-    if not access_token:
-        raise NotAuthenticated()
-
-    headers = {"Authorization": f"Bearer {access_token}", "OCS-APIRequest": "true"}
-    try:
-        response = requests.get(
-            f"{settings.NEXTCLOUD_URL}/ocs/v2.php/apps/files_sharing/api/v1/shares?format=json",
-            headers=headers,
-        )
-    except:
-        raise NextcloudError("Error reaching Nextcloud Api")
-    if response.status_code != 200:
-        raise NextcloudError("Error reaching Nextcloud Api")
-
-    return response
-
-
-def get_nextcloud_share(request, path):
-    access_token = get_valid_access_token(request)
-    if not access_token:
-        raise NotAuthenticated()
-
-    params = {
-        "path": path,
-        "format": "json",
-    }
-
-    headers = {"Authorization": f"Bearer {access_token}", "OCS-APIRequest": "true"}
-    try:
-        response = requests.get(
-            f"{settings.NEXTCLOUD_URL}/ocs/v2.php/apps/files_sharing/api/v1/shares",
-            headers=headers,
-            params=params,
-        )
-    except:
-        raise NextcloudError("Error reaching Nextcloud Api")
-    if response.status_code != 200:
-        raise NextcloudError("Error reaching Nextcloud Api")
-
-    return response
+            continue
+        share.path = el.get("path")
+        index = share.target_url.rfind("/")
+        share.target_url = share.target_url[: index + 1] + el.get("token")
+        share.expiration = el.get("expiration") if el.get("expiration") else None
+        share.save()
 
 
 def get_or_create_share_in_nextcloud(request, path):
-    response = get_nextcloud_share(request, path)
-    share_data = json.loads(response.text)["ocs"]["data"]
+    response = mycloud_api.get_share(request, path)
+    share_data = response.json()["ocs"]["data"]
     share_exist = False
 
     if share_data:  # share exist -> need to parse all shares
@@ -199,8 +96,8 @@ def get_or_create_share_in_nextcloud(request, path):
                 break
 
     if not share_exist:
-        response = create_share_in_nextcloud(request, path)
-        share_data = json.loads(response.text)["ocs"]["data"]
+        response = mycloud_api.create_share(request, path)
+        share_data = response.json()["ocs"]["data"]
 
     share, _ = Share.objects.get_or_create(
         uid=share_data["id"],
@@ -210,36 +107,138 @@ def get_or_create_share_in_nextcloud(request, path):
     return share
 
 
-def get_nextcloud_files(request):
-    access_token = get_valid_access_token(request)
-    if not access_token:
-        raise NotAuthenticated()
+class MycloudAPI:
 
-    headers = {
-        "Authorization": f"Bearer {access_token}",
-        "Depth": "infinity",
-        "Content-Type": "application/xml",
-    }
+    def __init__(self, url, timeout, debug):
+        self.url = url
+        self.timeout = timeout
+        self.debug = debug
 
-    xml_body = """<?xml version="1.0"?>
-    <d:propfind xmlns:d="DAV:">
-      <d:prop>
-        <d:getlastmodified/>
-        <d:getcontentlength/>
-        <d:resourcetype/>
-      </d:prop>
-    </d:propfind>
-    """
-    try:
-        response = requests.request(
-            headers=headers,
-            method="PROPFIND",
-            url=f"{settings.NEXTCLOUD_URL}/remote.php/dav/files/{request.user.username}",
-            data=xml_body,
+    def _get_access_token(self, request) -> str:
+        access_token = get_access_token(request)
+        if not access_token:
+            raise NotAuthenticated()
+        return access_token
+
+    def _get_ocs_headers(self, request) -> dict:
+        return {
+            "Authorization": f"Bearer {self._get_access_token(request)}",
+            "OCS-APIRequest": "true",
+        }
+
+    def _get_webdav_headers(self, request) -> dict:
+        return {
+            "Authorization": f"Bearer {self._get_access_token(request)}",
+            "Depth": "infinity",
+            "Content-Type": "application/xml",
+        }
+
+    def _request(
+        self,
+        method: str,
+        api_path: str,
+        params: dict | None = None,
+        data=None,
+        headers: dict | None = None,
+    ) -> requests.Response:
+
+        url = f"{self.url}{api_path}"
+
+        try:
+            response = requests.request(
+                method=method,
+                url=url,
+                headers=headers,
+                params=params,
+                data=data,
+                timeout=self.timeout,
+            )
+
+        except requests.Timeout as exc:
+            raise NextcloudError("Nextcloud request timed out") from exc
+
+        except requests.RequestException as exc:
+            raise NextcloudError("Error reaching Nextcloud API") from exc
+
+        if response.status_code == 429:
+            raise NextcloudError(
+                "Too many requests: maximum 100 shares every 10 minutes."
+            )
+
+        if response.status_code >= 300:
+            raise NextcloudError(f"Nextcloud API returned HTTP {response.status_code}")
+
+        return response
+
+    #
+    # OCS API
+    #
+    def get_share(self, request, path: str) -> requests.Response:
+        return self._request(
+            method="GET",
+            api_path="/ocs/v2.php/apps/files_sharing/api/v1/shares",
+            params={
+                "format": "json",
+                "path": path,
+            },
+            headers=self._get_ocs_headers(request),
         )
-    except:
-        raise NextcloudError("Error reaching Nextcloud Api")
-    if response.status_code > 300:
-        raise NextcloudError("Error reaching Nextcloud Api")
 
-    return response.content
+    def get_shares(self, request) -> requests.Response:
+        return self._request(
+            method="GET",
+            api_path="/ocs/v2.php/apps/files_sharing/api/v1/shares",
+            params={"format": "json"},
+            headers=self._get_ocs_headers(request),
+        )
+
+    def create_share(self, request, path: str) -> requests.Response:
+        return self._request(
+            method="POST",
+            api_path="/ocs/v2.php/apps/files_sharing/api/v1/shares?format=json",
+            data={
+                "path": path,
+                "shareType": 3,
+                "permissions": 1,
+            },
+            headers=self._get_ocs_headers(request),
+        )
+
+    def update_share(self, request, share_id: int) -> requests.Response:
+        share = get_object_or_404(Share, uid=share_id)
+
+        if not share.expiration:
+            raise NextcloudError("Share does not have an expiration date")
+
+        return self._request(
+            method="PUT",
+            api_path=f"/ocs/v2.php/apps/files_sharing/api/v1/shares/{share_id}",
+            data={
+                "expireDate": share.expiration.strftime("%Y-%m-%d"),
+            },
+            headers=self._get_ocs_headers(request),
+        )
+
+    def get_files(self, request) -> bytes:
+        xml_body = """<?xml version="1.0"?>
+        <d:propfind xmlns:d="DAV:">
+          <d:prop>
+            <d:getlastmodified/>
+            <d:getcontentlength/>
+            <d:resourcetype/>
+          </d:prop>
+        </d:propfind>
+        """
+
+        response = self._request(
+            method="PROPFIND",
+            api_path=f"/remote.eephp/dav/files/{request.user.username}",
+            # api_path=f"/remote.php/dav/files/{request.user.username}",
+            data=xml_body,
+            headers=self._get_webdav_headers(request),
+        )
+
+        return response.content
+
+
+mycloud_api = MycloudAPI(url=settings.NEXTCLOUD_URL, timeout=10, debug=False)
