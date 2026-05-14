@@ -26,11 +26,13 @@ def validate_all_links():
 
 
 def send_invalid_link_mail(user: User, invalid_links):
+
+    print(f"send_invalid_link_mail : {user.email}")
     context = {
         "invalid_links": invalid_links,
         "site_domain": get_host(),
         "user": user,
-        "token": user.id + sign(user.id),
+        "token": str(user.id) + "." + sign(str(user.id)),
     }
     html_content = render_to_string("email/mail.html", context)
     text_content = strip_tags(html_content)

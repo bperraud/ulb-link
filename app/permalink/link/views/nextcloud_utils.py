@@ -232,8 +232,7 @@ class MycloudAPI:
 
         response = self._request(
             method="PROPFIND",
-            api_path=f"/remote.eephp/dav/files/{request.user.username}",
-            # api_path=f"/remote.php/dav/files/{request.user.username}",
+            api_path=f"/remote.php/dav/files/{request.user.username}",
             data=xml_body,
             headers=self._get_webdav_headers(request),
         )

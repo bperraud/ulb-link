@@ -129,8 +129,10 @@ def unsubscribe_email(request, token):
         payload = verify_token(token)
         if payload:
             user = User.objects.get(id=payload)
+            print(f"user : {user.username}")
             user.unsubscribe_from_email = True
             user.save()
-        return render(request, "unsubscribe_success.html")
+            return render(request, "email/unsubscribe_success.html")
+        return HttpResponse("Error unsubscribe from email")
 
-    return render(request, "unsubscribe_from_email.html", {"token": token})
+    return render(request, "email/unsubscribe_from_email.html", {"token": token})
