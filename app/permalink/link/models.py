@@ -12,6 +12,7 @@ import string, random
 
 class User(AbstractUser):
     is_nextcloud_user = models.BooleanField(default=False)  # type: ignore
+    unsubscribe_from_email = models.BooleanField(default=False)
 
 
 class Share(models.Model):

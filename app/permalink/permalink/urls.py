@@ -30,6 +30,7 @@ urlpatterns = [
     path("status/", views.status),
     path("link/", include("link.urls")),
     path("t/<str:token>", views.redirect_to_target_url, name="redirect"),
+    path("unsubscribe/<str:token>", views.unsubscribe_email, name="unsubscribe"),
     path("", RedirectView.as_view(url="/link/", permanent=False), name="home"),
     # auth
     path("accounts/login/", OIDCAuthenticationRequestView.as_view(), name="login"),

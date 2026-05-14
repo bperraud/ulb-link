@@ -5,10 +5,11 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
+from permalink.utils import *
 
 import json
 from rest_framework.generics import get_object_or_404
-from link.models import Link
+from link.models import Link, User
 from link.forms import LinkForm
 from link.views.nextcloud_utils import (
     update_share_in_nextcloud,
@@ -121,3 +122,15 @@ def redirect_to_target_url(request, token):
 
 def status(request):
     return JsonResponse({"message": "ok"})
+
+
+def unsubscribe_email(request, token):
+    if request.method == "POST":
+        payload = verify_token(token)
+        if payload:
+            user = User.objects.get(id=payload)
+            user.unsubscribe_from_email = True
+            user.save()
+        return render(request, "unsubscribe_success.html")
+
+    return render(request, "unsubscribe_from_email.html", {"token": token})
