@@ -35,7 +35,7 @@ oauth = OAuth()
 oauth.register(name="nextcloud", **settings.AUTHLIB_OAUTH_CLIENTS)
 
 
-def get_valid_access_token(request):
+def get_access_token(request):
     token = request.session.get("oauth_token")
     if not token:
         return None  # Not authenticated
@@ -100,6 +100,7 @@ def is_nextcloud_user(uid: str) -> bool:
             f"{settings.NEXTCLOUD_URL}/ocs/v2.php/cloud/users/{uid}?format=json",
             auth=(settings.NEXTCLOUD_ADMIN_USER, settings.NEXTCLOUD_ADMIN_PASSWORD),
             headers=headers,
+            timeout=5,
         )
         response.raise_for_status()
         data = response.json()

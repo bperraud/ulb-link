@@ -68,6 +68,7 @@ deploy:
         --set oidc.clientId="$OIDC_CLIENT_ID" \
         --set oidc.clientSecret="$OIDC_CLIENT_SECRET"
     - oc delete pod -l app=django-permalink
+    - oc delete pod -l app=celery-worker
   only:
     refs:
       - dev

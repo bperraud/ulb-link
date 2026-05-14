@@ -12,7 +12,7 @@ from rest_framework.generics import get_object_or_404
 from link.models import Link, User
 from link.forms import LinkForm
 from link.views.nextcloud_utils import (
-    update_share_in_nextcloud,
+    mycloud_api,
 )
 
 
@@ -66,7 +66,7 @@ def edit_link(request, pk):
             response["HX-Refresh"] = "true"
             if link.share:
                 try:
-                    update_share_in_nextcloud(request, link.share.uid)
+                    mycloud_api.update_share(request, link.share.uid)
                 except Exception as e:
                     response["HX-Trigger"] = json.dumps(
                         {
