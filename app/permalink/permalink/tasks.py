@@ -12,7 +12,7 @@ from permalink.utils import *
 
 @shared_task
 def validate_all_links():
-    users = User.objects.prefetch_related(
+    users = User.objects.exclude(unsubscribe_from_email=True).prefetch_related(
         Prefetch("link", queryset=Link.objects.filter(share__isnull=True))
     )
     for user in users:
@@ -26,8 +26,6 @@ def validate_all_links():
 
 
 def send_invalid_link_mail(user: User, invalid_links):
-
-    print(f"send_invalid_link_mail : {user.email}")
     context = {
         "invalid_links": invalid_links,
         "site_domain": get_host(),
