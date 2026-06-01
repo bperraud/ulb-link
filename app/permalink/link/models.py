@@ -15,6 +15,13 @@ class User(AbstractUser):
     unsubscribe_from_email = models.BooleanField(default=False)
 
 
+class NextcloudShareBatchJob(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    oauth_token = models.JSONField(default=dict)
+    file_paths = models.JSONField(default=list)
+
+
 class Share(models.Model):
     uid = models.IntegerField(primary_key=True)
     target_url = models.URLField(verbose_name="Target URL")

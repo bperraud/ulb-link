@@ -9,7 +9,7 @@ from django.views.decorators.http import require_http_methods
 import json
 from rest_framework.generics import get_object_or_404
 from link.decorators import nextcloud_connected_user_required
-from link.models import Link, Share
+from link.models import NextcloudShareBatchJob, Link, Share
 from link.views.nextcloud_utils import (
     update_shares_object,
     get_or_create_share_in_nextcloud,
@@ -63,22 +63,30 @@ def create_nextcloud_bulk(request):
     if request.method == "POST":
         selected_path = request.POST.get("selected_nodes")
         selected_files = json.loads(selected_path)
-        link_created = False
+        # link_created = False
+        link_created = True
+        file_paths = []
         for file in selected_files:
             if file["icon"] == "jstree-folder":
                 continue
-            try:
-                share = get_or_create_share_in_nextcloud(request, file["id"])
-            except Exception as e:
-                response["HX-Trigger"] = json.dumps(
-                    {
-                        "flashMessage": "Error while creating permalink : " + str(e),
-                        "type": "error",
-                    }
-                )
-                return response
-            Link.objects.create(user=request.user, share=share)
-            link_created = True
+            file_paths.append(file["id"])
+        NextcloudShareBatchJob.objects.create(
+            user=request.user,
+            oauth_token=request.session["oauth_token"],
+            file_paths=file_paths,
+        )
+        #     try:
+        #         share = get_or_create_share_in_nextcloud(request, file["id"])
+        #     except Exception as e:
+        #         response["HX-Trigger"] = json.dumps(
+        #             {
+        #                 "flashMessage": "Error while creating permalink : " + str(e),
+        #                 "type": "error",
+        #             }
+        #         )
+        #         return response
+        #     Link.objects.create(user=request.user, share=share)
+        #     link_created = True
         if link_created:
             response["HX-Trigger"] = json.dumps(
                 {"flashMessage": "Permalinks successfully created"}

@@ -83,7 +83,32 @@ def update_shares_object(request):
         share.save()
 
 
+# Deprecated
 def get_or_create_share_in_nextcloud(request, path):
+    response = mycloud_api.get_share(request, path)
+    share_data = response.json()["ocs"]["data"]
+    share_exist = False
+
+    if share_data:  # share exist -> need to parse all shares
+        for share in share_data:
+            if share["share_type"] == 3:
+                share_data = share
+                share_exist = True
+                break
+
+    if not share_exist:
+        response = mycloud_api.create_share(request, path)
+        share_data = response.json()["ocs"]["data"]
+
+    share, _ = Share.objects.get_or_create(
+        uid=share_data["id"],
+        path=share_data["path"],
+        target_url=share_data["url"],
+    )
+    return share
+
+
+def get_or_create_share(request, path):
     response = mycloud_api.get_share(request, path)
     share_data = response.json()["ocs"]["data"]
     share_exist = False
