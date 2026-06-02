@@ -55,6 +55,7 @@ def process_bulk_share_creation():
 
     for job in jobs:
         paths_to_process = job.file_paths[:100]
+        remaining = job.file_paths[100:]
         request = SimpleNamespace(session={"oauth_token": job.oauth_token})
 
         for file in paths_to_process:
@@ -63,8 +64,8 @@ def process_bulk_share_creation():
                 Link.objects.create(user=job.user, share=share)
             except Exception as e:
                 print("Error while creating permalink : " + str(e))
+                remaining.append(file)  # retry later
 
-        remaining = job.file_paths[100:]
         if remaining:
             job.file_paths = remaining
             job.save(update_fields=["file_paths"])
