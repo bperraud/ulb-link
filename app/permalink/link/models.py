@@ -16,7 +16,7 @@ class User(AbstractUser):
 
 
 class NextcloudShareBatchJob(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, unique=True)
 
     oauth_token = models.JSONField(default=dict)
     file_paths = models.JSONField(default=list)

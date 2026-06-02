@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
 from django.conf import settings
 from link.auth import get_access_token
-from link.models import Link, User, Share
+from link.models import Link, NextcloudShareBatchJob, User, Share
 
 from xml.etree import ElementTree as ET
 from urllib.parse import unquote
@@ -28,9 +28,13 @@ def webdav_to_jstree(xml, user: User):
     root = ET.fromstring(xml)
     base = f"/remote.php/dav/files/{user.username}/"
     nodes = []
-    paths = Link.objects.filter(user=user, share__isnull=False).values_list(
-        "share__path", flat=True
-    )
+    job = NextcloudShareBatchJob.objects.filter(user=user).first()
+    paths = list(
+        Link.objects.filter(
+            user=user,
+            share__isnull=False,
+        ).values_list("share__path", flat=True)
+    ) + (job.file_paths if job else [])
 
     for resp in root.findall("d:response", ns):
         href_el = resp.find("d:href", ns)

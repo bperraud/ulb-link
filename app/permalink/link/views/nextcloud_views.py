@@ -12,7 +12,6 @@ from link.decorators import nextcloud_connected_user_required
 from link.models import NextcloudShareBatchJob, Link, Share
 from link.views.nextcloud_utils import (
     update_shares_object,
-    get_or_create_share_in_nextcloud,
     webdav_to_jstree,
     mycloud_api,
 )
@@ -69,11 +68,18 @@ def create_nextcloud_bulk(request):
             if file["icon"] == "jstree-folder":
                 continue
             file_paths.append(file["id"])
-        NextcloudShareBatchJob.objects.create(
-            user=request.user,
-            oauth_token=request.session["oauth_token"],
-            file_paths=file_paths,
-        )
+        job = NextcloudShareBatchJob.objects.filter(user=request.user).first()
+
+        if job:
+            job.file_paths = job.file_paths + file_paths
+            job.oauth_token = request.session["oauth_token"]
+            job.save(update_fields=["oauth_token", "file_paths"])
+        else:
+            NextcloudShareBatchJob.objects.create(
+                user=request.user,
+                oauth_token=request.session["oauth_token"],
+                file_paths=file_paths,
+            )
         #     try:
         #         share = get_or_create_share_in_nextcloud(request, file["id"])
         #     except Exception as e:
