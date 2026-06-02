@@ -80,7 +80,7 @@ class OIDCCAS(OIDCAuthenticationBackend):
     def save_fields(self, user, claims):
         user.username = claims.get("id", "")
         user.email = claims.get("email", "")
-        user.is_nextcloud_user = False
+        # user.is_nextcloud_user = False
         user.save()
 
     def create_user(self, claims):
