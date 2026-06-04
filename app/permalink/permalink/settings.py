@@ -43,6 +43,8 @@ if CSRF:
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # keep session cookie after browser close
 SESSION_COOKIE_AGE = 86400
 
+DATA_UPLOAD_MAX_MEMORY_SIZE = 30 * 1024 * 1024  # 30 mb
+
 # Application definition
 
 INSTALLED_APPS = [

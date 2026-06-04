@@ -34,7 +34,7 @@ class Command(BaseCommand):
 
         PeriodicTask.objects.get_or_create(
             crontab=crontab,
-            name="Validate URLs Every 10 Minutes",
+            name="Proces share creation Every 10 Minutes",
             task="permalink.tasks.process_bulk_share_creation",
         )
 
