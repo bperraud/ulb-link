@@ -10,6 +10,7 @@ from link.models import Link, NextcloudShareBatchJob
 from link.views.nextcloud_utils import get_or_create_share_in_nextcloud
 from permalink.utils import *
 from types import SimpleNamespace
+from link.views.nextcloud_utils import update_shares_object
 
 
 @shared_task
@@ -71,3 +72,11 @@ def process_bulk_share_creation():
             job.save(update_fields=["file_paths"])
         else:
             job.delete()
+
+
+@shared_task
+def sync_user_shares(response):
+    try:
+        update_shares_object(response)
+    except:
+        print("Error sync user shares")

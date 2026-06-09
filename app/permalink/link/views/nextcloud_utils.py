@@ -73,9 +73,9 @@ def webdav_to_jstree(xml, user: User):
     return {"data": nodes}
 
 
-def update_shares_object(request):
-    response = mycloud_api.get_shares(request)
-    for el in response.json()["ocs"]["data"]:
+def update_shares_object(response):
+    # response = mycloud_api.get_shares(request)
+    for el in response["ocs"]["data"]:
         try:
             share = Share.objects.get(uid=el.get("id"))
         except Share.DoesNotExist:

@@ -16,6 +16,17 @@ from link.views.nextcloud_utils import (
     mycloud_api,
 )
 
+from permalink.tasks import sync_user_shares
+
+from datetime import timedelta
+from django.utils import timezone
+
+
+def should_sync(user):
+    if user.last_share_sync is None:
+        return True
+    return timezone.now() - user.last_share_sync > timedelta(hours=1)
+
 
 @method_decorator([nextcloud_connected_user_required, login_required], name="dispatch")
 class MycloudLinkTableView(ListView):
@@ -24,10 +35,11 @@ class MycloudLinkTableView(ListView):
     template_name = "mycloud/mycloud_link_table.html"
 
     def get_queryset(self):
-        try:
-            update_shares_object(self.request)
-        except:
-            pass
+        if should_sync(self.request.user):
+            response = mycloud_api.get_shares(self.request)
+            sync_user_shares.delay(response.json())
+            self.request.user.last_share_sync = timezone.now()
+            self.request.user.save()
         return Link.objects.filter(user=self.request.user, share__isnull=False)
 
 
@@ -62,7 +74,6 @@ def create_nextcloud_bulk(request):
     if request.method == "POST":
         selected_path = request.POST.get("selected_nodes")
         selected_files = json.loads(selected_path)
-        # link_created = False
         file_paths = []
         for file in selected_files:
             if file["icon"] == "jstree-folder":
@@ -80,19 +91,6 @@ def create_nextcloud_bulk(request):
                 oauth_token=request.session["oauth_token"],
                 file_paths=file_paths,
             )
-        #     try:
-        #         share = get_or_create_share_in_nextcloud(request, file["id"])
-        #     except Exception as e:
-        #         response["HX-Trigger"] = json.dumps(
-        #             {
-        #                 "flashMessage": "Error while creating permalink : " + str(e),
-        #                 "type": "error",
-        #             }
-        #         )
-        #         return response
-        #     Link.objects.create(user=request.user, share=share)
-        #     link_created = True
-        # if link_created:
         response["HX-Trigger"] = json.dumps(
             {
                 "flashMessage": "Permalink creation has started and will continue in the background (up to 100 every 10 minutes)."
