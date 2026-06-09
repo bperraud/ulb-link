@@ -23,11 +23,7 @@
     </div>
 </div>
 
-<script>
-    document.getElementById('modalTitle').textContent = 'Edit link';
-</script>
-
-{% block scripts %}
+{% block custom_js %}
 <script>
     document.getElementById('submitButton').addEventListener('click', function() {
         htmx.trigger(document.getElementById('saveForm'), 'submit');

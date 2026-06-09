@@ -15,6 +15,7 @@ spec:
       containers:
         - name: beat
           image: {{ .Values.web.image }}
+          imagePullPolicy: Always
           resources:
             limits:
               memory: "512Mi"

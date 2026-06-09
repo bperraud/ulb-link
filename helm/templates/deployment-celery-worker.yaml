@@ -15,6 +15,7 @@ spec:
       containers:
         - name: worker
           image: {{ .Values.web.image }}
+          imagePullPolicy: Always
           command: ["celery", "-A", "permalink", "worker", "-l", "info"]
           resources:
             limits:
