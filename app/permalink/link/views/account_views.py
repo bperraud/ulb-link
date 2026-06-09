@@ -30,8 +30,17 @@ def mycloud_login_view(request):
 def auth_callback(request):
 
     token = oauth.nextcloud.authorize_access_token(request)
-    if not token:
-        return HttpResponse(b"Authorization failed", status=401)
+
+    try:
+        token = oauth.nextcloud.authorize_access_token(request)
+        if not token:
+            return HttpResponse(b"Authorization failed", status=401)
+    except Exception as e:
+        import traceback
+
+        traceback.print_exc()
+        print(str(e))
+        return HttpResponse(b"Authorization failed", status=500)
 
     userinfo_response = oauth.nextcloud.get(
         "/ocs/v2.php/cloud/user?format=json", token=token
