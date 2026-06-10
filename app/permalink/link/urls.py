@@ -27,5 +27,9 @@ urlpatterns = [
     path(
         "mycloud", nextcloud_views.MycloudLinkTableView.as_view(), name="mycloud-link"
     ),
-    path("test", nextcloud_views.bulk_task_advancement),
+    path(
+        "bulk_advancement",
+        nextcloud_views.bulk_task_advancement,
+        name="bulk-task-advancement",
+    ),
 ]

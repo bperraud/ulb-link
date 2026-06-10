@@ -55,8 +55,8 @@ def process_bulk_share_creation():
     jobs = NextcloudShareBatchJob.objects.all()
 
     for job in jobs:
-        paths_to_process = job.file_paths[:10]
-        remaining = job.file_paths[10:]
+        paths_to_process = job.file_paths[:100]
+        remaining = job.file_paths[100:]
         request = SimpleNamespace(session={"oauth_token": job.oauth_token})
 
         for file in paths_to_process:
