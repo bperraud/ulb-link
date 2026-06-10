@@ -16,7 +16,7 @@
   "></span>
 </div>
 <div style="background: #eee; border-radius: 999px; height: 12px; overflow: hidden; width: 30%; margin-bottom: 1rem;">
-    <div id="bar" style="height: 100%; width: {{pct}}%; background: #1D9E75;"</div>
+    <div id="bar" style="height: 100%; width: {{pct}}%; background: #0054a6;"/div>
 </div>
 
 
@@ -24,7 +24,7 @@
 var total   = parseInt("{{ initial_file_count }}");
 var current = total - parseInt("{{ file_count_left }}");
 
-document.getElementById('label-text').textContent = current + ' of ' + total + ' permalinks created';
+document.getElementById('label-text').textContent = current + ' of ' + total + ' permalinks created...';
 document.getElementById('spinner').style.display = 'inline-block';
 
 </script>
