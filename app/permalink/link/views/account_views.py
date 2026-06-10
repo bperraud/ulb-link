@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.contrib.auth import login, logout
 from link.auth import oauth
 from django.conf import settings
+from django.urls import reverse
 import urllib.parse
 
 from link.context_processors import get_host
@@ -60,4 +61,5 @@ def auth_callback(request):
     login(request, user, backend=settings.AUTHENTICATION_BACKENDS[1])
     request.session["oauth_token"] = token
 
-    return redirect("/")
+    return redirect(reverse("mycloud-link"))
+    # return redirect("/")

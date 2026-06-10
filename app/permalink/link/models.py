@@ -23,6 +23,7 @@ class NextcloudShareBatchJob(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, unique=True)
     oauth_token = models.JSONField(default=dict)
     file_paths = models.JSONField(default=list)
+    initial_file_count = models.PositiveIntegerField(default=0)
 
 
 class Share(models.Model):

@@ -11,7 +11,6 @@ from rest_framework.generics import get_object_or_404
 from link.decorators import nextcloud_connected_user_required
 from link.models import NextcloudShareBatchJob, Link, Share
 from link.views.nextcloud_utils import (
-    update_shares_object,
     webdav_to_jstree,
     mycloud_api,
 )
@@ -82,14 +81,16 @@ def create_nextcloud_bulk(request):
         job = NextcloudShareBatchJob.objects.filter(user=request.user).first()
 
         if job:
-            job.file_paths = job.file_paths + file_paths
+            job.file_paths += file_paths
+            job.initial_file_count += len(file_paths)
             job.oauth_token = request.session["oauth_token"]
-            job.save(update_fields=["oauth_token", "file_paths"])
+            job.save()
         else:
             NextcloudShareBatchJob.objects.create(
                 user=request.user,
                 oauth_token=request.session["oauth_token"],
                 file_paths=file_paths,
+                initial_file_count=len(file_paths),
             )
         response["HX-Trigger"] = json.dumps(
             {
@@ -145,3 +146,25 @@ def create_bulk(request):
             "modal_title": "Create permalinks for selected shares",
         },
     )
+
+
+@login_required
+@nextcloud_connected_user_required
+@require_http_methods(["GET"])
+def bulk_task_advancement(request):
+    task = NextcloudShareBatchJob.objects.filter(user=request.user).first()
+
+    if task:
+        file_count_left = task.initial_file_count - len(task.file_paths)
+        pct = min(100, round(file_count_left / task.initial_file_count * 100))
+
+        return render(
+            request,
+            "mycloud/bulk_task_advancement.html",
+            {
+                "file_count_left": len(task.file_paths),
+                "initial_file_count": task.initial_file_count,
+                "pct": pct,
+            },
+        )
+    return HttpResponse()

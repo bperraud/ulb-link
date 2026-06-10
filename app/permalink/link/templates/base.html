@@ -125,7 +125,12 @@
     </aside>
 
 
+
+
     <div class="ml-[205px] mt-8 p-8">
+
+        <div hx-get="{% url 'bulk-task-advancement' %}" hx-trigger="every 60s, load"></div>
+
         {% block pagecontent %}
         <!-- Page-specific content goes here -->
         {% endblock %}
