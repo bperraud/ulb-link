@@ -32,7 +32,6 @@ class CustomJWTAuthentication(BaseAuthentication):
 
 
 oauth = OAuth()
-print(settings.AUTHLIB_OAUTH_CLIENTS)
 oauth.register(name="nextcloud", **settings.AUTHLIB_OAUTH_CLIENTS)
 
 

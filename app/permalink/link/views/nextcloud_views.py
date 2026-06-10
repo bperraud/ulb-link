@@ -81,9 +81,10 @@ def create_nextcloud_bulk(request):
         job = NextcloudShareBatchJob.objects.filter(user=request.user).first()
 
         if job:
-            job.file_paths = job.file_paths + file_paths
+            job.file_paths += file_paths
+            job.initial_file_count += len(file_paths)
             job.oauth_token = request.session["oauth_token"]
-            job.save(update_fields=["oauth_token", "file_paths"])
+            job.save()
         else:
             NextcloudShareBatchJob.objects.create(
                 user=request.user,
@@ -152,6 +153,9 @@ def create_bulk(request):
 @require_http_methods(["GET"])
 def bulk_task_advancement(request):
     task = NextcloudShareBatchJob.objects.filter(user=request.user).first()
+
+    file_count_left = task.initial_file_count - len(task.file_paths)
+    pct = min(100, round(file_count_left / task.initial_file_count * 100))
     if task:
 
         return render(
@@ -160,6 +164,7 @@ def bulk_task_advancement(request):
             {
                 "file_count_left": len(task.file_paths),
                 "initial_file_count": task.initial_file_count,
+                "pct": pct,
             },
         )
     return HttpResponse()
