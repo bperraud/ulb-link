@@ -154,9 +154,9 @@ def create_bulk(request):
 def bulk_task_advancement(request):
     task = NextcloudShareBatchJob.objects.filter(user=request.user).first()
 
-    file_count_left = task.initial_file_count - len(task.file_paths)
-    pct = min(100, round(file_count_left / task.initial_file_count * 100))
     if task:
+        file_count_left = task.initial_file_count - len(task.file_paths)
+        pct = min(100, round(file_count_left / task.initial_file_count * 100))
 
         return render(
             request,
