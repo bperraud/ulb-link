@@ -29,8 +29,6 @@ def mycloud_login_view(request):
 
 def auth_callback(request):
 
-    token = oauth.nextcloud.authorize_access_token(request)
-
     try:
         token = oauth.nextcloud.authorize_access_token(request)
         if not token:
