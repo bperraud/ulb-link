@@ -11,6 +11,7 @@ from link.views.nextcloud_utils import get_or_create_share_in_nextcloud
 from permalink.utils import *
 from types import SimpleNamespace
 from link.views.nextcloud_utils import update_shares_object
+from link.auth import get_access_token
 
 
 @shared_task
@@ -57,12 +58,15 @@ def process_bulk_share_creation():
     for job in jobs:
         paths_to_process = job.file_paths[:100]
         remaining = job.file_paths[100:]
-        request = SimpleNamespace(session={"oauth_token": job.oauth_token})
+        request = SimpleNamespace(user=job.user)
 
         for file in paths_to_process:
             try:
                 share = get_or_create_share_in_nextcloud(request, file)
-                Link.objects.create(user=job.user, share=share)
+                Link.objects.get_or_create(
+                    user=job.user,
+                    share=share,
+                )
             except Exception as e:
                 print("Error while creating permalink : " + str(e))
                 remaining.append(file)  # retry later

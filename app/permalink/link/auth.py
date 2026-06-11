@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.shortcuts import redirect
 from django.contrib import auth
 
-from link.models import User
+from link.models import NextcloudShareBatchJob, User
 import jwt, time, requests
 
 
@@ -36,7 +36,8 @@ oauth.register(name="nextcloud", **settings.AUTHLIB_OAUTH_CLIENTS)
 
 
 def get_access_token(request):
-    token = request.session.get("oauth_token")
+
+    token = request.user.oauth_token
     if not token:
         return None  # Not authenticated
 
@@ -45,24 +46,34 @@ def get_access_token(request):
         token = refresh_token(token)
         if not token:
             return None
-        request.session["oauth_token"] = token
+        request.user.oauth_token = token
+        request.user.save(update_fields=["oauth_token"])
 
     return token["access_token"]
 
 
-def refresh_token(refresh_token):
-    client_data = {
-        "client_id": settings.AUTHLIB_OAUTH_CLIENTS["client_id"],
-        "client_secret": settings.AUTHLIB_OAUTH_CLIENTS["client_secret"],
-    }
-    client = OAuth2Session(**client_data, token=refresh_token)
+def refresh_token(token):
+
+    client = OAuth2Session(
+        settings.AUTHLIB_OAUTH_CLIENTS["client_id"],
+        settings.AUTHLIB_OAUTH_CLIENTS["client_secret"],
+        token=token,
+    )
+
+    #     import logging
+    #     logging.basicConfig(level=logging.DEBUG)
+    #     logging.getLogger("authlib").setLevel(logging.DEBUG)
+    #     logging.getLogger("urllib3").setLevel(logging.DEBUG)
+
     try:
-        token = client.refresh_token(
-            settings.AUTHLIB_OAUTH_CLIENTS["refresh_token_url"], **client_data
+        new_token = client.refresh_token(
+            settings.AUTHLIB_OAUTH_CLIENTS["refresh_token_url"],
+            refresh_token=token["refresh_token"],
         )
-        return token
+        return new_token
     except Exception as e:
-        print(f"Token refresh failed: {e}")
+        if hasattr(e, "response"):
+            print(e.response.text)
         return None
 
 
@@ -80,7 +91,6 @@ class OIDCCAS(OIDCAuthenticationBackend):
     def save_fields(self, user, claims):
         user.username = claims.get("id", "")
         user.email = claims.get("email", "")
-        # user.is_nextcloud_user = False
         user.save()
 
     def create_user(self, claims):
