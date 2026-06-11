@@ -16,7 +16,7 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    request.session.flush()
+    # request.session.flush()
     return redirect(
         f"{settings.OIDC_OP_LOGOUT_ENDPOINT}?service={urllib.parse.quote(get_host(), safe='')}"
     )
@@ -55,11 +55,10 @@ def auth_callback(request):
     except User.DoesNotExist:
         user = User.objects.create(username=username, email=email)
 
+    login(request, user, backend=settings.AUTHENTICATION_BACKENDS[1])
+
     user.is_nextcloud_user = True
+    user.oauth_token = token
     user.save()
 
-    login(request, user, backend=settings.AUTHENTICATION_BACKENDS[1])
-    request.session["oauth_token"] = token
-
     return redirect(reverse("mycloud-link"))
-    # return redirect("/")
