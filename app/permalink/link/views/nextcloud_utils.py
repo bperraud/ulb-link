@@ -74,7 +74,6 @@ def webdav_to_jstree(xml, user: User):
 
 
 def update_shares_object(response):
-    # response = mycloud_api.get_shares(request)
     for el in response["ocs"]["data"]:
         try:
             share = Share.objects.get(uid=el.get("id"))
