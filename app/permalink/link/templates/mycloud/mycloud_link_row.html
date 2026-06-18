@@ -10,6 +10,10 @@
     </td>
     <td><a class="font-bold" href="{{ link.share.target_url }}">{{ link.share.target_url }}</a></td>
     <td>{{ link.share.path }}</td>
-    <td>{{ link.share.expiration }}</td>
-    <td>{{ link.updated_at }}</td>
+    <td data-sort="{{ link.expiration|date:'c' }}">
+        {{ link.expiration}}
+    </td>
+    <td data-sort="{{ link.updated_at|date:'c' }}">
+        {{ link.updated_at}}
+    </td>
 </tr>

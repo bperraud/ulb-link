@@ -74,7 +74,6 @@ def webdav_to_jstree(xml, user: User):
 
 
 def update_shares_object(response):
-    # response = mycloud_api.get_shares(request)
     for el in response["ocs"]["data"]:
         try:
             share = Share.objects.get(uid=el.get("id"))
@@ -269,4 +268,4 @@ class MycloudAPI:
         return response.content
 
 
-mycloud_api = MycloudAPI(url=settings.NEXTCLOUD_URL, timeout=20, debug=False)
+mycloud_api = MycloudAPI(url=settings.NEXTCLOUD_URL, timeout=60, debug=False)
