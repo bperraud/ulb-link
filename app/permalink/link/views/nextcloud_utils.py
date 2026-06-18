@@ -268,4 +268,4 @@ class MycloudAPI:
         return response.content
 
 
-mycloud_api = MycloudAPI(url=settings.NEXTCLOUD_URL, timeout=10, debug=False)
+mycloud_api = MycloudAPI(url=settings.NEXTCLOUD_URL, timeout=60, debug=False)
