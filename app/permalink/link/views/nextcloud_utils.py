@@ -168,6 +168,7 @@ class MycloudAPI:
         params: dict | None = None,
         data=None,
         headers: dict | None = None,
+        timeout: int | float | tuple | None = None,
     ) -> requests.Response:
 
         url = f"{self.url}{api_path}"
@@ -179,7 +180,7 @@ class MycloudAPI:
                 headers=headers,
                 params=params,
                 data=data,
-                timeout=self.timeout,
+                timeout=timeout if timeout is not None else self.timeout,
             )
 
         except requests.Timeout as exc:
@@ -218,6 +219,7 @@ class MycloudAPI:
             api_path="/ocs/v2.php/apps/files_sharing/api/v1/shares",
             params={"format": "json"},
             headers=self._get_ocs_headers(request),
+            timeout=180,
         )
 
     def create_share(self, request, path: str) -> requests.Response:
@@ -268,4 +270,4 @@ class MycloudAPI:
         return response.content
 
 
-mycloud_api = MycloudAPI(url=settings.NEXTCLOUD_URL, timeout=60, debug=False)
+mycloud_api = MycloudAPI(url=settings.NEXTCLOUD_URL, timeout=30, debug=False)

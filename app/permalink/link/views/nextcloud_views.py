@@ -35,8 +35,9 @@ class MycloudLinkTableView(ListView):
 
     def get_queryset(self):
         if should_sync(self.request.user):
-            response = mycloud_api.get_shares(self.request)
-            sync_user_shares.delay(response.json())
+            # response = mycloud_api.get_shares(self.request)
+            sync_user_shares.delay(self.request.user)
+            # sync_user_shares.delay(response.json())
             self.request.user.last_share_sync = timezone.now()
             self.request.user.save()
         return Link.objects.filter(user=self.request.user, share__isnull=False)

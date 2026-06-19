@@ -11,7 +11,10 @@ from link.views.nextcloud_utils import get_or_create_share_in_nextcloud
 from permalink.utils import *
 from types import SimpleNamespace
 from link.views.nextcloud_utils import update_shares_object
-from link.auth import get_access_token
+
+from link.views.nextcloud_utils import (
+    mycloud_api,
+)
 
 
 @shared_task
@@ -78,9 +81,19 @@ def process_bulk_share_creation():
             job.delete()
 
 
+# @shared_task
+# def sync_user_shares(response):
+#     try:
+#         update_shares_object(response)
+#     except:
+#         print("Error sync user shares")
+
+
 @shared_task
-def sync_user_shares(response):
+def sync_user_shares(user: User):
     try:
+        request = SimpleNamespace(user=user)
+        response = mycloud_api.get_shares(request)
         update_shares_object(response)
     except:
         print("Error sync user shares")
