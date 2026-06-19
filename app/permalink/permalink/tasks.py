@@ -90,8 +90,9 @@ def process_bulk_share_creation():
 
 
 @shared_task
-def sync_user_shares(user: User):
+def sync_user_shares(user_id: str):
     try:
+        user = User.objects.get(id=user_id)
         request = SimpleNamespace(user=user)
         response = mycloud_api.get_shares(request)
         update_shares_object(response)
