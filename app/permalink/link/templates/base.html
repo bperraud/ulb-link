@@ -131,10 +131,10 @@
 
         <div hx-get="{% url 'bulk-task-advancement' %}" hx-trigger="every 60s, load"></div>
 
-        {% block pagecontent %}
-        <!-- Page-specific content goes here -->
-        {% endblock %}
-    </div>
+            {% block pagecontent %}
+            <!-- Page-specific content goes here -->
+            {% endblock %}
+        </div>
 
 
     {% block custom_js %}{% endblock %}
