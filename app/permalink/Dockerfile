@@ -32,7 +32,7 @@ ENTRYPOINT ["/app/entrypoint.sh"]
 
 EXPOSE 8000
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "1", "--threads", "8", "--timeout", "60", "permalink.wsgi:application"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "1", "--threads", "8", "--timeout", "180", "permalink.wsgi:application"]
 
 # FROM base AS dev
 # CMD ["python", "manage.py", "tailwind", "runserver", "0.0.0.0:8000"]
