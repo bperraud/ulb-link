@@ -3,7 +3,6 @@ from link.models import User
 from django.utils.html import strip_tags
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
-from link.context_processors import get_host
 from django.db.models import Prefetch
 from link.models import Link, NextcloudShareBatchJob
 
@@ -33,9 +32,9 @@ def validate_all_links():
 
 
 def send_invalid_link_mail(user: User, invalid_links):
+    print(invalid_links)
     context = {
         "invalid_links": invalid_links,
-        "site_domain": get_host(),
         "user": user,
         "token": str(user.id) + "." + sign(str(user.id)),
     }
@@ -79,14 +78,6 @@ def process_bulk_share_creation():
             job.save(update_fields=["file_paths"])
         else:
             job.delete()
-
-
-# @shared_task
-# def sync_user_shares(response):
-#     try:
-#         update_shares_object(response)
-#     except:
-#         print("Error sync user shares")
 
 
 @shared_task
