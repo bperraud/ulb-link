@@ -70,8 +70,6 @@ class Link(models.Model):
         if not self.token:
             self.token = self._generate_unique_token()
         self.is_valid = self.self_test()
-        print(self.direct_target_url)
-        print(self.is_valid)
         super().save(*args, **kwargs)
 
     def _generate_unique_token(self, length=10) -> str:

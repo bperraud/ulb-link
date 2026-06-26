@@ -33,7 +33,6 @@ def validate_all_links():
 
 
 def send_invalid_link_mail(user: User, invalid_links):
-    print(invalid_links)
     context = {
         "invalid_links": invalid_links,
         "site_domain": get_host(),
