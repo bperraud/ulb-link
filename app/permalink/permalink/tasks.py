@@ -3,6 +3,7 @@ from link.models import User
 from django.utils.html import strip_tags
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
+from link.context_processors import get_host
 from django.db.models import Prefetch
 from link.models import Link, NextcloudShareBatchJob
 
@@ -35,6 +36,7 @@ def send_invalid_link_mail(user: User, invalid_links):
     print(invalid_links)
     context = {
         "invalid_links": invalid_links,
+        "site_domain": get_host(),
         "user": user,
         "token": str(user.id) + "." + sign(str(user.id)),
     }
