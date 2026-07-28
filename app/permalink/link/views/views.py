@@ -120,6 +120,12 @@ def redirect_to_target_url(request, token):
     return redirect(targetURL)
 
 
+def redirect_with_suffix(request, token, suffix):
+    link = get_object_or_404(Link, token=token)
+    targetURL = link.share.target_url if link.share else link.direct_target_url
+    return redirect(targetURL + f"/{suffix}")
+
+
 def status(request):
     return JsonResponse({"message": "ok"})
 
