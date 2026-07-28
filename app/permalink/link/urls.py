@@ -17,6 +17,7 @@ urlpatterns = [
         name="create-nextcloud-bulk",
     ),
     path("delete/<str:ids>", views.delete_links),
+    path("delete_all/", views.delete_all_links),
     path("row/<int:pk>", views.LinkRowView.as_view(), name="link-row"),
     path(
         "mycloud/row/<int:pk>",

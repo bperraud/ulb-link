@@ -50,7 +50,15 @@ def toolbar(request, nb):
 @require_http_methods(["DELETE"])
 def delete_links(request, ids):
     list_ids = ids.split(",")
-    links = Link.objects.filter(id__in=(list_ids))
+    links = Link.objects.filter(id__in=(list_ids), user=request.user)
+    links.delete()
+    return JsonResponse({"message": "ok"})
+
+
+@login_required
+@require_http_methods(["DELETE"])
+def delete_all_links(request):
+    links = Link.objects.filter(user=request.user)
     links.delete()
     return JsonResponse({"message": "ok"})
 
