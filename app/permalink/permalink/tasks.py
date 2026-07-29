@@ -7,14 +7,13 @@ from link.context_processors import get_host
 from django.db.models import Prefetch
 from link.models import Link, NextcloudShareBatchJob
 
-from link.views.nextcloud_utils import get_or_create_share_in_nextcloud
+from mycloud.utils import (
+    get_or_create_share_in_nextcloud,
+    mycloud_api,
+    update_shares_object,
+)
 from permalink.utils import *
 from types import SimpleNamespace
-from link.views.nextcloud_utils import update_shares_object
-
-from link.views.nextcloud_utils import (
-    mycloud_api,
-)
 
 
 @shared_task
@@ -88,5 +87,6 @@ def sync_user_shares(user_id: str):
         request = SimpleNamespace(user=user)
         response = mycloud_api.get_shares(request)
         update_shares_object(response)
-    except:
+    except Exception as e:
         print("Error sync user shares")
+        print(e)

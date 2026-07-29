@@ -36,6 +36,7 @@ urlpatterns = [
     ),
     path("unsubscribe/<str:token>", views.unsubscribe_email, name="unsubscribe"),
     path("", RedirectView.as_view(url="/link/", permanent=False), name="home"),
+    path("mycloud", include("mycloud.urls")),
     # auth
     path("accounts/login/", OIDCAuthenticationRequestView.as_view(), name="login"),
     path(

@@ -7,7 +7,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 
 from link.models import Link, Share
-from link.auth import CustomJWTAuthentication
+from mycloud.auth import CustomJWTAuthentication
 
 
 class ShareCreateSerializer(serializers.ModelSerializer):

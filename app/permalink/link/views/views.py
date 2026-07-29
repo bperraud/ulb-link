@@ -11,7 +11,7 @@ import json
 from rest_framework.generics import get_object_or_404
 from link.models import Link, User
 from link.forms import LinkForm
-from link.views.nextcloud_utils import (
+from mycloud.utils import (
     mycloud_api,
 )
 

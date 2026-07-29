@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 from django.conf import settings
-from link.auth import get_access_token
+from mycloud.auth import get_access_token
 from link.models import Link, NextcloudShareBatchJob, User, Share
 
 from xml.etree import ElementTree as ET

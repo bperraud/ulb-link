@@ -8,9 +8,9 @@ from django.views.decorators.http import require_http_methods
 
 import json
 from rest_framework.generics import get_object_or_404
-from link.decorators import nextcloud_connected_user_required
+from mycloud.decorators import nextcloud_connected_user_required
 from link.models import NextcloudShareBatchJob, Link, Share
-from link.views.nextcloud_utils import (
+from mycloud.utils import (
     webdav_to_jstree,
     mycloud_api,
 )
@@ -166,4 +166,11 @@ def bulk_task_advancement(request):
                 "pct": pct,
             },
         )
+    return HttpResponse()
+
+
+@login_required
+@nextcloud_connected_user_required
+@require_http_methods(["GET"])
+def renew_expiration(request):
     return HttpResponse()

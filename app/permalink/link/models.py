@@ -20,17 +20,17 @@ class User(AbstractUser):
     oauth_token = models.JSONField(default=dict)
 
 
-class NextcloudShareBatchJob(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, unique=True)
-    file_paths = models.JSONField(default=list)
-    initial_file_count = models.PositiveIntegerField(default=0)
-
-
 class Share(models.Model):
     uid = models.IntegerField(primary_key=True)
     target_url = models.URLField(verbose_name="Target URL")
     path = models.CharField()
     expiration = models.DateTimeField(null=True)
+
+
+class NextcloudShareBatchJob(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, unique=True)
+    file_paths = models.JSONField(default=list)
+    initial_file_count = models.PositiveIntegerField(default=0)
 
 
 class Link(models.Model):

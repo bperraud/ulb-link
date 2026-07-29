@@ -1,13 +1,13 @@
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from django.contrib.auth import login, logout
-from link.auth import oauth
 from django.conf import settings
 from django.urls import reverse
 import urllib.parse
 
 from link.context_processors import get_host
 from link.models import User
+from mycloud.auth import oauth
 
 
 def login_view(request):
