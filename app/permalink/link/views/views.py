@@ -74,7 +74,7 @@ def edit_link(request, pk):
             response["HX-Refresh"] = "true"
             if link.share:
                 try:
-                    mycloud_api.update_share(request, link.share.uid)
+                    mycloud_api.update_share(request, link.share)
                 except Exception as e:
                     response["HX-Trigger"] = json.dumps(
                         {

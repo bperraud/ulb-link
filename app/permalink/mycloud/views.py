@@ -17,7 +17,9 @@ from mycloud.utils import (
 
 from permalink.tasks import sync_user_shares
 
-from datetime import timedelta
+from datetime import timedelta, datetime
+from dateutil.relativedelta import relativedelta
+
 from django.utils import timezone
 
 
@@ -172,5 +174,34 @@ def bulk_task_advancement(request):
 @login_required
 @nextcloud_connected_user_required
 @require_http_methods(["GET"])
-def renew_expiration(request):
-    return HttpResponse()
+def renew_expiration(request, ids):
+
+    if ids == "all":
+        links = Link.objects.filter(user=request.user, share__isnull=False)
+    else:
+        list_ids = ids.split(",")
+        links = Link.objects.filter(
+            id__in=(list_ids), user=request.user, share__isnull=False
+        )
+    response = HttpResponse()
+    response["HX-Refresh"] = "true"
+
+    for link in links:
+
+        share = link.share
+        if not share.expiration:
+            share.expiration = datetime.now()
+        share.expiration += relativedelta(years=1)
+        try:
+            mycloud_api.update_share(request, share)
+            share.save()
+        except Exception as e:
+            print(e)
+            response["HX-Trigger"] = json.dumps(
+                {"flashMessage": "Failed to renew expiration dates"}
+            )
+
+    response["HX-Trigger"] = json.dumps(
+        {"flashMessage": "Expiration dates renewed successfully"}
+    )
+    return response

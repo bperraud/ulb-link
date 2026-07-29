@@ -234,15 +234,14 @@ class MycloudAPI:
             headers=self._get_ocs_headers(request),
         )
 
-    def update_share(self, request, share_id: int) -> requests.Response:
-        share = get_object_or_404(Share, uid=share_id)
+    def update_share(self, request, share: Share) -> requests.Response:
 
         if not share.expiration:
             raise NextcloudError("Share does not have an expiration date")
 
         return self._request(
             method="PUT",
-            api_path=f"/ocs/v2.php/apps/files_sharing/api/v1/shares/{share_id}",
+            api_path=f"/ocs/v2.php/apps/files_sharing/api/v1/shares/{share.uid}",
             data={
                 "expireDate": share.expiration.strftime("%Y-%m-%d"),
             },

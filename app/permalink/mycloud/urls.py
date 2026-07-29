@@ -18,13 +18,13 @@ urlpatterns = [
         name="mycloud-link-row",
     ),
     path(
-        "renew_expiration",
+        "renew-expiration/<str:ids>",
         views.renew_expiration,
         name="mycloud-renew-expiration",
     ),
     path("", views.MycloudLinkTableView.as_view(), name="mycloud-link"),
     path(
-        "bulk_advancement",
+        "bulk-advancement",
         views.bulk_task_advancement,
         name="bulk-task-advancement",
     ),

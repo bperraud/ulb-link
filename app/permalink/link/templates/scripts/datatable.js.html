@@ -54,6 +54,18 @@ document.querySelector('#links').addEventListener('change', (event) => {
 });
 
 
+document.body.addEventListener('click', function (event) {
+    const renewButton = event.target.closest('#renew-expiration-button');
+    if (!renewButton) return;
+
+    event.preventDefault();
+
+    const ids = getSelectedIds();
+    const url = `/mycloud/renew-expiration/${ids}`;
+    htmx.ajax('GET', url);
+});
+
+
 
 document.body.addEventListener('click', function (event) {
     const editButton = event.target.closest('#edit-button');
