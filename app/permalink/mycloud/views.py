@@ -190,7 +190,11 @@ def renew_expiration(request, ids):
     for link in links:
 
         share = link.share
-        share.expiration = datetime.now() + relativedelta(years=1)
+        one_year_date = (timezone.now() + relativedelta(years=1)).date()
+        # ignore share that expire in one year
+        if share.expiration and share.expiration.date() == one_year_date:
+            continue
+        share.expiration = one_year_date
         try:
             mycloud_api.update_share(request, share)
             share.save()
@@ -199,13 +203,13 @@ def renew_expiration(request, ids):
             error = True
             return response
 
-    response["HX-Trigger"] = json.dumps(
-        {"flashMessage": "Expiration dates renewed successfully"}
-    )
-
     if error:
         response["HX-Trigger"] = json.dumps(
             {"flashMessage": "Failed to renew expiration dates", "type": "error"}
+        )
+    else:
+        response["HX-Trigger"] = json.dumps(
+            {"flashMessage": "Expiration dates renewed successfully"}
         )
 
     return response
