@@ -69,7 +69,7 @@ class Link(models.Model):
     def save(self, *args, **kwargs):
         if not self.token:
             self.token = self._generate_unique_token()
-        self.is_valid = self.self_test()
+        self.is_target_url_reachable()
         super().save(*args, **kwargs)
 
     def _generate_unique_token(self, length=10) -> str:
@@ -82,19 +82,18 @@ class Link(models.Model):
     def get_permalink(self):
         return f"{get_host()}/t/{self.token}"
 
-    def self_test(self) -> bool:
+    def is_target_url_reachable(self):
         target_url = getattr(self.share, "target_url", None) or self.direct_target_url
         if not target_url:
             self.is_valid = False
-            return False
+            return
 
         try:
             response = requests.get(target_url, timeout=5)
-            is_valid = response.status_code < 400
-        except:
-            is_valid = False
-
-        return is_valid
+            self.is_valid = response.status_code < 400
+        except Exception as e:
+            print("Invalid Link : ", e)
+            self.is_valid = False
 
 
 @receiver(post_delete, sender=Link)
