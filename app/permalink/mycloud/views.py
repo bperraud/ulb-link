@@ -185,6 +185,7 @@ def renew_expiration(request, ids):
         )
     response = HttpResponse()
     response["HX-Refresh"] = "true"
+    error = False
 
     for link in links:
 
@@ -197,11 +198,16 @@ def renew_expiration(request, ids):
             share.save()
         except Exception as e:
             print("Failed to renew expiration : ", e)
-            response["HX-Trigger"] = json.dumps(
-                {"flashMessage": "Failed to renew expiration dates"}
-            )
+            error = True
+            return response
 
     response["HX-Trigger"] = json.dumps(
         {"flashMessage": "Expiration dates renewed successfully"}
     )
+
+    if error:
+        response["HX-Trigger"] = json.dumps(
+            {"flashMessage": "Failed to renew expiration dates", "type": "error"}
+        )
+
     return response

@@ -38,6 +38,8 @@ function getSelectedIds() {
 }
 
 function getSelectedIdsLen() {
+    const selectAll = document.querySelector('#selectAll');
+
     if (selectAll.checked) {
         return 'all';
     }
@@ -59,8 +61,15 @@ document.body.addEventListener('click', function (event) {
     if (!renewButton) return;
 
     event.preventDefault();
+    var ids;
 
-    const ids = getSelectedIds();
+    if (getSelectedIdsLen() == 'all') {
+        ids = 'all';
+    }
+    else {
+        ids = getSelectedIds();
+    }
+
     const url = `/mycloud/renew-expiration/${ids}`;
     htmx.ajax('GET', url);
 });
