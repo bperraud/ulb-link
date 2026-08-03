@@ -89,7 +89,7 @@ def sync_user_shares(user_id: str):
         user = User.objects.get(id=user_id)
         request = SimpleNamespace(user=user)
         response = mycloud_api.get_shares(request)
-        update_shares_object(response)
+        update_shares_object(response.json())
     except Exception:
         print("Error sync user shares")
         traceback.print_exc()
