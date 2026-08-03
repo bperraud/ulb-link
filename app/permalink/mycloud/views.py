@@ -196,7 +196,7 @@ def renew_expiration(request, ids):
             mycloud_api.update_share(request, share)
             share.save()
         except Exception as e:
-            print(e)
+            print("Failed to renew expiration : ", e)
             response["HX-Trigger"] = json.dumps(
                 {"flashMessage": "Failed to renew expiration dates"}
             )
