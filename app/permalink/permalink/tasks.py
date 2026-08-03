@@ -80,6 +80,9 @@ def process_bulk_share_creation():
             job.delete()
 
 
+import traceback
+
+
 @shared_task
 def sync_user_shares(user_id: str):
     try:
@@ -87,6 +90,6 @@ def sync_user_shares(user_id: str):
         request = SimpleNamespace(user=user)
         response = mycloud_api.get_shares(request)
         update_shares_object(response)
-    except Exception as e:
+    except Exception:
         print("Error sync user shares")
-        print(e)
+        traceback.print_exc()
