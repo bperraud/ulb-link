@@ -190,9 +190,7 @@ def renew_expiration(request, ids):
     for link in links:
 
         share = link.share
-        if not share.expiration:
-            share.expiration = datetime.now()
-        share.expiration += relativedelta(years=1)
+        share.expiration = datetime.now() + relativedelta(years=1)
         try:
             mycloud_api.update_share(request, share)
             share.save()
