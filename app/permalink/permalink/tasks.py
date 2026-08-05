@@ -24,9 +24,10 @@ def validate_all_links():
     for user in users:
         invalid_links = []
         for link in user.link.all():
-            link.save()
             if not link.is_valid:
+                link.is_target_url_reachable()
                 invalid_links.append(link)
+            link.is_target_url_reachable()  # do not append before the test so it needs two consecutive days to send email
         if invalid_links:
             send_invalid_link_mail(user, invalid_links)
 
