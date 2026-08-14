@@ -6,7 +6,9 @@ from authlib.integrations.requests_client import OAuth2Session
 from django.conf import settings
 
 from link.models import User
-import jwt, time, requests
+import jwt, time, requests, logging
+
+logger = logging.getLogger(__name__)
 
 
 class CustomJWTAuthentication(BaseAuthentication):
@@ -67,7 +69,7 @@ def refresh_token(token):
         return new_token
     except Exception as e:
         if hasattr(e, "response"):
-            print(e.response.text)
+            logger.error(f"Error refresh token: {e.response.text}")
         return None
 
 

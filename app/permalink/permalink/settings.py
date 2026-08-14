@@ -229,47 +229,57 @@ USE_X_FORWARDED_HOST = True
 OIDC_RP_SIGN_ALGO = "RS256"
 LOGIN_REDIRECT_URL = "/"
 
-import sys
+
+# Logging
+ADMINS = ["benjamin.perraudin@ulb.be"]
+SERVER_EMAIL = "permalink@ulb.be"
 
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
         "simplified": {
-            "format": "{levelname} : {name} - {module} : {message}",
+            "format": "{levelname}: {name} - {module} : {message}",
             "style": "{",
         },
         "normal": {
-            "format": "{levelname} : {asctime} : {name} - {module} : {message}",
+            "format": "{levelname}: {asctime} : {name} - {module} : {message}",
             "datefmt": "%Y-%m-%d %H:%M:%S",
             "style": "{",
         },
     },
     "handlers": {
-        "console_info": {
+        "console": {
             "class": "logging.StreamHandler",
             "formatter": "simplified",
-            "stream": sys.stdout,
             "level": "INFO",
-        },
-        "console_error": {
-            "class": "logging.StreamHandler",
-            "formatter": "simplified",
-            "stream": sys.stderr,
-            "level": "ERROR",
         },
         "django_error_handler": {
             "class": "logging.FileHandler",
             "level": "ERROR",
-            "filename": "/var/log/permalink.log",
+            "filename": "/var/log/error_permalink.log",
             "formatter": "normal",
+        },
+        "mail_admins": {
+            "level": "ERROR",
+            "class": "django.utils.log.AdminEmailHandler",
         },
     },
     "loggers": {
-        "django": {
-            "handlers": ["django_error_handler", "console_info", "console_error"],
+        "contracts": {
+            "handlers": ["django_error_handler", "console"],
             "level": "INFO",
             "propagate": True,
+        },
+        "django": {
+            "handlers": ["django_error_handler", "console"],
+            "level": "INFO",
+            "propagate": True,
+        },
+        "django.request": {
+            "handlers": ["django_error_handler", "mail_admins", "console"],
+            "level": "ERROR",
+            "propagate": False,
         },
     },
 }

@@ -15,6 +15,10 @@ from mycloud.utils import (
 from permalink.utils import *
 from types import SimpleNamespace
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 @shared_task
 def validate_all_links():
@@ -70,8 +74,8 @@ def process_bulk_share_creation():
                     user=job.user,
                     share=share,
                 )
-            except Exception as e:
-                print("Error while creating permalink : " + str(e))
+            except Exception:
+                logger.exception("Error while creating permalink")
                 remaining.append(file)  # retry later
 
         if remaining:
@@ -92,5 +96,4 @@ def sync_user_shares(user_id: str):
         response = mycloud_api.get_shares(request)
         update_shares_object(response.json())
     except Exception:
-        print("Error sync user shares")
-        traceback.print_exc()
+        logger.exception("Error sync user shares")

@@ -7,7 +7,9 @@ from django.dispatch import receiver
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 import requests
-import string, random
+import string, random, logging
+
+logger = logging.getLogger(__name__)
 
 
 class User(AbstractUser):
@@ -92,7 +94,7 @@ class Link(models.Model):
             response = requests.get(target_url, timeout=5)
             self.is_valid = response.status_code < 400
         except Exception as e:
-            print("Invalid Link : ", e)
+            logger.warning("Invalid Link: " + str(e))
             self.is_valid = False
 
 

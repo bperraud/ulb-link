@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.views.decorators.http import require_http_methods
 
-import json
+import json, logging
 from rest_framework.generics import get_object_or_404
 from mycloud.decorators import nextcloud_connected_user_required
 from link.models import NextcloudShareBatchJob, Link, Share
@@ -21,6 +21,8 @@ from datetime import timedelta, datetime
 from dateutil.relativedelta import relativedelta
 
 from django.utils import timezone
+
+logger = logging.getLogger(__name__)
 
 
 def should_sync(user):
@@ -198,8 +200,8 @@ def renew_expiration(request, ids):
         try:
             mycloud_api.update_share(request, share)
             share.save()
-        except Exception as e:
-            print("Failed to renew expiration : ", e)
+        except Exception:
+            logger.exception("Failed to renew expiration")
             error = True
             return response
 
