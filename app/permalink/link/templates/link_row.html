@@ -1,3 +1,5 @@
+{% load filters %}
+
 <tr id="link-{{ link.id }}">
     <td><input type="checkbox" value="{{ link.id }}" name="input-checkbox"></td>
     <td class="font-medium text-heading whitespace-nowrap mr-3"><a href="{{ HOST }}/t/{{ link.token }}">{{ HOST }}/t/{{ link.token }}</a></td>
@@ -8,7 +10,7 @@
             </svg>
         </button>
     </td>
-    <td><a class="font-bold" href="{{ link.direct_target_url }}">{{ link.direct_target_url }}</a></td>
+    <td><a class="font-bold" href="{{ link.direct_target_url }}">{{ link.direct_target_url|max_len }}</a></td>
     <td class="relative">
       {% if link.is_valid %}
         <span data-tooltip-target="tooltip-{{ link.id }}">✔️</span>

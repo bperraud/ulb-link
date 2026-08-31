@@ -24,7 +24,7 @@ class User(AbstractUser):
 
 class Share(models.Model):
     uid = models.IntegerField(primary_key=True)
-    target_url = models.URLField(verbose_name="Target URL")
+    target_url = models.URLField(verbose_name="Target URL", max_length=2048)
     path = models.CharField()
     expiration = models.DateTimeField(null=True)
 
@@ -54,6 +54,7 @@ class Link(models.Model):
         blank=True,
         verbose_name="Direct Target URL",
         help_text="Used if no Share is associated.",
+        max_length=2048,
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
