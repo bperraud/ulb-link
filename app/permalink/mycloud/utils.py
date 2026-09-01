@@ -195,7 +195,9 @@ class MycloudAPI:
             )
 
         if response.status_code >= 300:
-            raise NextcloudError(f"Nextcloud API returned HTTP {response.status_code}")
+            raise NextcloudError(
+                f"Nextcloud API returned HTTP {response.status_code}: {response.text}"
+            )
 
         return response
 
