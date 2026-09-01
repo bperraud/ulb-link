@@ -31,7 +31,7 @@ def should_sync(user):
     return timezone.now() - user.last_share_sync > timedelta(hours=1)
 
 
-@method_decorator([nextcloud_connected_user_required, login_required], name="dispatch")
+@method_decorator([login_required, nextcloud_connected_user_required], name="dispatch")
 class MycloudLinkTableView(ListView):
     model = Link
     context_object_name = "links"
@@ -39,15 +39,13 @@ class MycloudLinkTableView(ListView):
 
     def get_queryset(self):
         if should_sync(self.request.user):
-            # response = mycloud_api.get_shares(self.request)
             sync_user_shares.delay(self.request.user.id)
-            # sync_user_shares.delay(response.json())
             self.request.user.last_share_sync = timezone.now()
             self.request.user.save()
         return Link.objects.filter(user=self.request.user, share__isnull=False)
 
 
-@method_decorator([nextcloud_connected_user_required, login_required], name="dispatch")
+@method_decorator([login_required, nextcloud_connected_user_required], name="dispatch")
 class MycloudLinkRowView(TemplateView):
     template_name = "mycloud/mycloud_link_row.html"
 
@@ -63,38 +61,58 @@ def create_nextcloud_bulk(request):
     response = HttpResponse()
     response["HX-Refresh"] = "true"
 
-    try:
-        response_xml = mycloud_api.get_files(request)  # can throw error
-        tree_data = webdav_to_jstree(response_xml, request.user)
-    except Exception as e:
+    depth = 1
+    last_response_len = 0
+    response_xml = ""
+    while True:
+        try:
+            response_xml = mycloud_api.get_files(request, depth)  # can throw error
+        except Exception as e:
+            break
+        depth += 1
+        if len(response_xml) == last_response_len:
+            break
+        last_response_len = len(response_xml)
+
+    if not response_xml:
         response["HX-Trigger"] = json.dumps(
             {
-                "flashMessage": "Error while creating permalink : " + str(e),
+                "flashMessage": "Error while creating permalink",
                 "type": "error",
             }
         )
         return response
 
+    tree_data = webdav_to_jstree(response_xml, request.user)
+
     if request.method == "POST":
         selected_path = request.POST.get("selected_nodes")
         selected_files = json.loads(selected_path)
         file_paths = []
+        directories_to_scan = []
         for file in selected_files:
             if file["icon"] == "jstree-folder":
+                # Only defer folders at the deepest loaded level
+                node_depth = file["id"].strip("/").count("/") + 1
+                if node_depth >= depth:
+                    directories_to_scan.append(file["id"])
                 continue
             file_paths.append(file["id"])
         job = NextcloudShareBatchJob.objects.filter(user=request.user).first()
 
         if job:
             job.file_paths += file_paths
+            job.directories_to_scan += directories_to_scan
             job.initial_file_count += len(file_paths)
             job.save()
         elif file_paths:
             NextcloudShareBatchJob.objects.create(
                 user=request.user,
                 file_paths=file_paths,
+                directories_to_scan=directories_to_scan,
                 initial_file_count=len(file_paths),
             )
+
         response["HX-Trigger"] = json.dumps(
             {
                 "flashMessage": "Permalink creation has started and will continue in the background (up to 100 every 10 minutes)."

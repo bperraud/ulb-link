@@ -7,6 +7,9 @@ from link.context_processors import get_host
 from django.db.models import Prefetch
 from link.models import Link, NextcloudShareBatchJob
 
+from xml.etree import ElementTree as ET
+from urllib.parse import unquote
+
 from mycloud.utils import (
     get_or_create_share_in_nextcloud,
     mycloud_api,
@@ -57,10 +60,56 @@ def send_invalid_link_mail(user: User, invalid_links):
     email.send()
 
 
+def parse_xml(content, job, requested_folder):
+    root = ET.fromstring(content)
+
+    ns = {"d": "DAV:"}
+    base = f"/remote.php/dav/files/{job.user.username}"
+
+    for response in root.findall("d:response", ns):
+        href = response.findtext("d:href", namespaces=ns)
+
+        if not href:
+            continue
+
+        path = unquote(href)[len(base) :].rstrip("/")
+
+        # Skip the folder we requested
+        if path == requested_folder.rstrip("/"):
+            continue
+
+        is_folder = (
+            response.find(
+                "d:propstat/d:prop/d:resourcetype/d:collection",
+                ns,
+            )
+            is not None
+        )
+
+        print(path)
+
+        if is_folder:
+            job.directories_to_scan.append(path)
+        else:
+            job.file_paths.append(path)
+            job.initial_file_count += 1
+
+    return job
+
+
 # each 10 minutes : creates max 100 shares (per user)
 @shared_task
 def process_bulk_share_creation():
     jobs = NextcloudShareBatchJob.objects.all()
+
+    for job in jobs:
+        folders = job.directories_to_scan.copy()
+        job.directories_to_scan = []
+        request = SimpleNamespace(user=job.user)
+        for folder in folders:
+            xml_content = mycloud_api.get_directory_files(request, folder)
+            parse_xml(xml_content, job, folder)
+        job.save()
 
     for job in jobs:
         paths_to_process = job.file_paths[:100]
@@ -83,9 +132,6 @@ def process_bulk_share_creation():
             job.save(update_fields=["file_paths"])
         else:
             job.delete()
-
-
-import traceback
 
 
 @shared_task

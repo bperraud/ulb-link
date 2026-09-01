@@ -154,10 +154,11 @@ class MycloudAPI:
             "OCS-APIRequest": "true",
         }
 
-    def _get_webdav_headers(self, request) -> dict:
+    def _get_webdav_headers(self, request, depth: int) -> dict:
         return {
             "Authorization": f"Bearer {self._get_access_token(request)}",
-            "Depth": "infinity",
+            "Depth": f"{depth}",
+            # "Depth": "infinity",
             "Content-Type": "application/xml",
         }
 
@@ -250,12 +251,10 @@ class MycloudAPI:
             headers=self._get_ocs_headers(request),
         )
 
-    def get_files(self, request) -> bytes:
+    def get_files(self, request, depth: int) -> bytes:
         xml_body = """<?xml version="1.0"?>
         <d:propfind xmlns:d="DAV:">
           <d:prop>
-            <d:getlastmodified/>
-            <d:getcontentlength/>
             <d:resourcetype/>
           </d:prop>
         </d:propfind>
@@ -265,10 +264,30 @@ class MycloudAPI:
             method="PROPFIND",
             api_path=f"/remote.php/dav/files/{request.user.username}",
             data=xml_body,
-            headers=self._get_webdav_headers(request),
+            headers=self._get_webdav_headers(request, depth),
         )
 
         return response.content
+
+    def get_directory_files(self, request, path: str) -> list:
+        xml_body = """<?xml version="1.0"?>
+        <d:propfind xmlns:d="DAV:">
+          <d:prop>
+            <d:resourcetype/>
+          </d:prop>
+        </d:propfind>
+        """
+
+        response = self._request(
+            method="PROPFIND",
+            api_path=f"/remote.php/dav/files/{request.user.username}{path}",
+            data=xml_body,
+            headers=self._get_webdav_headers(request, 1),
+        )
+
+        return response.content
+
+    # return response.content
 
 
 mycloud_api = MycloudAPI(url=settings.NEXTCLOUD_URL, timeout=30, debug=False)

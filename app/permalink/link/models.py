@@ -32,6 +32,7 @@ class Share(models.Model):
 class NextcloudShareBatchJob(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, unique=True)
     file_paths = models.JSONField(default=list)
+    directories_to_scan = models.JSONField(default=list)
     initial_file_count = models.PositiveIntegerField(default=0)
 
 
