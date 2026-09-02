@@ -1,6 +1,5 @@
 from django.urls import path
 
-from mycloud.api import ExternalLinkAPIView, LinkAPIView
 from mycloud import views
 
 urlpatterns = [
@@ -27,5 +26,10 @@ urlpatterns = [
         "bulk-advancement",
         views.bulk_task_advancement,
         name="bulk-task-advancement",
+    ),
+    path(
+        "cancel-task",
+        views.cancel_task,
+        name="cancel-task",
     ),
 ]

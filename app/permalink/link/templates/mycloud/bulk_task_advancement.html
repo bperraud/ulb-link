@@ -1,3 +1,5 @@
+{% load static %}
+
 <style>
 @keyframes pulse {
   0%,100% { transform: scale(1); opacity: 1; }
@@ -15,16 +17,37 @@
     animation: pulse 1.2s ease-in-out infinite;
   "></span>
 </div>
-<div style="background: #eee; border-radius: 999px; height: 12px; overflow: hidden; width: 30%; margin-bottom: 1rem;">
-    <div id="bar" style="height: 100%; width: {{pct}}%; background: #0054a6;"/div>
+<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 1rem;">
+    <div style="background: #eee; border-radius: 999px; height: 12px; overflow: hidden; width: 30%;">
+        <div id="bar" style="height: 100%; width: {{pct}}%; background: #0054a6;"></div>
+    </div>
+
+<button data-modal-target="cancel-task-modal" data-modal-toggle="cancel-task-modal" type="button" class="bg-transparent">
+        <img id="cancel-task" src="{% static 'cross.svg' %}" alt="Logo" class="w-4 h-4 invert">
+    </button>
 </div>
 
 
+
 <script>
+
 var total   = parseInt("{{ initial_file_count }}");
 var current = total - parseInt("{{ file_count_left }}");
 
 document.getElementById('label-text').textContent = current + ' of ' + total + ' permalinks created...';
 document.getElementById('spinner').style.display = 'inline-block';
+
+document.getElementById('cancel-task').addEventListener('click', function() {
+});
+
+
+document.body.addEventListener('click', function (event) {
+    const cancelButton = event.target.closest('#cancel-task-button');
+    if (!cancelButton) return;
+    htmx.ajax('GET', '/mycloud/cancel-task');
+});
+
+initFlowbite();
+
 
 </script>

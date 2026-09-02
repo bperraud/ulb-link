@@ -233,3 +233,23 @@ def renew_expiration(request, ids):
         )
 
     return response
+
+
+@login_required
+@nextcloud_connected_user_required
+@require_http_methods(["GET"])
+def cancel_task(request):
+    response = HttpResponse()
+    response["HX-Refresh"] = "true"
+    job = NextcloudShareBatchJob.objects.filter(user=request.user).first()
+    if job:
+        job.delete()
+        response["HX-Trigger"] = json.dumps(
+            {"flashMessage": "Task cancelled successfully."}
+        )
+    else:
+        response["HX-Trigger"] = json.dumps(
+            {"flashMessage": "Unable to cancel task: no active task found."}
+        )
+
+    return response

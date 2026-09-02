@@ -59,12 +59,14 @@
     <button data-modal-target="modalMain" data-modal-toggle="modalMain" type="button">
     </button>
 
-    
     <button data-modal-target="popup-modal" data-modal-toggle="popup-modal" type="button">
     </button>
 
+    <button data-modal-target="cancel-task-modal" data-modal-toggle="cancel-task-modal" type="button">
+    </button>
 
-    {% include "confirm_deletion_modal.html" %}
+    {% include "modals/confirm_deletion_modal.html" %}
+    {% include "modals/confirm_cancel_task.html" %}
 
     {% include "alert.html" %}
 
