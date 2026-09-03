@@ -31,6 +31,9 @@ web:
   DJANGO_SUPERUSER_USERNAME: "admin_permalink"
   DJANGO_SUPERUSER_PASSWORD: "admin_password"
 
+  # Haproxy Timeout
+  TIMEOUT: 100s
+
   image: registry.gitlab.ulb.be/pole-techno/okd-apps/django-permalink/permalink:dev
 
 oidc:

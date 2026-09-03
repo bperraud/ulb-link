@@ -20,6 +20,9 @@ web:
   SITE_DOMAIN: "permalink.ulb.be"
   CSRF_TRUSTED_ORIGINS: "https://permalink.ulb.be,https://mycloud.ulb.be"
 
+  # Haproxy Timeout
+  TIMEOUT: 100s
+
   # no trailling slash for nextcloud_url
   NEXTCLOUD_URL: https://mycloud.ulb.be
 

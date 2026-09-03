@@ -56,7 +56,7 @@ services:
     expose:
       - 6379
 
-  # nginx:
+  # nginx-permalink:
   #   container_name: nginx-permalink
   #   build:
   #     context: ./nginx

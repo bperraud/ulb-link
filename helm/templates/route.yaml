@@ -9,6 +9,7 @@ metadata:
   annotations:
     cert-manager.io/issuer-kind: ClusterIssuer
     cert-manager.io/issuer-name: letsencrypt-prod
+    haproxy.router.openshift.io/timeout: {{ .Values.web.TIMEOUT }}
   {{- end }}
 spec:
   to:
