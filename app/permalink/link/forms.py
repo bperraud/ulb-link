@@ -12,7 +12,7 @@ class LinkForm(ModelForm):
     target_url = forms.URLField(
         label="Share Target URL",
         required=True,
-        disabled=False,
+        disabled=True,
         widget=forms.URLInput(attrs={"class": input_style}),
     )
 
@@ -42,6 +42,7 @@ class LinkForm(ModelForm):
             self.fields["expiration"].initial = self.instance.share.expiration
         else:
             self.fields.pop("expiration", None)
+            self.fields["target_url"].disabled = False
             self.fields["target_url"].initial = self.instance.direct_target_url
 
     def save(self, commit=True):
@@ -51,7 +52,8 @@ class LinkForm(ModelForm):
         if instance.share and expiration:
             instance.share.expiration = expiration
             instance.share.save()
-        instance.direct_target_url = self.cleaned_data.get("target_url")
+        else:
+            instance.direct_target_url = self.cleaned_data.get("target_url")
         if commit:
             instance.save()
         return instance

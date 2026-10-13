@@ -7,13 +7,15 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
 from permalink.utils import *
 
-import json
+import json, logging
 from rest_framework.generics import get_object_or_404
 from link.models import Link, User
 from link.forms import LinkForm
 from mycloud.utils import (
     mycloud_api,
 )
+
+logger = logging.getLogger(__name__)
 
 
 @method_decorator([login_required], name="dispatch")
@@ -76,6 +78,7 @@ def edit_link(request, pk):
                 try:
                     mycloud_api.update_share(request, link.share)
                 except Exception as e:
+                    logger.exception("Error editing Permalink : " + str(e))
                     response["HX-Trigger"] = json.dumps(
                         {
                             "flashMessage": "Error editing Permalink : " + str(e),
