@@ -1,6 +1,7 @@
 from celery import shared_task
 from link.models import User
 from django.utils.html import strip_tags
+from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from link.context_processors import get_host
@@ -46,14 +47,40 @@ def send_invalid_link_mail(user: User, invalid_links):
         "user": user,
         "token": str(user.id) + "." + sign(str(user.id)),
     }
-    html_content = render_to_string("email/mail.html", context)
-    text_content = strip_tags(html_content)
+    html_content = render_to_string("email/invalid_links.html", context)
 
+    send_email(
+        "Liens invalides détectés dans Permalink",
+        html_content,
+        [user.email],
+    )
+
+
+def send_deletion_warning_mail(user: User, _):
+    context = {
+        "site_domain": get_host(),
+        "user": user,
+        "token": str(user.id) + "." + sign(str(user.id)),
+    }
+    html_content = render_to_string("email/mail.html", context)
+
+    send_email(
+        "Warning Deletion",
+        html_content,
+        [user.email],
+    )
+
+
+def send_email(subject, html_content, recipient_list: list):
+    if settings.DEBUG:
+        recipient_list = settings.ADMINS
+
+    text_content = strip_tags(html_content)
     email = EmailMultiAlternatives(
-        subject="Liens invalides détectés dans Permalink",
+        subject=subject,
         body=text_content,
         from_email=None,
-        to=[user.email],
+        to=recipient_list,
     )
 
     email.attach_alternative(html_content, "text/html")
@@ -62,22 +89,17 @@ def send_invalid_link_mail(user: User, invalid_links):
 
 def parse_xml(content, job, requested_folder):
     root = ET.fromstring(content)
-
     ns = {"d": "DAV:"}
     base = f"/remote.php/dav/files/{job.user.username}"
 
     for response in root.findall("d:response", ns):
         href = response.findtext("d:href", namespaces=ns)
-
         if not href:
             continue
-
         path = unquote(href)[len(base) :].rstrip("/")
-
         # Skip the folder we requested
         if path == requested_folder.rstrip("/"):
             continue
-
         is_folder = (
             response.find(
                 "d:propstat/d:prop/d:resourcetype/d:collection",
@@ -85,8 +107,6 @@ def parse_xml(content, job, requested_folder):
             )
             is not None
         )
-
-        print(path)
 
         if is_folder:
             job.directories_to_scan.append(path)
