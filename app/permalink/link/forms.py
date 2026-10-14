@@ -17,7 +17,7 @@ class LinkForm(ModelForm):
     )
 
     expiration = forms.DateField(
-        label="Expiration Date",
+        label="Share Expiration Date",
         required=False,
         widget=forms.DateInput(attrs={"type": "date"}),
     )
