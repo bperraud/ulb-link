@@ -1,0 +1,29 @@
+{% extends 'email/base_email.html' %}
+{% load static %}
+
+{% block mail_title %}
+
+<title>Suppression automatique d’un permalien</title>
+
+{% endblock %}
+
+{% block mail_content %}
+<tr>
+    <td style="font-size:16px; color:#374151; padding-bottom:20px;">
+        Nous avons détecté qu’un lien public Mycloud a été supprimé. Permalink assurant une correspondance bidirectionnelle entre le lien public et le permalien, ce dernier a également été supprimé :
+        {{ site_domain }}/t/{{ deleted_link.token }}.
+
+        Vous pouvez toujours créer un nouveau permalien depuis Mycloud,
+        puis modifier son token pour retrouver le lien original.
+    </td>
+</tr>
+
+<tr>
+    <td>
+    <a href="{{ site_domain }}"
+         style="display:inline-block; padding:10px 18px; margin-bottom:10px;background-color:#1e40af; color:#ffffff; text-decoration:none; border-radius:5px; font-size:13px; ">
+        Corriger les liens
+      </a>
+    </td>
+</tr>
+{% endblock %}

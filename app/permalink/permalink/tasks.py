@@ -56,18 +56,19 @@ def send_invalid_link_mail(user: User, invalid_links):
     )
 
 
-def send_deletion_warning_mail(user: User, _):
+def send_deletion_warning_mail(deleted_link):
     context = {
+        "deleted_link": deleted_link,
         "site_domain": get_host(),
-        "user": user,
-        "token": str(user.id) + "." + sign(str(user.id)),
+        "user": deleted_link.user,
+        "token": str(deleted_link.user.id) + "." + sign(str(deleted_link.user.id)),
     }
-    html_content = render_to_string("email/mail.html", context)
+    html_content = render_to_string("email/warning_deletion.html", context)
 
     send_email(
-        "Warning Deletion",
+        "Suppression automatique d’un permalien",
         html_content,
-        [user.email],
+        [deleted_link.user.email],
     )
 
 

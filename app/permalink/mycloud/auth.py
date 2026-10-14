@@ -25,7 +25,13 @@ class CustomJWTAuthentication(BaseAuthentication):
         except jwt.InvalidTokenError:
             raise AuthenticationFailed("Invalid JWT token")
 
+        username = payload.get("sub")
+
+        if username == "anonymous-nextcloud-user":
+            return (None, None)
+
         user, _ = User.objects.get_or_create(username=payload.get("sub"))
+        # user, _ = User.objects.get_or_create(username=payload.get("sub"))
         return (user, None)
 
 
@@ -68,7 +74,7 @@ def refresh_token(token):
         )
         return new_token
     except Exception as e:
-        if hasattr(e, "response"):
+        if hasattr(e, "response") and hasattr(e.response, "text"):
             logger.error(f"Error refresh token: {e.response.text}")
         return None
 

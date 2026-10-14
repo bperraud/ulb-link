@@ -8,6 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from link.models import Link, Share
 from mycloud.auth import CustomJWTAuthentication
+from permalink.tasks import send_deletion_warning_mail
 
 
 class ShareCreateSerializer(serializers.ModelSerializer):
@@ -83,6 +84,7 @@ class ExternalLinkAPIView(APIView):
 
     def delete(self, request):
         uid = request.query_params.get("uid")
+        path = request.query_params.get("path")
 
         if not uid:
             return Response(
@@ -90,13 +92,19 @@ class ExternalLinkAPIView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         try:
-            permalink = Link.objects.get(user=request.user, share__uid=uid)
+            permalinks = Link.objects.filter(share__uid=uid)
+            # permalinks = Link.objects.get(user=request.user, share__uid=uid)
         except Link.DoesNotExist:
             return Response(
                 {"error": "Permalink does not exist"},
                 status=status.HTTP_404_NOT_FOUND,
             )
-        permalink.delete()
+        # permalink.delete()
+        for permalink in permalinks:
+            print(f"Permalink to be deleted: {permalink.share.target_url}")
+            print(path)
+            send_deletion_warning_mail(permalink)
+
         return Response({"message": "Permalink deleted successfully"}, status=200)
 
 
